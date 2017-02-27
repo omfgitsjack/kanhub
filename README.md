@@ -1,4 +1,4 @@
-#Bankan
+#KanHub
 
 ##Team Members
 - Jack Yiu
@@ -9,7 +9,7 @@ With their recent launch of “project boards”, Github can now be used as a to
 
 However, the project board feature is still very primitive and lacks many features that would help streamline this workflow. For example, when opening and closing an issue, the developer will still have to manually reflect these changes on their project board by creating a new card and adding the details there or by deleting the card when the issue is closed. There is currently no way to automate this process.
 
-Our project will be to create a chrome extension that would “inject” code and UI elements onto the existing Github project board that will help it sync with the project’s issues. We will allow developers to create “rulesets” that would be used to determine which issues are synced to which column. We will also include a real-time chat feature that allows collaborators to quickly discuss what they are working on at the moment so that they will always be on the same page. We are hoping this extension would create a seamless experience for current developers to help manage their issues.
+Our project will be to create a chrome extension that would “inject” code and UI elements onto the existing Github project board that will help it sync with the project’s issues. We will allow developers to create “rulesets” that would be used to determine which issues are synced to which column. We will also include a real-time chat feature that allows collaborators to quickly discuss what they are working on at the moment so that they will always be on the same page. The role of the real-time chat is similar to how each issue has a conversation thread, we believe the project boards could benefit from having a similar feature. We are hoping this extension would create a seamless experience for current developers to help manage their issues.
 
 ##Beta Version Key Features
 - Installing the extension
