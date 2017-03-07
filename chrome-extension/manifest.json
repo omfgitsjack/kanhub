@@ -1,0 +1,26 @@
+{
+  "name": "KanHub",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "author": "omfgitsklampz",
+  "description": "blueee",
+  "homepage_url": "https://github.com/UTSCC09/omfgitsklampz",
+  "browser_action": {
+      "default_title": "KanHub",
+      "default_popup": "html/popup.html"
+  }
+//   "permissions": [
+//     "https://github.com/*",
+//     "storage"
+//   ],
+  
+//   "optional_permissions": [
+//     "<all_urls>"
+//   ],
+//   "background": {
+//     "scripts": [
+//       "background.js"
+//     ],
+//     "persistent": false
+//   }
+}
