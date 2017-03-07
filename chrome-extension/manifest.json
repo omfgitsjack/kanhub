@@ -9,6 +9,9 @@
       "default_title": "KanHub",
       "default_popup": "html/popup.html"
   }
+//   "web_accessible_resources": [
+//       "style/*"
+//   ],
 //   "permissions": [
 //     "https://github.com/*",
 //     "storage"
