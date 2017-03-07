@@ -7,7 +7,7 @@
   "homepage_url": "https://github.com/UTSCC09/omfgitsklampz",
   "browser_action": {
       "default_title": "KanHub",
-      "default_popup": "html/popup.html"
+      "default_popup": "build/index.html"
   }
 //   "web_accessible_resources": [
 //       "style/*"
