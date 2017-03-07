@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import RaisedButton from 'material-ui/RaisedButton';
 import logo from './logo.svg';
 import './App.css';
 
@@ -10,6 +12,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React!!!!</h2>
         </div>
+        <MuiThemeProvider>
+          <RaisedButton secondary={true} label="Default"/>
+        </MuiThemeProvider>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
