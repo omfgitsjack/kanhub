@@ -1,17 +1,17 @@
 function injectResources() {
-    const injectDOM = document.createElement('div');
-    injectDOM.className = 'inject-react-example';
-    injectDOM.style.textAlign = 'center';
-    injectDOM.innerHTML = "hello1"
-    document.body.appendChild(injectDOM);
+    // const injectDOM = document.createElement('div');
+    // injectDOM.className = 'inject-react-example';
+    // injectDOM.style.textAlign = 'center';
+    // injectDOM.innerHTML = "hello1"
+    // document.body.appendChild(injectDOM);
 
-    // alert();
+    alert('alert');
 
-    var style = document.createElement("link");
-    style.setAttribute("rel", "stylesheet");
-    style.setAttribute("href", "chrome-extension://" + chrome.runtime.id + "/style/popup.css");
+    // var style = document.createElement("link");
+    // style.setAttribute("rel", "stylesheet");
+    // style.setAttribute("href", "chrome-extension://" + chrome.runtime.id + "/style/popup.css");
 
-    document.body.appendChild(style);
+    // document.body.appendChild(style);
 
 }
 
