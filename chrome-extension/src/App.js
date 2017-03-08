@@ -1,7 +1,6 @@
 /* global chrome */
 
 import React, { Component } from 'react';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
 import { blueGrey100, blueGrey500 } from 'material-ui/styles/colors';
@@ -76,43 +75,39 @@ class App extends Component {
   render() {
     return (
       <div>
-        <MuiThemeProvider>
-          <div className="popup">
-            <div className="popup-settings-bar">
-              <div className="settings">
-                <ActionSettings
-                  id="popup-settings"
-                  color={ blueGrey500 }
-                  hoverColor={ blueGrey100 }
-                  onClick={this.handleOpenSettings}
-                />
-              </div>
-            </div>
-            <div className="popup-header">
-              <img src={logo} className="popup-logo" alt="logo" />
-              <div className="popup-title">KanHub</div>
-            </div>
-            <div className="popup-body">
-              <RaisedButton
-                primary={true}
-                label="Authenticate with GitHub"
-                onClick={this.handleOpenGithubAuth}
+        <div className="popup">
+          <div className="popup-settings-bar">
+            <div className="settings">
+              <ActionSettings
+                id="popup-settings"
+                color={ blueGrey500 }
+                hoverColor={ blueGrey100 }
+                onClick={this.handleOpenSettings}
               />
             </div>
-            <div className="popup-footer">
-              <TooltipLabel label="What's this?">
-                This extension requires you to authenticate with your GitHub account
-                ONLY for project issue management.
-              </TooltipLabel>
-            </div>
           </div>
-        </MuiThemeProvider>
-        <MuiThemeProvider>
-          <Settings
-            {...this}
-            {...this.state}
-          />
-        </MuiThemeProvider>
+          <div className="popup-header">
+            <img src={logo} className="popup-logo" alt="logo" />
+            <div className="popup-title">KanHub</div>
+          </div>
+          <div className="popup-body">
+            <RaisedButton
+              primary={true}
+              label="Authenticate with GitHub"
+              onClick={this.handleOpenGithubAuth}
+            />
+          </div>
+          <div className="popup-footer">
+            <TooltipLabel label="What's this?">
+              This extension requires you to authenticate with your GitHub account
+              ONLY for project issue management.
+            </TooltipLabel>
+          </div>
+        </div>
+        <Settings
+          {...this}
+          {...this.state}
+        />
       </div>
     );
   };
