@@ -49,18 +49,18 @@
   background-color: #ECEFF1;
 }
 
-.popup-whats-this {
+.tooltip-text {
+  word-wrap: break-word;
+  width: 140px;
+}
+
+.tooltip-label {
   font-size: 14px;
   color: #263238;
   text-decoration: underline;
 }
 
-.whats-this-text {
-  word-wrap: break-word;
-  width: 140px;
-}
-
-.popup-whats-this:hover {
+.tooltip-label:hover {
   color: #78909C;
 }
 
