@@ -8,14 +8,13 @@
   "browser_action": {
       "default_title": "KanHub",
       "default_popup": "index.html"
-  }
-//   "web_accessible_resources": [
-//       "style/*"
-//   ],
-//   "permissions": [
-//     "https://github.com/*",
-//     "storage"
-//   ],
+  },
+  "web_accessible_resources": [
+      "localhost:8080/*"
+  ],
+  "permissions": [
+    "tabs"
+  ]
   
 //   "optional_permissions": [
 //     "<all_urls>"
