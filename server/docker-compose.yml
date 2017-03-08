@@ -5,10 +5,6 @@ kanhub_db:
   image: postgres
   ports:
     - "5432:5432"
-  environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=StageHehexd
-    - POSTGRES_TRUST_LOCALNET=true
 kanhub_app:
   build: .
   links:
@@ -16,7 +12,4 @@ kanhub_app:
   ports:
     - "8080:8080"
   environment:
-    - PGHOST=kanhub_db
-    - PGDATABASE=postgres
-    - PGUSER=postgres
-    - PGPASSWORD=StageHehexd
+    - POSTGRES_HOST=kanhub_db

@@ -26,26 +26,6 @@ passport.use(new GithubStrategy({
 	done();
 }));
 
-console.log('postgres user: ', process.env.PGUSER);
-console.log('postgres password: ', process.env.PGPASSWORD);
-console.log('postgres database: ', process.env.PGDATABASE);
-console.log('postgres host: ', process.env.PGHOST);
-
-// Setup postgres
-import pg from 'pg';
-let dbClient = new pg.Client({
-	user: process.env.PGUSER,
-	database: process.env.PGDATABASE,
-	password: process.env.PGPASSWORD,
-	port: 5432,
-	host: process.env.PGHOST
-});
-dbClient.connect(err => {
-	if (err) throw err;
-
-	console.log("successfully connected to db!");
-})
-
 let app = express();
 app.server = http.createServer(app);
 
