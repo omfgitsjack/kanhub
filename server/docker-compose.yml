@@ -21,3 +21,4 @@ services:
       - PGHOST=kanhub_db
       - PGDATABASE=postgres
       - PGUSER=postgres
+      - PGPASSWORD=StageHehexd
