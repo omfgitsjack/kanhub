@@ -12,12 +12,14 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React!!!!</h2>
         </div>
-        <MuiThemeProvider>
-          <RaisedButton secondary={true} label="Default"/>
-        </MuiThemeProvider>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <div className="popup-body">
+          <MuiThemeProvider>
+            <RaisedButton
+              primary={true}
+              label="Authenticate with GitHub"
+            />
+          </MuiThemeProvider>
+        </div>
       </div>
     );
   }

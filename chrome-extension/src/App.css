@@ -18,6 +18,27 @@
   font-size: large;
 }
 
+.popup-header {
+  background-color: #4DD0E1;
+  height: 100px;
+  padding: 20px;
+  color: white;
+  margin: 5px 0px;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 75px;
+  margin: 5px 0px;
+  padding: 20px;
+}
+
+.popup-footer {
+  margin: 5px 0px;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
