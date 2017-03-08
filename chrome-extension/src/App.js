@@ -7,7 +7,8 @@ import ActionSettings from 'material-ui/svg-icons/action/settings';
 import { blueGrey100, blueGrey500 } from 'material-ui/styles/colors';
 import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from 'react-tooltip';
+import logo from './logo-256.png';
 import './App.css';
 
 const Settings = ({anchorEl, anchorOrigin, targetOrigin, handleCloseSettings, open}) => {
@@ -100,6 +101,7 @@ class App extends Component {
               </div>
             </div>
             <div className="popup-header">
+              <img src={logo} className="popup-logo" alt="logo" />
               <div className="popup-title">KanHub</div>
             </div>
             <div className="popup-body">
