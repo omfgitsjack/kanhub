@@ -1,45 +1,58 @@
-.App {
+.popup {
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
+.popup-logo {
+  animation: popup-logo-spin infinite 20s linear;
   height: 80px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-intro {
-  font-size: large;
-}
-
 .popup-header {
-  background-color: #4DD0E1;
-  height: 100px;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 40px;
+  padding: 10px;
+  background-color: #263238;
   color: white;
-  margin: 5px 0px;
+}
+
+.popup-title {
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.popup-settings-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  background-color: #263238;
+  padding: 10px 10px 0px 0px;
+}
+
+.popup-settings {
+  height: 25px;
+  width: 25px;
 }
 
 .popup-body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 75px;
-  margin: 5px 0px;
-  padding: 20px;
+  height: 50px;
+  padding: 10px 20px;
+  background-color: #ECEFF1;
 }
 
 .popup-footer {
-  margin: 5px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 0px 20px 10px 20px;
+  background-color: #ECEFF1;
 }
 
-@keyframes App-logo-spin {
+@keyframes popup-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
