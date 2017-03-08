@@ -75,14 +75,17 @@ class App extends Component {
   render() {
     return (
       <div>
+        <Settings
+          {...this}
+          {...this.state}
+        />
         <div className="popup">
           <div className="popup-settings-bar">
             <div className="settings">
               <ActionSettings
-                id="popup-settings"
                 color={ blueGrey500 }
                 hoverColor={ blueGrey100 }
-                onClick={this.handleOpenSettings}
+                onClick={ this.handleOpenSettings }
               />
             </div>
           </div>
@@ -104,10 +107,6 @@ class App extends Component {
             </TooltipLabel>
           </div>
         </div>
-        <Settings
-          {...this}
-          {...this.state}
-        />
       </div>
     );
   };
