@@ -8,7 +8,7 @@ import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
 import TooltipLabel from './TooltipLabel';
 import logo from './logo-256.png';
-import { openUrlTab, getExtension } from './helper.js';
+import { openNewTab, getExtension } from './helper.js';
 import './App.css';
 
 const Settings = (props) => {
