@@ -6,7 +6,7 @@ import './index.css';
 
 ReactDOM.render(
   <MuiThemeProvider>
-    
+    <App />
   </MuiThemeProvider>,
   document.getElementById('settings-root')
 );
