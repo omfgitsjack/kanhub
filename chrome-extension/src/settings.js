@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import SettingsApp from './SettingsApp';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import './index.css';
+import './settings.css';
 
 ReactDOM.render(
   <MuiThemeProvider>
-    <App />
+    <SettingsApp />
   </MuiThemeProvider>,
   document.getElementById('settings-root')
 );

@@ -39,7 +39,6 @@
   justify-content: center;
   height: 75px;
   padding: 10px 20px;
-  background-color: #ECEFF1;
 }
 
 .popup-footer {
@@ -47,5 +46,4 @@
   flex-direction: row;
   justify-content: flex-end;
   padding: 0px 20px 10px 20px;
-  background-color: #ECEFF1;
 }

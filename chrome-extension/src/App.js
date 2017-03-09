@@ -1,5 +1,3 @@
-/* global chrome */
-
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
@@ -33,7 +31,7 @@ const Settings = (props) => {
 
 class App extends Component {
 
- constructor(props) {
+  constructor(props) {
     super(props);
 
     this.settingsOptions = [
@@ -107,9 +105,9 @@ class App extends Component {
           </div>
           <div className="popup-body">
             <RaisedButton
-              primary={true}
+              primary={ true }
               label="Authenticate with GitHub"
-              onClick={this.handleOpenGithubAuth}
+              onClick={ this.handleOpenGithubAuth }
             />
           </div>
           <div className="popup-footer">
