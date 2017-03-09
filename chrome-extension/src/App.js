@@ -8,6 +8,7 @@ import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
 import TooltipLabel from './TooltipLabel';
 import logo from './logo-256.png';
+import { openUrlTab, getExtension } from './helper.js';
 import './App.css';
 
 const Settings = (props) => {
@@ -42,9 +43,7 @@ class App extends Component {
       },
       {
         label: 'Settings',
-        onClick: function(event) { chrome.tabs.create({ 'url': chrome.extension.getURL("settings.html")}, function(tab) {
-
-        })},
+        onClick: function(event) { openNewTab(getExtension("settings.html")) },
       },
       {
         label: 'Sign out',
@@ -82,9 +81,7 @@ class App extends Component {
   };
 
   handleOpenGithubAuth = () => {
-    chrome.tabs.create({ 'url': process.env.REACT_APP_SERVER_ROUTE + '/api/auth/github' }, function (tab) {
-      // Tab opened.
-    });
+    openNewTab(process.env.REACT_APP_SERVER_ROUTE + '/api/auth/github');
   };
 
   render() {
