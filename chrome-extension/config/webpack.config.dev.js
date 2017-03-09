@@ -184,13 +184,15 @@ module.exports = {
     new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
+      filename: "index.html",
       inject: true,
       template: paths.appHtml,
     }),
 
     new HtmlWebpackPlugin({
+      filename: "settings.html",
       inject: true,
-      template: paths.appSettings,
+      template: paths.appSettingsHtml,
     }),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
