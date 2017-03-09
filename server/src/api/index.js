@@ -3,6 +3,7 @@ import { Router } from 'express';
 import facets from './facets';
 
 import auth from './auth'
+import user from './users'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -14,6 +15,7 @@ export default ({ config, db }) => {
 
 	api.use('/facets', facets({ config, db }));
 	api.use('/auth', auth({ config, db }));
+	api.use('/users', user({ config, db }));
 
 	return api;
 }
