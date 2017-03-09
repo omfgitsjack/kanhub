@@ -12,9 +12,9 @@ import './App.css';
 
 const Settings = (props) => {
 
-  const options = props.settingsOptions.map((option) => {
-                    return <MenuItem primaryText={option} />
-                  });
+  const options = props.settingsOptions.map((option, i) => {
+    return <MenuItem key={i} primaryText={option.label} onClick={option.onClick} />
+  });
 
   return (
     <div>
@@ -35,7 +35,22 @@ class App extends Component {
  constructor(props) {
     super(props);
 
-    this.settingsOptions = ['Help & feedback', 'Settings', 'Sign out'];
+    this.settingsOptions = [
+      {
+        label: 'Help & feedback',
+        onClick: function(event) { console.log("wow") },
+      },
+      {
+        label: 'Settings',
+        onClick: function(event) { chrome.tabs.create({ 'url': chrome.extension.getURL("settings.html")}, function(tab) {
+
+        })},
+      },
+      {
+        label: 'Sign out',
+        onClick: null,
+      }
+    ];
 
     this.anchorOrigin = {
       horizontal: 'right',

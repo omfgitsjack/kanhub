@@ -10,11 +10,17 @@
       "default_popup": "index.html"
   },
   "web_accessible_resources": [
-      "localhost:8080/*"
+      "localhost:8080/*",
+      "settings.html"
   ],
   "permissions": [
     "tabs"
-  ]
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   
 //   "optional_permissions": [
 //     "<all_urls>"

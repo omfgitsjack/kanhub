@@ -3,8 +3,14 @@
 }
 
 .popup-logo {
+  animation: popup-logo-spin infinite 30s linear;
   height: 80px;
   width: 80px;
+}
+
+@keyframes popup-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .popup-header {
