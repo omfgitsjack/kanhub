@@ -13,18 +13,6 @@ import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 
-// Setup authentication
-import passport from 'passport';
-import GithubStrategy from 'passport-github2';
-passport.use(new GithubStrategy({
-	clientID: process.env.GITHUB_CLIENT_ID,
-	clientSecret: process.env.GITHUB_CLIENT_SECRET,
-	callbackURL: `${process.env.SERVER_ROUTE}/api/auth/github/callback`
-},
-(accessToken, refreshToken, profile, done) => {
-	console.log("verified:", accessToken, refreshToken, profile);
-	done();
-}));
 
 let app = express();
 app.server = http.createServer(app);

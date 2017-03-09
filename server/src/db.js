@@ -1,12 +1,15 @@
 
 import backoff from 'backoff';
+import Sequelize from 'sequelize';
 
-import pg from 'pg';
-
+/**
+ * Initializes oru database and returns the client upon successfully 
+ * connecting to postgres. 
+ * 
+ * Utilizes exponential backoff to retry reconnections.
+ * 
+ */
 export default callback => {
-	let expBackoff = backoff.exponential({
-		randomisationFactor: 0.5
-	});
 
 	let config = {
 		user: process.env.POSTGRES_USER,
@@ -16,38 +19,35 @@ export default callback => {
 		host: process.env.POSTGRES_HOST
 	}
 
+	// Setup exponential backoff incase of postgres starting before the app server
+	let expBackoff = backoff.exponential({
+		randomisationFactor: 0.5
+	});
 	let maxTries = 10;
+
 	expBackoff.failAfter(maxTries);
 	expBackoff.on('backoff', (num, delay) => {
 		console.log(`Attempting to reconnect to postgres in ${delay}ms. (Try ${num + 1}/${maxTries})`);
 	})
-	expBackoff.on('ready', (num, delay) => {
-		try {
-			let dbClient = new pg.Client(config);
-
-			dbClient.on('error', error => {
-				if (error.code === 'ECONNREFUSED') {
-					// do nothing, we'll try.
-				} else {
-					throw error;
-				}
-			});
-
-			dbClient.connect(err => {
-				if (err) {
-					expBackoff.backoff();
-				} else {
-					console.log("Successfully connected to postgres.");
-					callback(dbClient);
-				}
-			})
-		} catch (e) {
-			console.error(e);
-			expBackoff.backoff();
-		}
-	})
 	expBackoff.on('fail', () => {
 		console.log("Failed to connect to postgres.");
+	})
+	expBackoff.on('ready', (num, delay) => {
+		let sequelize = new Sequelize(config.database, config.user, config.password, {
+			host: config.host,
+			port: config.port,
+			dialect: 'postgres'
+		})
+
+		sequelize.authenticate()
+			.then(() => {
+				console.log("Successfully connected to postgres.");
+				callback(sequelize);
+			})
+			.catch(err => {
+				console.log(err);
+				expBackoff.backoff();
+			});
 	})
 
 	expBackoff.backoff();
