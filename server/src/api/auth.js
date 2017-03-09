@@ -30,18 +30,19 @@ export default ({ config, db }) => {
                 console.log("[User Login]:", user.username, `(${user.displayName})`);
             }
 
-            done();
+            done(null, user.get({ plain: true }));
         });
     }));
 
     api.get('/github', passport.authenticate('github', { scope: ['repo'] }));
-    api.get('/github/callback',
-        passport.authenticate('github', { failureRedirect: '/login' }),
-        function (req, res) {
-            // Successful authentication, redirect home.
-            console.log("Successful auth");
-            res.redirect('/');
-        });
+    api.get('/github/callback', (req, res, next) => {
+        passport.authenticate('github', (err, user, info) => {
+            if (err) return res.status(404).json({ message: err });
+            if (!user) return res.status(404).json({ message: 'user not logged in' });
+
+            res.redirect(user.profileUrl);
+        })(req, res, next);
+    });
 
     return api
 }
