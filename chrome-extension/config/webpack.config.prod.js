@@ -190,6 +190,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       inject: true,
+      chunks: ['index'],
       template: paths.appHtml,
       minify: {
         removeComments: true,
@@ -208,6 +209,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'settings.html',
       inject: true,
+      chunks: ['settings'],
       template: paths.appSettingsHtml,
       minify: {
         removeComments: true,
