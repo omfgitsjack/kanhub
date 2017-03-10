@@ -35,12 +35,13 @@ const styles = {
   },
   tabsInkBar: {
     color: "pink",
+    backgroundColor: "pink",
   },
 };
 
 const OptionTabs = () => {
   return (
-    <Tabs style={styles.tabs} value="rulesets" >
+    <Tabs style={styles.tabs} value="rulesets" inkBarStyle={styles.inkBarStyle} >
       <Tab label="Rulesets" style={styles.tab} value="rulesets" >
       </Tab>
       <Tab label="Feedback" style={styles.tab} value="feedback" >
@@ -61,7 +62,6 @@ class SettingsApp extends Component {
           titleStyle={styles.appbarTitle} 
           iconElementLeft={<img style={styles.appbarLogo} src={logo} />}
           style={styles.appbar}
-          inkBarStyle={styles.inkBarStyle} 
         >
           <OptionTabs />
         </AppBar>
