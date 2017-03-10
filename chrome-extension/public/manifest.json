@@ -20,8 +20,14 @@
   ],
   "content_scripts": [
     {
+      "run_at":"document_start",
       "matches": ["https://github.com/*"],
-      "js": ["githubContentScript.js"]
+      "js": [
+        "githubContentScript.js",
+        "content.js",
+        "detectPage.js",
+        "githubInjection.js"
+      ]
     }
   ],
   "icons": {
