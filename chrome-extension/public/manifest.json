@@ -14,7 +14,15 @@
       "settings.html"
   ],
   "permissions": [
-    "tabs"
+    "tabs",
+    "http://localhost:8080/",
+    "https://localhost:8080/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["githubContentScript.js"]
+    }
   ],
   "icons": {
     "16": "icon16.png",
