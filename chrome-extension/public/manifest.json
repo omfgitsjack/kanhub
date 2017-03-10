@@ -26,6 +26,8 @@
         "githubContentScript.js",
         "content.js",
         "detectPage.js",
+        "icons.js",
+        "elements.js",
         "githubInjection.js"
       ]
     }
