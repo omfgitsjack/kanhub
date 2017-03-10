@@ -28,7 +28,8 @@
         "detectPage.js",
         "icons.js",
         "elements.js",
-        "githubInjection.js"
+        "githubInjection.js",
+        "jquery-3.1.1.min.js"
       ]
     }
   ],

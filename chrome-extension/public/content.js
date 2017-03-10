@@ -3,11 +3,20 @@
 'use strict';
 
 function addStandupTab() {
-	const navBar = document.getElementsByClassName('reponav js-repo-nav')[0];
-    
-    const standupTab = createTab("Standup", icons.organization, "test");
-    
-    navBar.appendChild(standupTab);
+    const standupTab = createRepoTab("Standup", icons.organization, "#Standup", "reponav-standup");
+
+    getRepoNavBar().append(standupTab);
+
+    standupTab.click(function(e) {
+        e.preventDefault();
+        getRepoContainer().empty();
+
+        const repoNavBar = getRepoNavBar();
+
+		repoNavBar.find('.selected').removeClass('selected');
+
+        $(this).addClass('selected');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
