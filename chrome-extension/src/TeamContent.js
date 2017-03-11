@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { RepoContent, SubNav, SubNavItem } from './elements';
+import 'primer-css/build/build.css';
+
+var octicons = require("octicons");
 
 const styles = {
   groupInfo: {
@@ -45,13 +48,18 @@ const GroupInfo = (props) => {
     return g.id === props.selectedGroupId;
   });
 
+  const isMember = group.members.findIndex(function(member) {
+    return member === "test";
+  }) > -1;
+
   return (
     <div style={styles.groupInfo}>
       <div style={styles.groupHeader}>
         <div style={styles.groupName}>{group.name}</div>
         <div style={styles.groupButtonGroup}>
-          <button style={styles.groupButton} className="btn btn-primary" type="button">Join Group</button>
-          <button style={styles.groupButton} className="btn btn-danger" type="button">Leave Group</button>
+          { isMember ? 
+            <button style={styles.groupButton} className="btn btn-danger" type="button">Leave Group</button>
+          : <button style={styles.groupButton} className="btn btn-primary" type="button">Join Group</button> }
         </div>
       </div>
       <p className="lead">{group.description}</p>
@@ -65,16 +73,38 @@ const GroupMembers = (props) => {
     return g.id === props.selectedGroupId;
   });
 
-  const isMember = group.members.findIndex(function(member) {
-    return member === "test";
-  }) > -1;
+  const noMember = group.members.length === 0;
 
   return (
     <div style={styles.groupInfo}>
       <div style={styles.groupName}>Members</div>
-      {/* group member listing */}
+      {noMember && <NoMembers groupName={group.name} />}
     </div>
   );
+}
+
+const NoGroups = () => {
+  const heading = "There aren't any groups.";
+  const description = "Create groups to organize your team's internal structure.";
+  return (
+    <div className="blankslate blankslate-capped blankslate-spacious blankslate-large">
+      <div dangerouslySetInnerHTML={{__html: octicons.octoface.toSVG({"width": 45, "height": 45})}}></div>
+      <h3>{heading}</h3>
+      <p>{description}</p>
+      <p><button className="btn btn-sm btn-primary" type="button">Create Group</button></p>
+    </div>
+  )
+}
+
+const NoMembers = ({groupName}) => {
+  const heading = `There aren't any members in ${groupName}.`;
+  return (
+    <div className="blankslate blankslate-capped blankslate-large">
+      <div dangerouslySetInnerHTML={{__html: octicons.hubot.toSVG({"width": 45, "height": 45})}}></div>
+      <h3>{heading}</h3>
+      <p><button className="btn btn-sm btn-primary" type="button">Join Group</button></p>
+    </div>
+  )
 }
 
 class TeamContent extends Component {
@@ -100,7 +130,7 @@ class TeamContent extends Component {
         "id": 2,
         "name": "jacks playhouse",
         "description": "more liek jacks FUNhouse full of evil clowns start the countdown man",
-        "members": ["github ids of members"],
+        "members": [],
       },
     ]
 
@@ -122,6 +152,7 @@ class TeamContent extends Component {
         <GroupSubNav groups={this.props.data} selectedGroupId={this.state.selectedGroupId} handleNavSelect={this.handleNavSelect} />
         <GroupInfo groups={this.props.data} selectedGroupId={this.state.selectedGroupId} />
         <GroupMembers groups={this.props.data} selectedGroupId={this.state.selectedGroupId} />
+        <NoGroups />
       </RepoContent>
     );
   };
