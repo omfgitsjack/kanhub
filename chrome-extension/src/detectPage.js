@@ -1,10 +1,7 @@
-window.detectPage = (() => {
-	const isGist = () => location.hostname === 'gist.github.com';
+export function isGist() {
+	return location.hostname === 'gist.github.com';
+}
 
-	const isRepo = () => !isGist() && /^\/[^/]+\/[^/]+/.test(location.pathname);
-
-	return {
-		isGist,	
-		isRepo,
-	};
-})();
+export function isRepo() {
+	return !isGist() && /^\/[^/]+\/[^/]+/.test(location.pathname);	
+}

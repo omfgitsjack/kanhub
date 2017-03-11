@@ -20,9 +20,10 @@
   ],
   "content_scripts": [
     {
+      "run_at": "document_start",
       "matches": ["https://github.com/*"],
       "js": [
-        "static/js/content.js",
+        "static/js/content.js"
       ]
     }
   ],
