@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import 'primer-css/build/build.css';
 
 export function getRepoNavBar() {
     return $('.reponav.js-repo-nav');
@@ -20,7 +21,7 @@ export function createRepoTab(label, icon, url, customClass) {
 
 export const RepoContent = (props) => {
     return (
-        <div className="repository-content">
+        <div className="container">
             {props.children}
         </div>
     );
@@ -34,9 +35,10 @@ export const SubNav = (props) => {
   );
 };
 
-export const SubNavItem = ({label, url, selected}) => {
+export const SubNavItem = ({label, url, selected, onClick}) => {
+
     return (
-        <a href={url} className={"js-selected-navigation-item subnav-item " + (selected ? "selected":"")} role={"tab"}>
+        <a href={url} className={"js-selected-navigation-item subnav-item " + (selected ? "selected":"")} role={"tab"} onClick={onClick}>
             {label}
         </a>
     );

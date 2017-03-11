@@ -11,20 +11,25 @@ import $ from 'jquery';
 import gitHubInjection from './githubInjection';
 import * as detectPage from './detectPage';
 import * as elements from './elements';
-import * as icons from './icons';
 
 import './settings.css';
 
+var octicons = require("octicons");
+
 function addRepoTab(label, url, icon, customClass) {
+
+    if ($(customClass).length !== 0) {
+      return;
+    }
+    
     const newTab = elements.createRepoTab(label, icon, url, customClass);
 
     elements.getRepoNavBar().append(newTab);
+}
 
-    newTab.click(function(e) {
-        // change selected tab to this tab
-        elements.getRepoNavBar().find('.selected').removeClass('selected');
-        $(this).addClass('selected');
-    });
+function selectRepoTab(tab) {
+    elements.getRepoNavBar().find('.selected').removeClass('selected');
+    tab.addClass('selected');
 }
 
 function handleHashLocation() {
@@ -39,8 +44,8 @@ function handleHashLocation() {
 
   switch(location) {
     case 'Standup':
-      // remove repo contents
       repoContainer.empty();
+      selectRepoTab($(".reponav-standup"));
       ReactDOM.render(
         <MuiThemeProvider>
           <SettingsApp />
@@ -49,8 +54,8 @@ function handleHashLocation() {
       );
       break;
     case 'Team':
-      // remove repo contents
       repoContainer.empty();
+      selectRepoTab($(".reponav-team"));
       ReactDOM.render(
         <MuiThemeProvider>
           <TeamContent />
@@ -65,8 +70,8 @@ function handleHashLocation() {
 document.addEventListener('DOMContentLoaded', () => {
     if (detectPage.isRepo()) {
       gitHubInjection(window, () => {
-        addRepoTab("Standup", "#Standup", icons.organization, "reponav-standup");
-        addRepoTab("Team", "#Team", icons.organization, "reponav-team");
+        addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
+        addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
       });
 
       handleHashLocation();
