@@ -54,7 +54,7 @@ const GroupInfo = (props) => {
 
   return (
     <div style={styles.groupInfo}>
-      <div style={styles.groupHeader}>
+      <div className="border-bottom p-2" style={styles.groupHeader}>
         <div style={styles.groupName}>{group.name}</div>
         <div style={styles.groupButtonGroup}>
           { isMember ? 
@@ -77,7 +77,9 @@ const GroupMembers = (props) => {
 
   return (
     <div style={styles.groupInfo}>
-      <div style={styles.groupName}>Members</div>
+      <div className="border-bottom p-2" style={styles.groupHeader}>
+        <div style={styles.groupName}>Members</div>
+      </div>
       {noMember && <NoMembers groupName={group.name} />}
     </div>
   );
@@ -124,7 +126,7 @@ class TeamContent extends Component {
         "id": 1,
         "name": "Frontend",
         "description": "this is the frontend woopy doody ha doody like poop kek",
-        "members": ["github ids of members"],
+        "members": ["{id: github id of member, name: name of member}"],
       },
       {
         "id": 2,
