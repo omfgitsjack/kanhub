@@ -5,6 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SettingsApp from './SettingsApp';
+import TeamContent from './TeamContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import $ from 'jquery';
 import gitHubInjection from './githubInjection';
@@ -14,13 +15,12 @@ import * as icons from './icons';
 
 import './settings.css';
 
-function addStandupTab() {
-    const standupTab = elements.createRepoTab("Standup", icons.organization, "#Standup", "reponav-standup");
+function addRepoTab(label, url, icon, customClass) {
+    const newTab = elements.createRepoTab(label, icon, url, customClass);
 
-    elements.getRepoNavBar().append(standupTab);
+    elements.getRepoNavBar().append(newTab);
 
-    standupTab.click(function(e) {
-
+    newTab.click(function(e) {
         // change selected tab to this tab
         elements.getRepoNavBar().find('.selected').removeClass('selected');
         $(this).addClass('selected');
@@ -48,6 +48,16 @@ function handleHashLocation() {
         repoContainer[0]
       );
       break;
+    case 'Team':
+      // remove repo contents
+      repoContainer.empty();
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <TeamContent />
+        </MuiThemeProvider>,
+        repoContainer[0]
+      );
+      break;
     default:
   }
 }
@@ -55,7 +65,8 @@ function handleHashLocation() {
 document.addEventListener('DOMContentLoaded', () => {
     if (detectPage.isRepo()) {
       gitHubInjection(window, () => {
-        addStandupTab();
+        addRepoTab("Standup", "#Standup", icons.organization, "reponav-standup");
+        addRepoTab("Team", "#Team", icons.organization, "reponav-team");
       });
 
       handleHashLocation();

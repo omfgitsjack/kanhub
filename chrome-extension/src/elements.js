@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import React from 'react';
 
 export function getRepoNavBar() {
     return $('.reponav.js-repo-nav');
@@ -17,18 +18,26 @@ export function createRepoTab(label, icon, url, customClass) {
     `);
 };
 
-export function createRepoContent() {
-    return $('<div class="repository-content"></div>');
+export const RepoContent = (props) => {
+    return (
+        <div className="repository-content">
+            {props.children}
+        </div>
+    );
+}
+
+export const SubNav = (props) => {
+  return (
+    <nav className="subnav">
+        {props.children}
+    </nav>
+  );
 };
 
-export function createSubNav() {
-    return $('<nav class="subnav"></nav>');
-};
-
-export function createSubNavTab(label, url, customClass) {
-    return $(`
-        <a href=${url} class="js-selected-navigation-item subnav-item ${customClass}" role="tab">
-            ${label}
+export const SubNavItem = ({label, url, selected}) => {
+    return (
+        <a href={url} className={"js-selected-navigation-item subnav-item " + (selected ? "selected":"")} role={"tab"}>
+            {label}
         </a>
-    `);
-};
+    );
+}
