@@ -20,16 +20,9 @@
   ],
   "content_scripts": [
     {
-      "run_at":"document_start",
       "matches": ["https://github.com/*"],
       "js": [
-        "githubContentScript.js",
-        "content.js",
-        "detectPage.js",
-        "icons.js",
-        "elements.js",
-        "githubInjection.js",
-        "jquery-3.1.1.min.js"
+        "static/js/content.js",
       ]
     }
   ],

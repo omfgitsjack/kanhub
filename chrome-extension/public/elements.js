@@ -17,9 +17,28 @@ window.elements = (() => {
         `);
     };
 
+    createRepoContent = () => {
+        return $('<div class="repository-content"></div>');
+    };
+
+    createSubNav = () => {
+        return $('<nav class="subnav"></nav>');
+    };
+
+    createSubNavTab = (label, url, customClass) => {
+        return $(`
+            <a href=${url} class="js-selected-navigation-item subnav-item ${customClass}" role="tab">
+                ${label}
+            </a>
+        `);
+    };
+
     return {
         getRepoNavBar,
         getRepoContainer,
 		createRepoTab,
+        createRepoContent,
+        createSubNav,
+        createSubNavTab
 	};
 })();
