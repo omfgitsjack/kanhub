@@ -24,42 +24,8 @@ function addStandupTab() {
         // change selected tab to this tab
         elements.getRepoNavBar().find('.selected').removeClass('selected');
         $(this).addClass('selected');
-
-        // TODO: fetch stuff from model then addStandupContainer with info
-        addStandupContainer();
     });
 }
-
-function addStandupContainer() {
-
-    const repoContainer = elements.getRepoContainer();
-
-    // remove repo contents
-    repoContainer.empty();
-
-    // const repoContent = elements.createRepoContent();
-    // const subNav = elements.createSubNav();
-
-    // // TODO: fetch groups and append tabs to sub nav
-    // // test groups
-    // const testSubNavTab = elements.createSubNavTab("Frontend", "#wow", "subnav-test selected");
-    // subNav.append(testSubNavTab);
-    // subNav.append(elements.createSubNavTab("Backend", "#wow", "subnav-test"));
-
-    // repoContent.append(subNav);
-
-    // repoContainer.append(repoContent);
-
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (detectPage.isRepo()) {
-      gitHubInjection(window, () => {
-        addStandupTab();
-      });
-    }
-
-});
 
 function handleHashLocation() {
 
@@ -69,19 +35,33 @@ function handleHashLocation() {
 
   var location = window.location.hash.replace(/^#\/?|\/$/g, '').split('/')[0];
 
+  const repoContainer = elements.getRepoContainer();
+
   switch(location) {
     case 'Standup':
+      // remove repo contents
+      repoContainer.empty();
       ReactDOM.render(
         <MuiThemeProvider>
           <SettingsApp />
         </MuiThemeProvider>,
-        elements.getRepoContainer()[0]
+        repoContainer[0]
       );
       break;
     default:
   }
 }
 
-handleHashLocation()
+document.addEventListener('DOMContentLoaded', () => {
+    if (detectPage.isRepo()) {
+      gitHubInjection(window, () => {
+        addStandupTab();
+      });
+
+      handleHashLocation();
+    }
+
+});
+
 window.addEventListener('hashchange', handleHashLocation, false);
 
