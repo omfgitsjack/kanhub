@@ -5,6 +5,7 @@ function createRequest(method, url, body, jsonreq) {
 
     settings.method = method;
     settings.mode = 'cors';
+    settings.credentials = 'include' // Needed to send cookies over.
 
     if (jsonreq) {
         settings.headers = new Headers({'Content-Type': 'application/json'});

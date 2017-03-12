@@ -31,16 +31,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 import session from 'express-session';
 import passport from 'passport';
-app.use(session({ secret: 'keyboard cat' }));
+app.use(session({ 
+	secret: 'brandon was here',
+	cookie: { secure: true, sameSite: false }, // TODO: toggle to true and access cookie from background page }
+    resave: false,
+    saveUninitialized: true
+}));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // logger
 app.use(morgan('dev'));
 
 // 3rd party middleware
 app.use(cors({
-	exposedHeaders: config.corsHeaders
+	exposedHeaders: config.corsHeaders,
+	credentials: true
 }));
 
 app.use(bodyParser.json({
@@ -56,6 +61,12 @@ initializeDb(db => {
 
 	// internal middleware
 	app.use(middleware({ config, db }));
+
+	app.use((req, res, next) => {
+		console.log();
+		
+		next()
+	})
 
 	// api router
 	app.use('/api', api({ config, db }));
