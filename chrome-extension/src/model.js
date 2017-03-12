@@ -15,40 +15,52 @@ function createRequest(method, url, body, jsonreq) {
 }
 
 function checkPromise(response) {
-    if (response.status > 200 && response.status < 300) {
+    if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response);
     } else {
         return Promise.reject(new Error(response.statusText));
     }
 }
 
-function toJson(response) {
-    return response.json;
-}
-
 function createPromises(requests) {
     return requests.map(function(req) {
-        fetch(req)
-            .then(checkPromise)
-            .then(toJson)
-            .catch(function(err) {
-                console.log("Fetch error: " + err);
-            });
+        return fetch(req)
+                .then((res) => { return checkPromise(res); })
+                .then((res) => res.json())
+                .catch((err) => console.log('Fetch error: ' + err));
     });
 }
 
-export function getTeamGroup(data, callback) {
-    var getGroups = createRequest('GET', '/api/repo/' + data.repo + '/groups', false);
-    var getGroupData = createRequest('GET', '/api/repo/' + data.repo + '/group/' + data.groupId, false);
+export function getTeamGroups(data, callback) {
+    const getGroups = createRequest('GET', '/api/repository/' + data.repo + '/teams/', null, false);
 
-    const requests = [getGroups, getGroupData];
-    const promises = createPromises(requests);
+    Promise.all(createPromises([getGroups]))
+    .then((res) => { callback({groups: res[0]}); })
+    .catch((err) => console.log("promise error: " + err));
+}
 
-    Promise.all(promises)
-        .then(function(responses) {
-            console.log(responses);
-        })
-        .catch(function(err) {
-            console.log(err);
-        });
-};
+export function getTeamMembers(data, callback) {
+    const getMembers = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', null, false);
+
+    Promise.all(createPromises([getMembers]))
+    .then((res) => { callback({members: res[0]}); })
+    .catch((err) => console.log("promise error: " + err));
+}
+
+export function createTeamGroup(data, callback) {
+
+    const createGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams', data.rawTeam, true);
+
+    fetch(createGroup)
+        .then((resp) => resp.json())
+        .then((resp) => callback(resp))
+        .catch((err) => console.log(err));
+}
+
+export function joinTeamGroup(data, callback) {
+    const joinGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: "wow"}, true);
+
+    Promise.all(createPromises([joinGroup]))
+    .then((res) => { callback({data: res[0]}); })
+    .catch((err) => console.log("promise error: " + err));
+}
