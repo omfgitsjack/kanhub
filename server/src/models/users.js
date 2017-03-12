@@ -1,6 +1,8 @@
 
 import Sequelize from 'sequelize';
 
+import Teams from './teams'
+
 export default ({ db }) => {
     let User = db.define('user', {
         displayName: Sequelize.STRING,

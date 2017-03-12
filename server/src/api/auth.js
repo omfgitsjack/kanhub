@@ -11,8 +11,6 @@ export default ({ config, db }) => {
     let api = Router(),
         UserRepository = UserRepositoryFactory({ db })
 
-    db.sync();
-
     passport.use(new GithubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,

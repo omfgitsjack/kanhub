@@ -40,8 +40,12 @@ app.use(bodyParser.json({
 	limit: config.bodyLimit
 }));
 
+import initModels from './models'
+
 // connect to db
 initializeDb(db => {
+
+	initModels({ db })
 
 	// internal middleware
 	app.use(middleware({ config, db }));

@@ -8,8 +8,6 @@ export default ({ config, db }) => {
     let api = Router({ mergeParams: true }),
         TeamRepository = TeamRepositoryFactory({ db })
 
-    db.sync();
-
     // TODO: validation & permissions
     api.post('/', (req, res) => {
         TeamRepository.create({
@@ -60,6 +58,23 @@ export default ({ config, db }) => {
             } else {
                 throw "Somehow matched more than one item..."
             }
+        })
+    })
+
+    api.get('/:teamId', (req, res) => {
+        TeamRepository.getTeamMembers(req.params.teamId).then(team => {
+            res.json(team);
+        })
+    })
+
+    // TODO: Add validation here.
+    api.post('/:teamId/members', (req, res) => {
+        let username = req.body.username
+
+        TeamRepository.addTeamMember(req.params.teamId, username).then(() => {
+            res.json();
+        }).catch(err => {
+            res.status(400).json({ success: false, code: "INTERNAL_ERROR" })
         })
     })
 
