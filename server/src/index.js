@@ -1,4 +1,6 @@
-import http from 'http';
+import fs from 'fs';
+import https from 'https';
+import crypto from 'crypto';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -12,9 +14,14 @@ import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 
+// Create https server
+let options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.pem')
+};
 
 let app = express();
-app.server = http.createServer(app);
+app.server = https.createServer(options, app);
 
 import cookieParser from 'cookie-parser';
 app.use(cookieParser());
