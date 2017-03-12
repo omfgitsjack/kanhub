@@ -1,35 +1,16 @@
 import React, { Component } from 'react';
-import { RepoContent, SubNav, SubNavItem } from './elements';
+import { RepoContent, SubNav, SubNavItem, SectionContainer,
+    SectionTitle, SectionHeader, SectionButtonGroup, PrimaryButton,
+    PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious } from './elements';
 import 'primer-css/build/build.css';
+import { changeLocationHash } from './pageHelper';
 
 var octicons = require("octicons");
-
-const styles = {
-  groupInfo: {
-    marginBottom: "20px",
-  },
-  groupName: {
-    fontSize: "36px",
-    marginRight: "10px",
-  },
-  groupHeader: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  groupButtonGroup: {
-    display: "flex",
-    flexDirection: "row",
-    padding: "10px 0px",
-  },
-  groupButton: {
-    marginLeft: "10px",
-  },
-};
 
 const GroupSubNav = (props) => {
 
   const groups = props.groups.map((group, i) => {
-    return <SubNavItem key={i} label={group.name} selected={group.id === props.selectedGroupId} onClick={function(e) {
+    return <SubNavItem key={i} label={group.name} selected={group.id === props.selectedGroupId} onClick={function (e) {
       e.preventDefault();
       props.handleNavSelect(group.id);
     }} />
@@ -44,68 +25,63 @@ const GroupSubNav = (props) => {
 
 const GroupInfo = (props) => {
 
-  const group = props.groups.find(function(g) {
+  const group = props.groups.find(function (g) {
     return g.id === props.selectedGroupId;
   });
 
-  const isMember = group.members.findIndex(function(member) {
+  const isMember = group.members.findIndex(function (member) {
     return member === "test";
   }) > -1;
 
   return (
-    <div style={styles.groupInfo}>
-      <div className="border-bottom p-2" style={styles.groupHeader}>
-        <div style={styles.groupName}>{group.name}</div>
-        <div style={styles.groupButtonGroup}>
-          { isMember ? 
-            <button style={styles.groupButton} className="btn btn-danger" type="button">Leave Group</button>
-          : <button style={styles.groupButton} className="btn btn-primary" type="button">Join Group</button> }
-        </div>
-      </div>
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>{group.name}</SectionTitle>
+        <SectionButtonGroup>
+          {isMember ?
+            <DangerButton>Leave Group</DangerButton>
+            : <PrimaryButton>Join Group</PrimaryButton>}
+        </SectionButtonGroup>
+      </SectionHeader>
       <p className="lead">{group.description}</p>
-    </div>
+    </SectionContainer>
   );
 }
 
 const GroupMembers = (props) => {
 
-  const group = props.groups.find(function(g) {
+  const group = props.groups.find(function (g) {
     return g.id === props.selectedGroupId;
   });
 
   const noMember = group.members.length === 0;
 
   return (
-    <div style={styles.groupInfo}>
-      <div className="border-bottom p-2" style={styles.groupHeader}>
-        <div style={styles.groupName}>Members</div>
-      </div>
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>Members</SectionTitle>
+      </SectionHeader>
       {noMember && <NoMembers groupName={group.name} />}
-    </div>
+    </SectionContainer>
   );
 }
 
-const NoGroups = () => {
+const NoGroups = (props) => {
   const heading = "There aren't any groups.";
   const description = "Create groups to organize your team's internal structure.";
   return (
-    <div className="blankslate blankslate-capped blankslate-spacious blankslate-large">
-      <div dangerouslySetInnerHTML={{__html: octicons.octoface.toSVG({"width": 45, "height": 45})}}></div>
-      <h3>{heading}</h3>
-      <p>{description}</p>
-      <p><button className="btn btn-sm btn-primary" type="button">Create Group</button></p>
-    </div>
+    <BlankSlateSpacious heading={heading} description={description} icon={octicons.octoface.toSVG({ "width": 45, "height": 45 })}>
+      <p><PrimaryButtonSmall onClick={props.handleCreateGroupSelect}>Create Group</PrimaryButtonSmall></p>
+    </BlankSlateSpacious>
   )
 }
 
-const NoMembers = ({groupName}) => {
+const NoMembers = ({ groupName }) => {
   const heading = `There aren't any members in ${groupName}.`;
   return (
-    <div className="blankslate blankslate-capped blankslate-large">
-      <div dangerouslySetInnerHTML={{__html: octicons.hubot.toSVG({"width": 45, "height": 45})}}></div>
-      <h3>{heading}</h3>
-      <p><button className="btn btn-sm btn-primary" type="button">Join Group</button></p>
-    </div>
+    <BlankSlate heading={heading} icon={octicons.hubot.toSVG({ "width": 45, "height": 45 })}>
+      <p><PrimaryButtonSmall>Join Group</PrimaryButtonSmall></p>
+    </BlankSlate>
   )
 }
 
@@ -148,13 +124,17 @@ class TeamContent extends Component {
     });
   };
 
+  handleCreateGroupSelect = () => {
+    changeLocationHash("#Team?action=new");
+  };
+
   render() {
     return (
       <RepoContent>
         <GroupSubNav groups={this.props.data} selectedGroupId={this.state.selectedGroupId} handleNavSelect={this.handleNavSelect} />
         <GroupInfo groups={this.props.data} selectedGroupId={this.state.selectedGroupId} />
         <GroupMembers groups={this.props.data} selectedGroupId={this.state.selectedGroupId} />
-        <NoGroups />
+        <NoGroups handleCreateGroupSelect={this.handleCreateGroupSelect} />
       </RepoContent>
     );
   };
