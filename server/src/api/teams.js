@@ -61,11 +61,18 @@ export default ({ config, db }) => {
         })
     })
 
-    api.get('/:teamId', (req, res) => {
+    let fetchTeam = (showMetadata = true) => (req, res) => {
         TeamRepository.getTeamMembers(req.params.teamId).then(team => {
-            res.json(team);
+            if (showMetadata) {
+                res.json(team);
+            } else {
+                res.json(team.users);
+            }
         })
-    })
+    }
+
+    api.get('/:teamId', fetchTeam(true));
+    api.get('/:teamId/members', fetchTeam(false));
 
     // TODO: Add validation here.
     api.post('/:teamId/members', (req, res) => {
