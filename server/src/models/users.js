@@ -1,8 +1,6 @@
 
 import Sequelize from 'sequelize';
 
-import Teams from './teams'
-
 export default ({ db }) => {
     let User = db.define('user', {
         displayName: Sequelize.STRING,
@@ -11,7 +9,7 @@ export default ({ db }) => {
             allowNull: false, 
             primaryKey: true },
         profileUrl: Sequelize.STRING,
-        token: Sequelize.STRING // Tokens might expire... so its nullable
+        token: Sequelize.STRING
     })
 
     return User;

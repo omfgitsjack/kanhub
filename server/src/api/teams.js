@@ -3,6 +3,8 @@ import { Router } from 'express';
 
 import TeamRepositoryFactory from '../repositories/teams';
 
+import standupRoutes from './standups'
+
 export default ({ config, db }) => {
 
     let api = Router({ mergeParams: true }),
@@ -84,6 +86,9 @@ export default ({ config, db }) => {
             res.status(400).json({ success: false, code: "INTERNAL_ERROR" })
         })
     })
+
+    api.use('/:teamId/standups', standupRoutes({ config, db }));
+
 
     return api
 }
