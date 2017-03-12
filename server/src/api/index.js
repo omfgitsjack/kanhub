@@ -4,6 +4,7 @@ import facets from './facets';
 
 import auth from './auth'
 import user from './users'
+import team from './teams'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -13,9 +14,10 @@ export default ({ config, db }) => {
 		res.json({ version });
 	});
 
-	api.use('/facets', facets({ config, db }));
+	// api.use('/facets', facets({ config, db }));
 	api.use('/auth', auth({ config, db }));
 	api.use('/users', user({ config, db }));
+	api.use('/repository/:repository/teams', team({ config, db }));
 
 	return api;
 }

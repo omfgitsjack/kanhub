@@ -5,7 +5,9 @@
 
 export function openNewTab(url) {
     if (chrome.tabs) {
-        chrome.tabs.create({ 'url': url});
+        chrome.tabs.create({ 'url': url }, tab => {
+
+        });
     } else {
         window.open(url, '_blank');
     }
@@ -17,4 +19,12 @@ export function getExtension(path) {
     }
 
     return path;
+}
+
+export function cookies() {
+    if (chrome.cookies) {
+        chrome.cookies.onChanged.addListener(function (info) {
+            console.log("onChanged" + JSON.stringify(info));
+        });
+    }
 }

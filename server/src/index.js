@@ -2,7 +2,6 @@ import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import bodyParser from 'body-parser';
 
 // Load in env variables
 import dotenv from 'dotenv';
@@ -17,6 +16,18 @@ import config from './config.json';
 let app = express();
 app.server = http.createServer(app);
 
+import cookieParser from 'cookie-parser';
+app.use(cookieParser());
+import bodyParser from 'body-parser';
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+import session from 'express-session';
+import passport from 'passport';
+app.use(session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // logger
 app.use(morgan('dev'));
 
@@ -26,11 +37,11 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json({
-	limit : config.bodyLimit
+	limit: config.bodyLimit
 }));
 
 // connect to db
-initializeDb( db => {
+initializeDb(db => {
 
 	// internal middleware
 	app.use(middleware({ config, db }));

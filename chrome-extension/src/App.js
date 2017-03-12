@@ -6,7 +6,7 @@ import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
 import TooltipLabel from './TooltipLabel';
 import logo from './logo-256.png';
-import { openNewTab, getExtension } from './helper.js';
+import { openNewTab, getExtension, cookies } from './helper.js';
 import './App.css';
 
 const Settings = (props) => {
@@ -81,6 +81,11 @@ class App extends Component {
   handleOpenGithubAuth = () => {
     openNewTab(process.env.REACT_APP_SERVER_ROUTE + '/api/auth/github');
   };
+
+  componentDidMount() {
+    cookies();
+  }
+  
 
   render() {
     return (
