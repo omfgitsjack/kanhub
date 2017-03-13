@@ -38,6 +38,16 @@ export default ({ config, db }) => {
             if (err) return res.status(404).json({ message: err });
             if (!user) return res.status(404).json({ message: 'user not logged in' });
 
+            req.session.user = user;
+            res.cookie('kh_username', user.username, {
+                secure: true,
+                sameSite: false // TODO: toggle to true and access cookie from background page
+            });
+            res.cookie('kh_github_token', user.token, {
+                secure: true,
+                sameSite: false // TODO: toggle to true and access cookie from background page
+            })
+
             res.redirect(user.profileUrl);
         })(req, res, next);
     });
