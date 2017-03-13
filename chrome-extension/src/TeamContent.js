@@ -31,7 +31,6 @@ const GroupInfo = (props) => {
     return g.id === props.selectedGroupId;
   });
 
-  console.log(props.members);
   const me = props.members.find(function(member) {
     return member.login === props.username;
   });
@@ -102,7 +101,7 @@ class TeamContent extends Component {
     super(props);
 
     this.state = {
-      selectedGroupId: null,
+      selectedGroupId: parseInt(props.query.id),
       groups: null,
       members: null,
     };
@@ -120,7 +119,7 @@ class TeamContent extends Component {
       });
 
       if (data.groups.length > 0) {
-        this.getGroupMembers(data.groups[0].id);
+        this.getGroupMembers(this.state.selectedGroupId || data.groups[0].id);
       }
     }.bind(this));
   };
