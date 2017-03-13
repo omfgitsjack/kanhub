@@ -31,16 +31,17 @@ const GroupInfo = (props) => {
     return g.id === props.selectedGroupId;
   });
 
-  const isMember = false;//props.members.find(function(member) {
-  //   return 
-  // });
+  console.log(props.members);
+  const me = props.members.find(function(member) {
+    return member.login === props.username;
+  });
 
   return (
     <SectionContainer>
       <SectionHeader>
         <SectionTitle>{group.displayName}</SectionTitle>
         <SectionButtonGroup>
-          {isMember ?
+          {me ?
             <DangerButton>Leave Team</DangerButton>
             : <PrimaryButton onClick={props.handleJoinGroup}>Join Team</PrimaryButton>}
         </SectionButtonGroup>
@@ -141,6 +142,12 @@ class TeamContent extends Component {
   };
 
   componentWillMount() {
+    model.getUsernameCookie().then((username) => {
+      this.setState({
+        username: username,
+      });
+    });
+  
     this.getGroups();
   };
 
@@ -179,7 +186,7 @@ class TeamContent extends Component {
             <SectionButtonGroup>
               <PrimaryButton onClick={this.handleCreateGroupSelect}>Create Team</PrimaryButton>
             </SectionButtonGroup>
-            <GroupInfo groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
+            {this.state.username && <GroupInfo username={this.state.username} groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />}
             <GroupMembers groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
           </div>
           :
