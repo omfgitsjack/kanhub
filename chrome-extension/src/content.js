@@ -48,6 +48,8 @@ function handleHashLocation(e) {
 
   const oldHash = e && pageHelper.urlToHash(e.oldURL);
 
+  model.getAuthUser(function(e) {});
+  
   switch (location) {
     case '#Standup':
       if (oldHash !== "#Standup") {

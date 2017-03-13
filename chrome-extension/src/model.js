@@ -44,11 +44,15 @@ function createRequest(method, url, body, jsonreq) {
     return new Request(SERVER_ROUTE + url, settings);
 }
 
-function createGithubRequest(method, url) {
+function createGithubRequest(method, url, token) {
     var settings = {};
 
     settings.method = method;
     settings.credentials = 'include';
+
+    if (token) {
+        settings.headers = new Headers({'Authorization': 'token ' + token});
+    }
 
     return new Request(GITHUB_API_ROUTE + url, settings);
 }
@@ -93,29 +97,35 @@ export function createTeamGroup(data, callback) {
 }
 
 export function joinTeamGroup(data, callback) {
-    const joinGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: data.username}, true);
+    getAuthUser (function(user) {
 
-    const fetchGroup = fetch(joinGroup)
-        .then((res) => { return checkPromise(res); });
+        const joinGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: user.login}, true);
 
-    Promise.all([fetchGroup])
-    .then((res) => { callback({data: res[0]}); })
-}
+        const fetchGroup = fetch(joinGroup)
+            .then((res) => { return checkPromise(res); });
 
-export function doAuth(callback) {
 
-    const auth = createRequest('GET', '/api/auth/github/', null, false);
-
-    fetch(auth)
-        .then((resp) => console.log(resp))
+        Promise.all([fetchGroup])
+        .then((res) => { callback({data: res[0]}); })
+    });
 }
 
 export function getTeamMembersInfo(data, callback) {
     
     const requests = data.members.map(function(member) {
-        return createGithubRequest('GET', '/users/' + member.username);
+        return createGithubRequest('GET', '/users/' + member.username, null);
     });
 
     Promise.all(createPromises(requests))
     .then((res) => { callback({members: res}); })
+}
+
+export function getAuthUser(callback) {
+    getTokenCookie().then((token) => {
+        const userReq = createGithubRequest('GET', '/user', token);
+
+        fetch(userReq)
+            .then((user) => user.json())
+            .then((user) => callback(user));
+    });
 }

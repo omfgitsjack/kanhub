@@ -101,7 +101,7 @@ class TeamContent extends Component {
     super(props);
 
     this.state = {
-      selectedGroupId: parseInt(props.query.id) || 1,
+      selectedGroupId: null,
       groups: null,
       members: null,
     };
@@ -111,7 +111,6 @@ class TeamContent extends Component {
     const {ownerName, repoName} = getOwnerAndRepo();
     const requestData = {
       repo: repoName,
-      id: this.state.selectedGroupId,
     };
 
     model.getTeamGroups(requestData, function(data) {
@@ -119,14 +118,8 @@ class TeamContent extends Component {
         groups: data.groups,
       });
 
-      const selectedId = this.state.selectedGroupId;
-
-      const currentGroup = data.groups.find(function(group) {
-        return group.id === selectedId;
-      });
-
-      if (currentGroup) {
-        this.getGroupMembers(currentGroup.id);
+      if (data.groups.length > 0) {
+        this.getGroupMembers(data.groups[0].id);
       }
     }.bind(this));
   };
@@ -141,6 +134,7 @@ class TeamContent extends Component {
     model.getTeamMembers(requestData, function(data) {
       this.setState({
         members: data.members,
+        selectedGroupId: groupId,
       });
 
     }.bind(this));
@@ -168,7 +162,6 @@ class TeamContent extends Component {
     const requestData = {
       repo: repoName,
       id: this.state.selectedGroupId,
-      username: "klampzlamps",
     };
 
     model.joinTeamGroup(requestData, function(data) {
@@ -186,7 +179,7 @@ class TeamContent extends Component {
             <SectionButtonGroup>
               <PrimaryButton onClick={this.handleCreateGroupSelect}>Create Team</PrimaryButton>
             </SectionButtonGroup>
-            <GroupInfo groups={this.state.groups} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
+            <GroupInfo groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
             <GroupMembers groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
           </div>
           :
