@@ -38,6 +38,22 @@ const styles = {
     flexDirection: "row",
     padding: "10px 0px",
   },
+  userCard: {
+    display: "inline-block",
+    margin: "10px",
+    padding: "5px",
+    borderRadius: "5px",
+  },
+  userImage: {
+    width: "32px",
+    height: "32px",
+    marginRight: "5px",
+  },
+  cardHeading: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 };
 
 export const RepoContent = (props) => {
@@ -140,6 +156,20 @@ export const BlankSlate = (props) => {
             <h3>{props.heading}</h3>
             <p>{props.description}</p>
             {props.children}
+        </div>
+    );
+}
+
+export const UserCard = (props) => {
+
+    const user = props.user;
+
+    return (
+        <div className="border" style={styles.userCard}>
+            <h4 style={styles.cardHeading}>
+                <img style={styles.userImage} src={user['avatar_url']} alt="user" />
+                <a className="aname" href={user['html_url']}>{user.login}</a>
+            </h4>
         </div>
     );
 }

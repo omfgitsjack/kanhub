@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { RepoContent, SubNav, SubNavItem, SectionContainer,
     SectionTitle, SectionHeader, SectionButtonGroup, PrimaryButton,
-    PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious } from './elements';
+    PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
+    UserCard } from './elements';
 import 'primer-css/build/build.css';
 import { changeLocationHash, getOwnerAndRepo } from './pageHelper';
 import * as model from './model';
@@ -30,9 +31,9 @@ const GroupInfo = (props) => {
     return g.id === props.selectedGroupId;
   });
 
-  const isMember = props.members.findIndex(function (member) {
-    return member === "wow";
-  }) > -1;
+  const isMember = false;//props.members.find(function(member) {
+  //   return 
+  // });
 
   return (
     <SectionContainer>
@@ -57,12 +58,20 @@ const GroupMembers = (props) => {
 
   const noMember = (props.members.length === 0);
 
+  let members = <div></div>;
+  if (!noMember) {
+    members = props.members.map(function(member, i) {
+      return <UserCard key={i} user={member} />;
+    });
+  }
+
   return (
     <SectionContainer>
       <SectionHeader>
         <SectionTitle>Members</SectionTitle>
       </SectionHeader>
       {noMember && <NoMembers groupName={group.displayName} handleJoinGroup={props.handleJoinGroup} />}
+      {members}
     </SectionContainer>
   );
 }
@@ -109,26 +118,36 @@ class TeamContent extends Component {
       this.setState({
         groups: data.groups,
       });
+
+      const selectedId = this.state.selectedGroupId;
+
+      const currentGroup = data.groups.find(function(group) {
+        return group.id === selectedId;
+      });
+
+      if (currentGroup) {
+        this.getGroupMembers(currentGroup.id);
+      }
     }.bind(this));
   };
 
-  getGroupMembers() {
+  getGroupMembers(groupId) {
     const {ownerName, repoName} = getOwnerAndRepo();
     const requestData = {
       repo: repoName,
-      id: this.state.selectedGroupId,
+      id: groupId,
     };
 
     model.getTeamMembers(requestData, function(data) {
       this.setState({
         members: data.members,
       });
+
     }.bind(this));
   };
 
   componentWillMount() {
     this.getGroups();
-    this.getGroupMembers();
   };
 
   handleNavSelect = (groupId) => {
@@ -137,7 +156,7 @@ class TeamContent extends Component {
       selectedGroupId: groupId,
     });
 
-    this.getGroupMembers();
+    this.getGroupMembers(groupId);
   };
 
   handleCreateGroupSelect = () => {
@@ -149,10 +168,11 @@ class TeamContent extends Component {
     const requestData = {
       repo: repoName,
       id: this.state.selectedGroupId,
+      username: "klampzlamps",
     };
 
     model.joinTeamGroup(requestData, function(data) {
-      this.getGroupMembers();
+      this.getGroupMembers(this.state.selectedGroupId);
     }.bind(this));
   };
 
@@ -166,7 +186,7 @@ class TeamContent extends Component {
             <SectionButtonGroup>
               <PrimaryButton onClick={this.handleCreateGroupSelect}>Create Team</PrimaryButton>
             </SectionButtonGroup>
-            <GroupInfo groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
+            <GroupInfo groups={this.state.groups} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
             <GroupMembers groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
           </div>
           :

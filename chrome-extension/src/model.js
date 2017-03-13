@@ -1,10 +1,12 @@
 const SERVER_ROUTE = process.env.REACT_APP_SERVER_ROUTE;
+const GITHUB_API_ROUTE = process.env.REACT_APP_GITHUB_API_ROUTE;
 
 function createRequest(method, url, body, jsonreq) {
     var settings = {};
 
     settings.method = method;
     settings.mode = 'cors';
+    settings.credentials = 'include';
 
     if (jsonreq) {
         settings.headers = new Headers({'Content-Type': 'application/json'});
@@ -12,6 +14,15 @@ function createRequest(method, url, body, jsonreq) {
     }
 
     return new Request(SERVER_ROUTE + url, settings);
+}
+
+function createGithubRequest(method, url) {
+    var settings = {};
+
+    settings.method = method;
+    settings.credentials = 'include';
+
+    return new Request(GITHUB_API_ROUTE + url, settings);
 }
 
 function checkPromise(response) {
@@ -27,7 +38,6 @@ function createPromises(requests) {
         return fetch(req)
                 .then((res) => { return checkPromise(res); })
                 .then((res) => res.json())
-                .catch((err) => console.log('Fetch error: ' + err));
     });
 }
 
@@ -36,15 +46,13 @@ export function getTeamGroups(data, callback) {
 
     Promise.all(createPromises([getGroups]))
     .then((res) => { callback({groups: res[0]}); })
-    .catch((err) => console.log("promise error: " + err));
 }
 
 export function getTeamMembers(data, callback) {
     const getMembers = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', null, false);
 
     Promise.all(createPromises([getMembers]))
-    .then((res) => { callback({members: res[0]}); })
-    .catch((err) => console.log("promise error: " + err));
+    .then((res) => {getTeamMembersInfo({ members: res[0]}, callback); })
 }
 
 export function createTeamGroup(data, callback) {
@@ -54,13 +62,32 @@ export function createTeamGroup(data, callback) {
     fetch(createGroup)
         .then((resp) => resp.json())
         .then((resp) => callback(resp))
-        .catch((err) => console.log(err));
 }
 
 export function joinTeamGroup(data, callback) {
-    const joinGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: "wow"}, true);
+    const joinGroup = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: data.username}, true);
 
-    Promise.all(createPromises([joinGroup]))
+    const fetchGroup = fetch(joinGroup)
+        .then((res) => { return checkPromise(res); });
+
+    Promise.all([fetchGroup])
     .then((res) => { callback({data: res[0]}); })
-    .catch((err) => console.log("promise error: " + err));
+}
+
+export function doAuth(callback) {
+
+    const auth = createRequest('GET', '/api/auth/github/', null, false);
+
+    fetch(auth)
+        .then((resp) => console.log(resp))
+}
+
+export function getTeamMembersInfo(data, callback) {
+    
+    const requests = data.members.map(function(member) {
+        return createGithubRequest('GET', '/users/' + member.username);
+    });
+
+    Promise.all(createPromises(requests))
+    .then((res) => { callback({members: res}); })
 }
