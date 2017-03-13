@@ -25,11 +25,18 @@ Our project will be to create a chrome extension that would “inject” code an
 - Express
 - Postgres
 - Websockets
+- Docker
+- RabbitMQ
 
 ##Key Challenges
-- Learn how to create a chrome extension (https://developer.chrome.com/extensions/content_scripts)
-- Learn how OAuth w/ Github works
-- Learn React + Redux
-- Learn Postgres
-- Learn how to use Github’s API
-- Figure out how to use webhooks
+- [x] Learn how to create a chrome extension (https://developer.chrome.com/extensions/content_scripts)
+- [x] Learn how OAuth w/ Github works
+- [x] Learn React
+- [ ] Learn Redux
+- [x] Learn Postgres
+- [x] Deploying entire app & db in different docker containers
+- [x] Securely send XHR requests that are cross origin
+- [x] Securely store and access cookies while respecting SameSite policies.
+- [ ] Learn websockets & see if there's a need for RabbitMQ
+- [ ] Learn how to use Github’s API
+- [ ] Figure out how to use webhooks
