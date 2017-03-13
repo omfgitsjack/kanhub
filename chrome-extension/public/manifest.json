@@ -15,6 +15,7 @@
   ],
   "permissions": [
     "tabs",
+    "cookies",
     "http://localhost:8080/",
     "https://localhost:8080/"
   ],
@@ -27,6 +28,9 @@
       ]
     }
   ],
+  "background": {
+    "scripts": ["backgroundpage.js"]
+  },
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
