@@ -36,10 +36,6 @@ function handleHashLocation(e) {
     return;
   }
 
-  // yes we are authenticating everytime we visit the repo page
-  // yes i know we shouldnt but we are too bad
-  //model.doAuth(function(token) {
-
   const location = pageHelper.getLocationHash();
   const query = pageHelper.getQuery();
 
@@ -72,7 +68,6 @@ function handleHashLocation(e) {
       break;
     default:
   }
-  //});
 }
 
 function renderTeamTab(queryObject, repoContainer) {
