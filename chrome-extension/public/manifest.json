@@ -15,12 +15,9 @@
   ],
   "permissions": [
     "tabs",
-<<<<<<< HEAD
     "https://github.com/*",
     "https://api.github.com/*",
-=======
     "cookies",
->>>>>>> 9c2aa773444ef71e0ea6e86a0fbedc1a29b5da11
     "http://localhost:8080/",
     "https://localhost:8080/"
   ],
