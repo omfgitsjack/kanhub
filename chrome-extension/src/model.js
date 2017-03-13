@@ -1,6 +1,34 @@
 const SERVER_ROUTE = process.env.REACT_APP_SERVER_ROUTE;
 const GITHUB_API_ROUTE = process.env.REACT_APP_GITHUB_API_ROUTE;
 
+export function getUsernameCookie() {
+    return new Promise((resolve, reject) => {
+        try {
+            chrome.runtime.sendMessage({op: "getUsernameCookie"}, function(cookie) {
+                if (cookie) {
+                    resolve(cookie)
+                } else {
+                    reject()
+                }
+            });
+        } catch (e) {
+            return reject(e);
+        }
+    })
+}
+
+export function getTokenCookie() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({op: "getTokenCookie"}, function(cookie) {
+            if (cookie) {
+                resolve(cookie)
+            } else {
+                reject()
+            }
+        });
+    })
+}
+
 function createRequest(method, url, body, jsonreq) {
     var settings = {};
 
