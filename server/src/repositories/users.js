@@ -1,9 +1,6 @@
 
-import UserModelFactory from '../models/users';
-
 export default ({ db }) => {
-
-    let UserModel = UserModelFactory({ db });
+    let UserModel = db.models.user;
 
     return {
         findOrCreate: (payload) => new Promise(resolve => {

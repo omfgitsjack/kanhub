@@ -21,10 +21,34 @@ export function getExtension(path) {
     return path;
 }
 
-export function cookies() {
-    if (chrome.cookies) {
-        chrome.cookies.onChanged.addListener(function (info) {
-            console.log("onChanged" + JSON.stringify(info));
-        });
+export function getUsernameCookie() {
+    if (!chrome) {
+        return Promise.reject();
+    } else {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({op: "getUsernameCookie"}, function(cookie) {
+                if (cookie) {
+                    resolve(cookie)
+                } else {
+                    reject()
+                }
+            });
+        })
+    }
+}
+
+export function getTokenCookie() {
+    if (!chrome) {
+        return Promise.reject();
+    } else {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({op: "getTokenCookie"}, function(cookie) {
+                if (cookie) {
+                    resolve(cookie)
+                } else {
+                    reject()
+                }
+            });
+        })
     }
 }

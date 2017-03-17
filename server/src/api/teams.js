@@ -3,12 +3,12 @@ import { Router } from 'express';
 
 import TeamRepositoryFactory from '../repositories/teams';
 
+import standupRoutes from './standups'
+
 export default ({ config, db }) => {
 
     let api = Router({ mergeParams: true }),
         TeamRepository = TeamRepositoryFactory({ db })
-
-    db.sync();
 
     // TODO: validation & permissions
     api.post('/', (req, res) => {
@@ -62,6 +62,33 @@ export default ({ config, db }) => {
             }
         })
     })
+
+    let fetchTeam = (showMetadata = true) => (req, res) => {
+        TeamRepository.getTeamMembers(req.params.teamId).then(team => {
+            if (showMetadata) {
+                res.json(team);
+            } else {
+                res.json(team.users);
+            }
+        })
+    }
+
+    api.get('/:teamId', fetchTeam(true));
+    api.get('/:teamId/members', fetchTeam(false));
+
+    // TODO: Add validation here.
+    api.post('/:teamId/members', (req, res) => {
+        let username = req.body.username
+
+        TeamRepository.addTeamMember(req.params.teamId, username).then(() => {
+            res.json();
+        }).catch(err => {
+            res.status(400).json({ success: false, code: "INTERNAL_ERROR" })
+        })
+    })
+
+    api.use('/:teamId/standups', standupRoutes({ config, db }));
+
 
     return api
 }

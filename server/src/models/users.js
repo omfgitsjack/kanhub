@@ -9,7 +9,7 @@ export default ({ db }) => {
             allowNull: false, 
             primaryKey: true },
         profileUrl: Sequelize.STRING,
-        token: Sequelize.STRING // Tokens might expire... so its nullable
+        token: Sequelize.STRING
     })
 
     return User;

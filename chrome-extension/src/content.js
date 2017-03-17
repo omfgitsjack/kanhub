@@ -30,7 +30,7 @@ function selectRepoTab(tab) {
   tab.addClass('selected');
 }
 
-function handleHashLocation() {
+function handleHashLocation(e) {
 
   if (!pageHelper.isRepo()) {
     return;
@@ -42,9 +42,13 @@ function handleHashLocation() {
   const queryObject = pageHelper.queryToObject(query);
   const repoContainer = elements.getRepoContainer();
 
+  const oldHash = e && pageHelper.urlToHash(e.oldURL);
+  
   switch (location) {
     case '#Standup':
-      repoContainer.empty();
+      if (oldHash !== "#Standup") {
+        repoContainer.empty();
+      }
       selectRepoTab($(".reponav-standup"));
       ReactDOM.render(
         <MuiThemeProvider>
@@ -54,7 +58,9 @@ function handleHashLocation() {
       );
       break;
     case '#Team':
-      repoContainer.empty();
+      if (oldHash !== "#Team") {
+        repoContainer.empty();
+      }
       selectRepoTab($(".reponav-team"));
       renderTeamTab(queryObject, repoContainer);
       break;
@@ -64,29 +70,25 @@ function handleHashLocation() {
 
 function renderTeamTab(queryObject, repoContainer) {
 
-  if (queryObject.action !== "new") {
-    let requestData = {
-      id: queryObject.id || 0,
-    };
+  const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
-    //model.getTeamGroup(requestData, function (err, data) {
+  model.getUsernameCookie().then((username) => {
+    if (queryObject.action !== "new") {
       ReactDOM.render(
         <MuiThemeProvider>
-          <TeamContent />
+          <TeamContent query={queryObject} username={username} repo={repoName} />
         </MuiThemeProvider>,
         repoContainer[0]
       );
-    //});
-  } else {
-
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <CreateTeam />
-      </MuiThemeProvider>,
-      repoContainer[0]
-    );
-  }
-
+    } else {
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <CreateTeam />
+        </MuiThemeProvider>,
+        repoContainer[0]
+      );
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
     });
 
-    handleHashLocation();
+    handleHashLocation(null);
   }
 
 });

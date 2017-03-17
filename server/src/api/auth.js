@@ -11,8 +11,6 @@ export default ({ config, db }) => {
     let api = Router(),
         UserRepository = UserRepositoryFactory({ db })
 
-    db.sync();
-
     passport.use(new GithubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -39,6 +37,16 @@ export default ({ config, db }) => {
         passport.authenticate('github', (err, user, info) => {
             if (err) return res.status(404).json({ message: err });
             if (!user) return res.status(404).json({ message: 'user not logged in' });
+
+            req.session.user = user;
+            res.cookie('kh_username', user.username, {
+                secure: true,
+                sameSite: false // TODO: toggle to true and access cookie from background page
+            });
+            res.cookie('kh_github_token', user.token, {
+                secure: true,
+                sameSite: false // TODO: toggle to true and access cookie from background page
+            })
 
             res.redirect(user.profileUrl);
         })(req, res, next);

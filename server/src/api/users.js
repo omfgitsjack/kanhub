@@ -7,8 +7,6 @@ export default ({ config, db }) => {
 
     let api = Router(),
         UserRepository = UserRepositoryFactory({ db })
-    
-    db.sync();
 
     api.get('/:username', (req, res) => {
         let username = req.params.username;
