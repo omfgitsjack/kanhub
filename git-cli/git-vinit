@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function create_repo {
+create_repo() {
 	git init
 	git remote add -f origin $1
 	git config core.sparseCheckout true
@@ -8,11 +8,9 @@ function create_repo {
 	git pull origin master
 }
 
-if [[ $# -ne 1 ]]; then
+if [ $# -ne 1 ] ; then
     echo "Illegal number of parameters"
     exit 1
 fi
 
 create_repo $1
-
-
