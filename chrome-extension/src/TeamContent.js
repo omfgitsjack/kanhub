@@ -108,9 +108,8 @@ class TeamContent extends Component {
   };
 
   getGroups() {
-    const {ownerName, repoName} = getOwnerAndRepo();
     const requestData = {
-      repo: repoName,
+      repo: this.props.repo,
     };
 
     model.getTeamGroups(requestData, function(data) {
@@ -125,9 +124,8 @@ class TeamContent extends Component {
   };
 
   getGroupMembers(groupId) {
-    const {ownerName, repoName} = getOwnerAndRepo();
     const requestData = {
-      repo: repoName,
+      repo: this.props.repo,
       id: groupId,
     };
 
@@ -141,12 +139,6 @@ class TeamContent extends Component {
   };
 
   componentWillMount() {
-    model.getUsernameCookie().then((username) => {
-      this.setState({
-        username: username,
-      });
-    });
-  
     this.getGroups();
   };
 
@@ -164,9 +156,8 @@ class TeamContent extends Component {
   };
 
   handleJoinGroup = () => {
-    const {ownerName, repoName} = getOwnerAndRepo();
     const requestData = {
-      repo: repoName,
+      repo: this.props.repo,
       id: this.state.selectedGroupId,
     };
 
@@ -185,12 +176,12 @@ class TeamContent extends Component {
             <SectionButtonGroup>
               <PrimaryButton onClick={this.handleCreateGroupSelect}>Create Team</PrimaryButton>
             </SectionButtonGroup>
-            {this.state.username && <GroupInfo username={this.state.username} groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />}
+            {this.props.username && <GroupInfo username={this.props.username} groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />}
             <GroupMembers groups={this.state.groups} members={this.state.members} selectedGroupId={this.state.selectedGroupId} handleJoinGroup={this.handleJoinGroup} />
           </div>
           :
           <div>
-            {<NoGroups handleCreateGroupSelect={this.handleCreateGroupSelect} />}
+            <NoGroups handleCreateGroupSelect={this.handleCreateGroupSelect} />
           </div>
         }
       </RepoContent>

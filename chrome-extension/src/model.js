@@ -45,6 +45,7 @@ function createRequest(method, url, body, jsonreq) {
 }
 
 function createGithubRequest(method, url, token) {
+
     var settings = {};
 
     settings.method = method;
@@ -77,14 +78,14 @@ export function getTeamGroups(data, callback) {
     const getGroups = createRequest('GET', '/api/repository/' + data.repo + '/teams/', null, false);
 
     Promise.all(createPromises([getGroups]))
-    .then((res) => { callback({groups: res[0]}); })
+        .then((res) => { callback({groups: res[0]}); })
 }
 
 export function getTeamMembers(data, callback) {
     const getMembers = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', null, false);
 
     Promise.all(createPromises([getMembers]))
-    .then((res) => {getTeamMembersInfo({ members: res[0]}, callback); })
+        .then((res) => {getTeamMembersInfo({ members: res[0]}, callback); })
 }
 
 export function createTeamGroup(data, callback) {
@@ -106,18 +107,21 @@ export function joinTeamGroup(data, callback) {
 
 
         Promise.all([fetchGroup])
-        .then((res) => { callback({data: res[0]}); })
+            .then((res) => { callback({data: res[0]}); })
     });
 }
 
 export function getTeamMembersInfo(data, callback) {
     
-    const requests = data.members.map(function(member) {
-        return createGithubRequest('GET', '/users/' + member.username, null);
+    getTokenCookie().then((token) => {
+        const requests = data.members.map(function(member) {
+            return createGithubRequest('GET', '/users/' + member.username, token);
+        });
+
+        Promise.all(createPromises(requests))
+            .then((res) => { callback({members: res}); })
     });
 
-    Promise.all(createPromises(requests))
-    .then((res) => { callback({members: res}); })
 }
 
 export function getAuthUser(callback) {

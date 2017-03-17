@@ -43,8 +43,6 @@ function handleHashLocation(e) {
   const repoContainer = elements.getRepoContainer();
 
   const oldHash = e && pageHelper.urlToHash(e.oldURL);
-
-  model.getAuthUser(function(e) {});
   
   switch (location) {
     case '#Standup':
@@ -72,23 +70,25 @@ function handleHashLocation(e) {
 
 function renderTeamTab(queryObject, repoContainer) {
 
-  if (queryObject.action !== "new") {
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <TeamContent query={queryObject} />
-      </MuiThemeProvider>,
-      repoContainer[0]
-    );
-  } else {
+  const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <CreateTeam />
-      </MuiThemeProvider>,
-      repoContainer[0]
-    );
-  }
-
+  model.getUsernameCookie().then((username) => {
+    if (queryObject.action !== "new") {
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <TeamContent query={queryObject} username={username} repo={repoName} />
+        </MuiThemeProvider>,
+        repoContainer[0]
+      );
+    } else {
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <CreateTeam />
+        </MuiThemeProvider>,
+        repoContainer[0]
+      );
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
