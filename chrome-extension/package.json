@@ -49,12 +49,15 @@
     "primer-css": "^5.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-tooltip": "^3.2.7"
+    "react-tooltip": "^3.2.7",
+    "write-file-webpack-plugin": "^4.0.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "build-content-script": "node scripts/dev-content-build.js",
+    "test": "node scripts/test.js --env=jsdom",
+    "kenny": "NODE_ENV=development ./node_modules/.bin/webpack --config ./config/webpack-chrome-ext.config.dev.js --watch"
   },
   "jest": {
     "collectCoverageFrom": [

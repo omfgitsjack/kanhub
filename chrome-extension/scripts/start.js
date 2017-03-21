@@ -62,7 +62,7 @@ function setupCompiler(host, port, protocol) {
   // "invalid" is short for "bundle invalidated", it doesn't imply any errors.
   compiler.plugin('invalid', function() {
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
     console.log('Compiling...');
   });
@@ -73,7 +73,7 @@ function setupCompiler(host, port, protocol) {
   // Whether or not you have warnings or errors, you will get this event.
   compiler.plugin('done', function(stats) {
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
 
     // We have switched off the default Webpack output in WebpackDevServer
@@ -273,7 +273,7 @@ function runDevServer(host, port, protocol) {
     }
 
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
     console.log(chalk.cyan('Starting the development server...'));
     console.log();
