@@ -16,8 +16,8 @@ import config from './config.json';
 
 // Create https server
 let options = {
-	key: fs.readFileSync('key.pem'),
-	cert: fs.readFileSync('cert.pem')
+	key: fs.readFileSync(process.env.SSL_KEY),
+	cert: fs.readFileSync(process.env.SSL_CERT)
 };
 
 let app = express();
