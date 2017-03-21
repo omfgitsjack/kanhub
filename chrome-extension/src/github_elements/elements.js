@@ -19,7 +19,7 @@ export function createRepoTab(label, icon, url, customClass) {
     `);
 };
 
-// react elements and styles
+// react github elements and styles
 
 const styles = {
   sectionContainer: {

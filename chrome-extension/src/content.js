@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SettingsApp from './SettingsApp';
-import TeamContent from './TeamContent';
-import CreateTeam from './CreateTeam';
+import TeamContent from './team/containers/TeamContent';
+import CreateTeam from './team/containers/CreateTeam';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import $ from 'jquery';
 import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
-import * as elements from './elements';
-import * as model from './model';
+import * as elements from './github_elements/elements';
+import * as teamModel from './team/model/model';
+import { getUsernameCookie } from './modelCommon';
 
 import './settings.css';
 
@@ -37,11 +38,8 @@ function handleHashLocation(e) {
   }
 
   const location = pageHelper.getLocationHash();
-  const query = pageHelper.getQuery();
-
-  const queryObject = pageHelper.queryToObject(query);
+  const query = pageHelper.queryToObject(pageHelper.getQuery());
   const repoContainer = elements.getRepoContainer();
-
   const oldHash = e && pageHelper.urlToHash(e.oldURL);
   
   switch (location) {
@@ -62,33 +60,35 @@ function handleHashLocation(e) {
         repoContainer.empty();
       }
       selectRepoTab($(".reponav-team"));
-      renderTeamTab(queryObject, repoContainer);
+      renderTeamTab(query, repoContainer[0]);
       break;
     default:
   }
 }
 
-function renderTeamTab(queryObject, repoContainer) {
+function renderTeamTab(query, renderAnchor) {
 
   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
-  model.getUsernameCookie().then((username) => {
-    if (queryObject.action !== "new") {
+  if (query.action === "new") {
+    // render the create team container
+    ReactDOM.render(
+      <MuiThemeProvider>
+        <CreateTeam />
+      </MuiThemeProvider>,
+      renderAnchor
+    );
+  } else {
+    // render team container
+    Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
       ReactDOM.render(
         <MuiThemeProvider>
-          <TeamContent query={queryObject} username={username} repo={repoName} />
+          <TeamContent query={query} username={res[0]} teams={res[1]} repo={repoName} />
         </MuiThemeProvider>,
-        repoContainer[0]
+        renderAnchor
       );
-    } else {
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <CreateTeam />
-        </MuiThemeProvider>,
-        repoContainer[0]
-      );
-    }
-  });
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
