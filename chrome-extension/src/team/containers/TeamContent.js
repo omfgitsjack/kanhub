@@ -11,7 +11,7 @@ class TeamContent extends Component {
 
     this.state = {
       selectedTeamId: parseInt(props.query.id),
-      members: null,
+      members: [],
     };
   };
 
@@ -32,8 +32,8 @@ class TeamContent extends Component {
   };
 
   componentDidMount() {
-    if (this.props.groups && this.props.groups.length > 0) {
-      this.getTeamMembers(this.state.selectedTeamId || this.props.groups[0].id);
+    if (this.props.teams && this.props.teams.length > 0) {
+      this.getTeamMembers(this.state.selectedTeamId || this.props.teams[0].id);
     }
   };
 
@@ -80,8 +80,8 @@ class TeamContent extends Component {
             <SectionButtonGroup>
               <PrimaryButton onClick={this.handleCreateTeamSelect}>Create Team</PrimaryButton>
             </SectionButtonGroup>
-            <TeamInfo isMember={isMember} team={team} />
-            {this.state.members ?
+            <TeamInfo isMember={isMember} team={team} handleJoinTeam={this.handleJoinTeam} />
+            {this.state.members.length > 0 ?
               <TeamMembers members={this.state.members} /> :
               <NoMembers teamName={this.props.teams[0].displayName} handleJoinTeam={this.handleJoinTeam} />
             }

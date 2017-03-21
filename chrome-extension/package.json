@@ -57,7 +57,7 @@
     "build": "node scripts/build.js",
     "build-content-script": "node scripts/dev-content-build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "kenny": "NODE_ENV=development ./node_modules/.bin/webpack --config ./config/webpack-chrome-ext.config.dev.js --watch"
+    "kenny": "./node_modules/.bin/webpack --config ./config/webpack-chrome-ext.config.dev.js --watch"
   },
   "jest": {
     "collectCoverageFrom": [
