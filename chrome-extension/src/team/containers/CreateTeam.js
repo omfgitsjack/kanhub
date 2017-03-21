@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { SectionContainer, SectionHeader, SectionTitle, RepoContent, PrimaryButton, NormalButton } from './elements';
+import { SectionContainer, SectionHeader, SectionTitle, RepoContent, PrimaryButton, NormalButton } from '../../github_elements/elements';
 import 'primer-css/build/build.css';
-import * as pageHelper from './pageHelper';
-import * as model from './model';
+import * as pageHelper from '../../pageHelper';
+import * as model from '../model/model';
 
 var octicons = require("octicons");
 
@@ -27,8 +27,8 @@ const CreateTeamForm = (props) => {
         </dl>
 
         <div className="form-actions">
-          <PrimaryButton onClick={props.handleCreateGroupSelect}>Create</PrimaryButton>
-          <NormalButton onClick={props.handleCancelGroupSelect}>Cancel</NormalButton>
+          <PrimaryButton onClick={props.handleCreateTeamSelect}>Create</PrimaryButton>
+          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
         </div>
       </form>
     </SectionContainer>
@@ -58,7 +58,7 @@ class CreateTeam extends Component {
     });
   };
 
-  handleCreateGroupSelect = () => {
+  handleCreateTeamSelect = () => {
     const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
     const requestData = {
       repo: repoName,
@@ -69,13 +69,13 @@ class CreateTeam extends Component {
       },
     }
 
-    model.createTeamGroup(requestData, function(data) {
+    model.createTeam(requestData).then((data) => {
       pageHelper.changeLocationHash("#Team?id=" + data.id);
     });
   };
 
 
-  handleCancelGroupSelect = () => {
+  handleCancelTeamSelect = () => {
     pageHelper.changeLocationHash("#Team");
   };
 

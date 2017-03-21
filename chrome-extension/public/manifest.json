@@ -9,20 +9,12 @@
       "default_title": "KanHub",
       "default_popup": "index.html"
   },
-  "web_accessible_resources": [
-      "localhost:8080/*",
-      "settings.html"
-  ],
   "permissions": [
     "tabs",
+    "cookies",
     "https://github.com/*",
     "https://api.github.com/*",
-    "cookies",
-    "http://localhost:8080/",
-    "https://localhost:8080/"
-  ],
-  "optional_permissions": [
-    "<all_urls>"
+    "https://kanhub.me:8080/"
   ],
   "content_scripts": [
     {
@@ -41,14 +33,4 @@
     "48": "icon48.png",
     "128": "icon128.png"
   }
-  
-//   "optional_permissions": [
-//     "<all_urls>"
-//   ],
-//   "background": {
-//     "scripts": [
-//       "background.js"
-//     ],
-//     "persistent": false
-//   }
 }
