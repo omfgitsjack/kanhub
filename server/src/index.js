@@ -45,7 +45,8 @@ app.use(morgan('dev'));
 // 3rd party middleware
 app.use(cors({
 	exposedHeaders: config.corsHeaders,
-	credentials: true
+	credentials: true,
+	origin: /^chrome-extension:\/\/*/
 }));
 
 app.use(bodyParser.json({
@@ -53,6 +54,7 @@ app.use(bodyParser.json({
 }));
 
 import initModels from './models'
+import initSocket from './websockets'
 
 // connect to db
 initializeDb(db => {
@@ -72,6 +74,8 @@ initializeDb(db => {
 	app.use('/api', api({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port);
+	
+	initSocket({ app, db });
 
 	console.log(`Started on port ${app.server.address().port}`);
 });

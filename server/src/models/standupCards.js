@@ -5,9 +5,9 @@ import StandupSessions from './standupSessions'
 
 export default ({ db }) => {
     let model = db.define('standupCards', {
-        currentDescription: Sequelize.STRING,
-        roadblocksDescription: Sequelize.STRING,
-        futureDescription: Sequelize.STRING
+        yesterdayDescription: Sequelize.STRING,
+        todayDescription: Sequelize.STRING,
+        obstaclesDescription: Sequelize.STRING
     })
 
     return model;
