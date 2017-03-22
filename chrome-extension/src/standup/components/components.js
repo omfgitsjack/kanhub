@@ -18,11 +18,17 @@ const styles = {
     top: "0px",
     width: "320px",
     zIndex: "500",
-    background: "#efeef1",
+    background: "#fafbfc",
   },
   chatHeader: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     position: "relative",
-    height: "54px",
+    height: "54.4px",
+    background: "#24292e",
+    color: "#ffffff",
   },
   chatGroup: {
     display: "flex",
@@ -38,6 +44,7 @@ const styles = {
     height: "auto",
     backgroundClip: "content-box",
     overflow: "hidden",
+    overflowY: "scroll",
   },
   chatMessageList: {
     padding: "10px 0px",
@@ -88,12 +95,21 @@ export const Chat = (props) => {
   return (
     <div className="border-left" style={styles.chatContainer}>
       <div style={styles.chatHeader}>
-        <div style={styles.chatGroup}>
-
-        </div>
+        This is chat room
       </div>
       <div style={styles.chatSection}>
         <ul style={styles.chatMessageList}>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
           <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
         </ul>
       </div>
