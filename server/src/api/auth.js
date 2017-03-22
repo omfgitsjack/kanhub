@@ -4,9 +4,11 @@ import { Router } from 'express';
 // Setup authentication
 import GithubStrategy from 'passport-github2';
 
+import jwt from 'jsonwebtoken';
+
 import UserRepositoryFactory from '../repositories/users';
 
-export default ({ config, db }) => {
+export default ({ config, db, requireAuth }) => {
 
     let api = Router(),
         UserRepository = UserRepositoryFactory({ db })
@@ -31,6 +33,14 @@ export default ({ config, db }) => {
             done(null, user.get({ plain: true }));
         });
     }));
+
+    api.get('/socket', requireAuth, (req, res) => {
+        let token = jwt.sign(req.session.user, "koocat", {
+            expiresIn: "360d"
+        });
+
+        res.json({ token });
+    })
 
     api.get('/github', passport.authenticate('github', { scope: ['repo'] }));
     api.get('/github/callback', (req, res, next) => {

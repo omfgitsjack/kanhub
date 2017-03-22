@@ -25,7 +25,7 @@ export default ({ config, db }) => {
 	});
 
 	// api.use('/facets', facets({ config, db }));
-	api.use('/auth', auth({ config, db }));
+	api.use('/auth', auth({ config, db, requireAuth }));
 	api.use('/users', requireAuth, user({ config, db }));
 	api.use('/repository/:repository/teams', requireAuth, team({ config, db }));
 
