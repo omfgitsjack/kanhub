@@ -22,6 +22,12 @@ export function createRepoTab(label, icon, url, customClass) {
 // react github elements and styles
 
 const styles = {
+  navHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   sectionContainer: {
     marginBottom: "20px",
   },
@@ -36,7 +42,7 @@ const styles = {
   sectionButtonGroup: {
     display: "flex",
     flexDirection: "row",
-    padding: "10px 0px",
+    height: "33px",
   },
   userCard: {
     display: "inline-block",
@@ -55,6 +61,14 @@ const styles = {
     alignItems: "center",
   },
 };
+
+export const NavHeader = (props) => {
+    return (
+        <div style={styles.navHeader}>
+            {props.children}
+        </div>
+    );
+}
 
 export const RepoContent = (props) => {
     return (
@@ -111,14 +125,14 @@ export const SectionButtonGroup = (props) => {
 export const NormalButton = (props) => {
     
     return (
-        <button className="btn" type="button" onClick={props.onClick}>{props.children}</button>
+        <button className={"btn " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 
 export const PrimaryButton = (props) => {
 
     return (
-        <button className="btn btn-primary" type="button" onClick={props.onClick}>{props.children}</button>
+        <button className={"btn btn-primary " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 
@@ -132,7 +146,7 @@ export const PrimaryButtonSmall = (props) => {
 export const DangerButton = (props) => {
 
     return (
-        <button className="btn btn-danger" type="button" onClick={props.onClick}>{props.children}</button>
+        <button className={"btn btn-danger " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 

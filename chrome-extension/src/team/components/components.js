@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
-  SectionTitle, SectionHeader, SectionButtonGroup, PrimaryButton,
+  SectionTitle, SectionHeader, SectionButtonGroup, NormalButton, PrimaryButton,
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
   UserCard
 } from '../../github_elements/elements';
@@ -31,11 +31,6 @@ export const TeamInfo = (props) => {
     <SectionContainer>
       <SectionHeader>
         <SectionTitle>{props.team.displayName}</SectionTitle>
-        <SectionButtonGroup>
-          {props.isMember ?
-            <DangerButton>Leave Team</DangerButton>
-            : <PrimaryButton onClick={props.handleJoinTeam}>Join Team</PrimaryButton>}
-        </SectionButtonGroup>
       </SectionHeader>
       <p className="lead">{props.team.description}</p>
     </SectionContainer>
@@ -63,7 +58,7 @@ export const NoTeams = (props) => {
   const description = "Create teams to organize your team's internal structure.";
   return (
     <BlankSlateSpacious heading={heading} description={description} icon={octicons.octoface.toSVG({ "width": 45, "height": 45 })}>
-      <p><PrimaryButtonSmall onClick={props.handleCreateTeamSelect}>Create Team</PrimaryButtonSmall></p>
+      <p><PrimaryButtonSmall onClick={props.handleCreateTeamSelect}>New Team</PrimaryButtonSmall></p>
     </BlankSlateSpacious>
   )
 }
@@ -75,4 +70,33 @@ export const NoMembers = (props) => {
       <p><PrimaryButtonSmall onClick={props.handleJoinTeam}>Join Team</PrimaryButtonSmall></p>
     </BlankSlate>
   )
+}
+
+export const CreateTeamForm = (props) => {
+
+  return (
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>Create New Team</SectionTitle>
+      </SectionHeader>
+      <form>
+        <dl className="form-group">
+          <dt><label>Team Name</label></dt>
+          <dd><input className="form-control" type="text" placeholder="Team name" onChange={props.handleTeamNameChange}/></dd>
+        </dl>
+
+        <dl className="form-group">
+          <dt><label>Team Description</label></dt>
+          <dd>
+            <textarea className="form-control" placeholder="Briefly describe what this team is for..." onChange={props.handleTeamDescriptionChange}></textarea>
+          </dd>
+        </dl>
+
+        <div className="form-actions">
+          <PrimaryButton onClick={props.handleCreateTeamSelect}>Create</PrimaryButton>
+          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
+        </div>
+      </form>
+    </SectionContainer>
+  );
 }

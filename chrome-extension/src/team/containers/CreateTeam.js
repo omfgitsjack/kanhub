@@ -1,39 +1,9 @@
 import React, { Component } from 'react';
-import { SectionContainer, SectionHeader, SectionTitle, RepoContent, PrimaryButton, NormalButton } from '../../github_elements/elements';
+import { RepoContent } from '../../github_elements/elements';
+import { CreateTeamForm } from '../components/components';
 import 'primer-css/build/build.css';
 import * as pageHelper from '../../pageHelper';
 import * as model from '../model/model';
-
-var octicons = require("octicons");
-
-const CreateTeamForm = (props) => {
-
-  return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>Create New Team</SectionTitle>
-      </SectionHeader>
-      <form>
-        <dl className="form-group">
-          <dt><label>Team Name</label></dt>
-          <dd><input className="form-control" type="text" placeholder="Team name" onChange={props.handleTeamNameChange}/></dd>
-        </dl>
-
-        <dl className="form-group">
-          <dt><label>Team Description</label></dt>
-          <dd>
-            <textarea className="form-control" placeholder="Briefly describe what this team is for..." onChange={props.handleTeamDescriptionChange}></textarea>
-          </dd>
-        </dl>
-
-        <div className="form-actions">
-          <PrimaryButton onClick={props.handleCreateTeamSelect}>Create</PrimaryButton>
-          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
-        </div>
-      </form>
-    </SectionContainer>
-  );
-}
 
 class CreateTeam extends Component {
 
@@ -59,12 +29,11 @@ class CreateTeam extends Component {
   };
 
   handleCreateTeamSelect = () => {
-    const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
     const requestData = {
-      repo: repoName,
+      repo: this.props.repo,
       rawTeam: {
         displayName: this.state.teamName,
-        repository: repoName,
+        repository: this.props.repo,
         description: this.state.teamDescription,
       },
     }
@@ -73,7 +42,6 @@ class CreateTeam extends Component {
       pageHelper.changeLocationHash("#Team?id=" + data.id);
     });
   };
-
 
   handleCancelTeamSelect = () => {
     pageHelper.changeLocationHash("#Team");

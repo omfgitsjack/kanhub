@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { TeamSubNav, TeamInfo, NoTeams, TeamMembers, NoMembers } from '../components/components';
-import { SectionButtonGroup, NormalButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
+import { SectionButtonGroup, PrimaryButton } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
-import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
 
 class TeamContent extends Component {
@@ -11,7 +10,7 @@ class TeamContent extends Component {
     super(props);
 
     this.state = {
-      selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
+      selectedTeamId: parseInt(props.query.id) || this.props.teams[0].id,
       members: [],
     };
   };
@@ -22,30 +21,28 @@ class TeamContent extends Component {
       id: teamId,
     };
 
-    this.props.setLoading(true);
-
     model.getTeamMembers(requestData).then(function (data) {
-      model.getTeamMembersInfo({ members: data }).then(function (members) {
+      model.getTeamMembersInfo({members: data}).then(function(members) {
         this.setState({
           members: members,
           selectedTeamId: teamId,
         });
-
-        this.props.setLoading(false);
-
       }.bind(this));
     }.bind(this));
   };
 
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
-      window.history.pushState({}, "", "#Team?id=" + this.props.teams[0].id);
       this.getTeamMembers(this.state.selectedTeamId || this.props.teams[0].id);
     }
   };
 
   handleNavSelect = (teamId) => {
     window.history.pushState({}, "", "#Team?id=" + teamId);
+    this.setState({
+      selectedTeamId: teamId,
+    });
+
     this.getTeamMembers(teamId);
   };
 
@@ -59,7 +56,7 @@ class TeamContent extends Component {
       id: this.state.selectedTeamId,
     };
 
-    model.joinTeam(requestData).then(function (data) {
+    model.joinTeam(requestData).then(function(data) {
       this.getTeamMembers(this.state.selectedTeamId);
     }.bind(this));
   };
@@ -69,7 +66,7 @@ class TeamContent extends Component {
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
 
-        const isMember = this.state.members && this.state.members.find(function (member) {
+        let isMember = this.state.members && this.state.members.find(function (member) {
           return member.login === this.props.username;
         }.bind(this));
 
@@ -78,32 +75,25 @@ class TeamContent extends Component {
         }.bind(this));
 
         return (
-          <RepoContent>
-            <NavHeader>
-              <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
-              <SectionButtonGroup>
-                {isMember ?
-                  <NormalButton extraClass="ml-2">Leave Team</NormalButton>
-                  : <PrimaryButton extraClass="ml-2" onClick={this.handleJoinTeam}>Join Team</PrimaryButton>}
-                <PrimaryButton extraClass="ml-2" onClick={this.handleCreateTeamSelect}>New Team</PrimaryButton>
-              </SectionButtonGroup>
-            </NavHeader>
-            <TeamInfo team={team} />
+          <div>
+            <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
+            <SectionButtonGroup>
+              <PrimaryButton onClick={this.handleCreateTeamSelect}>Create Team</PrimaryButton>
+            </SectionButtonGroup>
+            <TeamInfo isMember={isMember} team={team} handleJoinTeam={this.handleJoinTeam} />
             {this.state.members.length > 0 ?
               <TeamMembers members={this.state.members} /> :
               <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />
             }
-          </RepoContent>
+          </div>
         );
       } else {
         return (
-          <RepoContent>
-            <NoTeams handleCreateTeamSelect={this.handleCreateTeamSelect} />
-          </RepoContent>
+          <NoTeams handleCreateTeamSelect={this.handleCreateTeamSelect} />
         );
       }
     }
   };
 }
 
-export default LoadingHOC(TeamContent);
+export default TeamContent;

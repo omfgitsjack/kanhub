@@ -74,7 +74,7 @@ function renderTeamTab(query, renderAnchor) {
     // render the create team container
     ReactDOM.render(
       <MuiThemeProvider>
-        <CreateTeam />
+        <CreateTeam repo={repoName} />
       </MuiThemeProvider>,
       renderAnchor
     );
