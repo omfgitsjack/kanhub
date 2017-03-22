@@ -45,7 +45,8 @@ app.use(morgan('dev'));
 // 3rd party middleware
 app.use(cors({
 	exposedHeaders: config.corsHeaders,
-	credentials: true
+	credentials: true,
+	origin: /^chrome-extension:\/\/*/
 }));
 
 app.use(bodyParser.json({
