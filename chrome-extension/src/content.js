@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SettingsApp from './SettingsApp';
-import TeamContent from './team/containers/TeamContent';
+import StandupContainer from './standup/containers/StandupContainer';
+import TeamContainer from './team/containers/TeamContainer';
 import CreateTeam from './team/containers/CreateTeam';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import $ from 'jquery';
@@ -48,12 +48,7 @@ function handleHashLocation(e) {
         repoContainer.empty();
       }
       selectRepoTab($(".reponav-standup"));
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <SettingsApp />
-        </MuiThemeProvider>,
-        repoContainer[0]
-      );
+      renderStandupTab(query, repoContainer[0]);
       break;
     case '#Team':
       if (oldHash !== "#Team") {
@@ -64,6 +59,21 @@ function handleHashLocation(e) {
       break;
     default:
   }
+}
+
+function renderStandupTab(query, renderAnchor) {
+
+   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
+
+  // render standup container
+  Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
+    ReactDOM.render(
+      <MuiThemeProvider>
+        <StandupContainer query={query} username={res[0]} teams={res[1]} repo={repoName} />
+      </MuiThemeProvider>,
+      renderAnchor
+    );
+  });
 }
 
 function renderTeamTab(query, renderAnchor) {
@@ -83,7 +93,7 @@ function renderTeamTab(query, renderAnchor) {
     Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
       ReactDOM.render(
         <MuiThemeProvider>
-          <TeamContent query={query} username={res[0]} teams={res[1]} repo={repoName} />
+          <TeamContainer query={query} username={res[0]} teams={res[1]} repo={repoName} />
         </MuiThemeProvider>,
         renderAnchor
       );
