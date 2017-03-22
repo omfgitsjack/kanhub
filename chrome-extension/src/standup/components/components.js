@@ -12,20 +12,17 @@ var octicons = require("octicons");
 
 const styles = {
   chatContainer: {
-    position: "fixed",
-    right: "30px",
+    position: "absolute",
+    right: "0px",
     bottom: "0px",
-    height: "550px",
+    top: "0px",
     width: "320px",
     zIndex: "500",
     background: "#efeef1",
-    borderRadius: "5px 5px 0px 0px",
-    boxShadow: "0px 0px 26px 2px rgba(122,122,122,1)",
   },
   chatHeader: {
-    borderRadius: "5px 5px 0px 0px",
-    background: "#000a1c",
-    height: "40px",
+    position: "relative",
+    height: "54px",
   },
   chatGroup: {
     display: "flex",
@@ -34,30 +31,71 @@ const styles = {
   },
   chatSection: {
     display: "block",
-    position: "relative",
-    height: "380px",
-    backgroundClip: "content-box"
+    position: "absolute",
+    top: "54px",
+    bottom: "125px",
+    width: "100%",
+    height: "auto",
+    backgroundClip: "content-box",
+    overflow: "hidden",
+  },
+  chatMessageList: {
+    padding: "10px 0px",
+    listStyleType: "none",
+  },
+  chatMessageAuthor: {
+    fontWeight: "bold",
+    marginRight: "5px",
+  },
+  chatMessageContent: {
+    margin: "0px",
+    padding: "0px",
+    boxSizing: "border-box",
+  },
+  chatMessage: {
+    fontSize: "12px",
+    lineHeight: "20px",
+    padding: "6px 20px",
+    margin: "-3px 0",
+    wordWrap: "break-word",
+    listStylePosition: "unset",
   },
   chatFooter: {
-    padding: "0px 15px 10px 15px",
+    position: "absolute",
+    bottom: "0px",
+    height: "125px",
+    width: "100%",
+    padding: "0px 15px 20px 15px",
     boxSizing: "border-box",
   },
   chatText: {
+    height: "65px",
     width: "100%",
     resize: "none",
   },
 }
 
+export const Message = (props) => {
+  return (
+    <li style={styles.chatMessage}>
+      <span style={styles.chatMessageAuthor}>{props.author + ":"}</span>
+      <span style={styles.chatMessageContent}>{props.content}</span>
+    </li>
+  );
+}
+
 export const Chat = (props) => {
   return (
-    <div style={styles.chatContainer}>
+    <div className="border-left" style={styles.chatContainer}>
       <div style={styles.chatHeader}>
         <div style={styles.chatGroup}>
 
         </div>
       </div>
       <div style={styles.chatSection}>
-        {props.children}
+        <ul style={styles.chatMessageList}>
+          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+        </ul>
       </div>
       <div style={styles.chatFooter}>
         <textarea style={styles.chatText} rows="4">

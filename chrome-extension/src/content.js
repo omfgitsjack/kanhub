@@ -33,6 +33,8 @@ function selectRepoTab(tab) {
 
 function handleHashLocation(e) {
 
+  document.body.style.width = "100%";
+  
   if (!pageHelper.isRepo()) {
     return;
   }
@@ -63,7 +65,8 @@ function handleHashLocation(e) {
 
 function renderStandupTab(query, renderAnchor) {
 
-   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
+  document.body.style.width = "80%";
+  const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
   // render standup container
   Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
@@ -102,10 +105,15 @@ function renderTeamTab(query, renderAnchor) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  gitHubInjection(window, () => {
+    // reset the body width to original
+    document.body.style.width = null;
+  });
+
   if (pageHelper.isRepo()) {
     gitHubInjection(window, () => {
-      addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
       addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
+      addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
     });
 
     handleHashLocation(null);
