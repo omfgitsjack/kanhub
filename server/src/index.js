@@ -53,6 +53,7 @@ app.use(bodyParser.json({
 }));
 
 import initModels from './models'
+import initSocket from './websockets'
 
 // connect to db
 initializeDb(db => {
@@ -72,6 +73,8 @@ initializeDb(db => {
 	app.use('/api', api({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port);
+	
+	initSocket({ app, db });
 
 	console.log(`Started on port ${app.server.address().port}`);
 });

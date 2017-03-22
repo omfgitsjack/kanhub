@@ -2,6 +2,7 @@
 import { Router } from 'express';
 
 import TeamRepositoryFactory from '../repositories/teams';
+import * as websocket from '../websockets';
 
 import standupRoutes from './standups'
 
