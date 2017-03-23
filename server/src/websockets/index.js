@@ -60,7 +60,6 @@ export default ({ app, db, redisClient }) => {
             console.log('[Left Lobby]', username, teamId);
         });
 
-<<<<<<< HEAD
         // socket.on('start_session') // initialize.
         // socket.on('end_session') // commit to postgres. cleanup.
 
@@ -69,7 +68,7 @@ export default ({ app, db, redisClient }) => {
 
         // socket.on('typing_message')
         // socket.on('new_message')
-=======
+
         socket.on('send_message', function(teamId, messageContent) {
             const lobbyUrl = getLobbyUrl(teamId);
 
@@ -80,7 +79,6 @@ export default ({ app, db, redisClient }) => {
 
             standupIo.to(lobbyUrl).emit('message_received', message);
         });
->>>>>>> f7ad16513324362cdfb0109d5f63ae44fb4a9639
 
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
