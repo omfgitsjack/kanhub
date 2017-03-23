@@ -14,7 +14,8 @@
     "cookies",
     "https://github.com/*",
     "https://api.github.com/*",
-    "https://kanhub.me:8080/"
+    "https://kanhub.me:8080/",
+    "https://localhost:8080/"
   ],
   "content_scripts": [
     {
@@ -26,7 +27,7 @@
     }
   ],
   "background": {
-    "scripts": ["backgroundpage.js"],
+    "scripts": ["static/js/backgroundpage.js"],
     "persistent": false
   },
   "icons": {

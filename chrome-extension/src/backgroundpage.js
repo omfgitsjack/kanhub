@@ -1,13 +1,13 @@
 
 var getUsernameCookie = function(cb) {
     chrome.cookies.get({
-        url: 'https://kanhub.me:8080',
+        url: process.env.REACT_APP_SERVER_ROUTE,
         name: 'kh_username' }, cb)
 }
 
 var getTokenCookie = function(cb) {
     chrome.cookies.get({
-        url: 'https://kanhub.me:8080',
+        url: process.env.REACT_APP_SERVER_ROUTE,
         name: 'kh_github_token' }, cb)
 }
 
