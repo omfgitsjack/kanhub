@@ -92,3 +92,9 @@ export function authKanhub() {
 
     return createPromise(authReq, true);
 }
+
+export function getSocketToken() {
+    const tokenReq = createRequest('GET', '/api/auth/socket', null, false);
+
+    return createPromise(tokenReq);
+}

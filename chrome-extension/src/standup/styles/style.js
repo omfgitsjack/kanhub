@@ -83,11 +83,15 @@ export const styles = {
     margin: "20px 0px",
   },
   standUpProfile: {
+    margin: "15px",
+    textAlign: "center",
+  },
+  standUpProfilePicture: {
     borderRadius: "50%",
     height: "100px",
     width: "100px",
     overflow: "hidden",
-    margin: "20px",
+    marginTop: "10px",
   },
   standUpCard: {
     display: "block",

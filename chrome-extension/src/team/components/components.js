@@ -53,6 +53,13 @@ export const TeamMembers = (props) => {
   );
 }
 
+export const NoTeamFound = (props) => {
+  const heading = "Oh no! The team you are looking for isn't here..";
+  return (
+    <BlankSlateSpacious heading={heading} icon={octicons['issue-opened'].toSVG({ "width": 45, "height": 45 })}/>
+  );
+}
+
 export const NoTeams = (props) => {
   const heading = "There aren't any teams.";
   const description = "Create teams to organize your team's internal structure.";
@@ -60,7 +67,7 @@ export const NoTeams = (props) => {
     <BlankSlateSpacious heading={heading} description={description} icon={octicons.octoface.toSVG({ "width": 45, "height": 45 })}>
       <p><PrimaryButtonSmall onClick={props.handleCreateTeamSelect}>New Team</PrimaryButtonSmall></p>
     </BlankSlateSpacious>
-  )
+  );
 }
 
 export const NoMembers = (props) => {
@@ -69,7 +76,7 @@ export const NoMembers = (props) => {
     <BlankSlate heading={heading} icon={octicons.hubot.toSVG({ "width": 45, "height": 45 })}>
       <p><PrimaryButtonSmall onClick={props.handleJoinTeam}>Join Team</PrimaryButtonSmall></p>
     </BlankSlate>
-  )
+  );
 }
 
 export const CreateTeamForm = (props) => {

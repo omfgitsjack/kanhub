@@ -30,7 +30,7 @@ export default ({ app, db, redisClient }) => {
         let username = socket.decoded_token.username;
         console.log('[Connection Established]', username);
 
-        socket.on('join_lobby', teamId => {
+        socket.on('join_lobby', function(teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             socket.join(lobbyUrl); // add user to lobby
@@ -38,18 +38,29 @@ export default ({ app, db, redisClient }) => {
             getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
             standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
+            
+            if (cb) {
+                cb(teamId);
+            }
+
             console.log('[Joined Lobby]', username);
         });
 
-        socket.on('leave_lobby', teamId => {
+        socket.on('leave_lobby', function(teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
+            socket.leave(lobbyUrl);
             removeUserFromLobby(redisClient, lobbyUrl, username);
             standupIo.to(lobbyUrl).emit('user_left_lobby', username);
+
+            if (cb) {
+                cb(teamId);
+            }
 
             console.log('[Left Lobby]', username, teamId);
         });
 
+<<<<<<< HEAD
         // socket.on('start_session') // initialize.
         // socket.on('end_session') // commit to postgres. cleanup.
 
@@ -58,6 +69,18 @@ export default ({ app, db, redisClient }) => {
 
         // socket.on('typing_message')
         // socket.on('new_message')
+=======
+        socket.on('send_message', function(teamId, messageContent) {
+            const lobbyUrl = getLobbyUrl(teamId);
+
+            const message = {
+                author: username,
+                content: messageContent,
+            };
+
+            standupIo.to(lobbyUrl).emit('message_received', message);
+        });
+>>>>>>> f7ad16513324362cdfb0109d5f63ae44fb4a9639
 
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
