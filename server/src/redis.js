@@ -5,7 +5,10 @@ bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 export default function redisFactory() {
-    let redisClient = redis.createClient();
+    let redisClient = redis.createClient({
+        port: 6379,
+        host: process.env.REDIS_HOST
+    });
 
     return redisClient;
 }
