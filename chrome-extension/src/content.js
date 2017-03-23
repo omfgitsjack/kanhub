@@ -33,7 +33,7 @@ function selectRepoTab(tab) {
 
 function handleHashLocation(e) {
 
-  document.body.style.width = "100%";
+  document.body.style.width = null;
   
   if (!pageHelper.isRepo()) {
     return;

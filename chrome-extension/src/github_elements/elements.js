@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import 'primer-css/build/build.css';
+import styles from './styles/style';
 
 export function getRepoNavBar() {
     return $('.reponav.js-repo-nav');
@@ -19,48 +20,7 @@ export function createRepoTab(label, icon, url, customClass) {
     `);
 };
 
-// react github elements and styles
-
-const styles = {
-  navHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  sectionContainer: {
-    marginBottom: "20px",
-  },
-  sectionTitle: {
-    fontSize: "36px",
-    marginRight: "10px",
-  },
-  sectionHeader: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  sectionButtonGroup: {
-    display: "flex",
-    flexDirection: "row",
-    height: "33px",
-  },
-  userCard: {
-    display: "inline-block",
-    margin: "10px",
-    padding: "5px",
-    borderRadius: "5px",
-  },
-  userImage: {
-    width: "32px",
-    height: "32px",
-    marginRight: "5px",
-  },
-  cardHeading: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-};
+// react github elements
 
 export const NavHeader = (props) => {
     return (

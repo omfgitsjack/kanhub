@@ -1,6 +1,9 @@
 # db:
 #   image: postgres
-
+kanhub_redis:
+  image: redis
+  ports:
+    - "6379:6379"
 kanhub_db:
   image: postgres
   ports:
@@ -13,3 +16,4 @@ kanhub_app:
     - "8080:8080"
   environment:
     - POSTGRES_HOST=kanhub_db
+    - REDIS_HOST=kanhub_redis

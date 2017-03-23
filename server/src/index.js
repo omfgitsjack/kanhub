@@ -56,6 +56,8 @@ app.use(bodyParser.json({
 import initModels from './models'
 import initSocket from './websockets'
 
+import redisFactory from './redis';
+
 // connect to db
 initializeDb(db => {
 
@@ -75,7 +77,7 @@ initializeDb(db => {
 
 	app.server.listen(process.env.PORT || config.port);
 	
-	initSocket({ app: app.server, db });
+	initSocket({ app: app.server, db, redis: redisFactory() });
 
 	console.log(`Started on port ${app.server.address().port}`);
 });
