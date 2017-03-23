@@ -41,21 +41,22 @@ function handleHashLocation(e) {
   const query = pageHelper.queryToObject(pageHelper.getQuery());
   const repoContainer = elements.getRepoContainer();
   const oldHash = e && pageHelper.urlToHash(e.oldURL);
-  
+  const reactRepoContainer = elements.getReactRepoContainer();
+
   switch (location) {
     case '#Standup':
       if (oldHash !== "#Standup") {
         repoContainer.empty();
       }
       selectRepoTab($(".reponav-standup"));
-      renderStandupTab(query, repoContainer[0]);
+      renderStandupTab(query, reactRepoContainer);
       break;
     case '#Team':
       if (oldHash !== "#Team") {
         repoContainer.empty();
       }
       selectRepoTab($(".reponav-team"));
-      renderTeamTab(query, repoContainer[0]);
+      renderTeamTab(query, reactRepoContainer);
       break;
     default:
   }
@@ -68,6 +69,7 @@ function renderStandupTab(query, renderAnchor) {
   // render standup container
   Promise.all([getUsernameCookie(), getSocketToken(), teamModel.getTeams({repo: repoName})]).then((res) => {
 
+    ReactDOM.unmountComponentAtNode(renderAnchor);
     ReactDOM.render(
       <MuiThemeProvider>
         <StandupContainer query={query} username={res[0]} socketToken={res[1].token} teams={res[2]} repo={repoName} />
@@ -80,6 +82,8 @@ function renderStandupTab(query, renderAnchor) {
 function renderTeamTab(query, renderAnchor) {
 
   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
+
+  ReactDOM.unmountComponentAtNode(renderAnchor);
 
   if (query.action === "new") {
     // render the create team container
@@ -105,15 +109,19 @@ function renderTeamTab(query, renderAnchor) {
 document.addEventListener('DOMContentLoaded', () => {
 
   authKanhub().then(() => {
+
     gitHubInjection(window, () => {
       // reset the body width to original
       document.body.style.width = null;
     });
 
     if (pageHelper.isRepo()) {
+      elements.createReactRepoContainer();
+
       gitHubInjection(window, () => {
         addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
         addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
+        ReactDOM.unmountComponentAtNode(elements.getReactRepoContainer());
       });
 
       handleHashLocation(null);
