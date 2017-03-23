@@ -12,6 +12,7 @@ kanhub_app:
   build: .
   links:
     - kanhub_db
+    - kanhub_redis
   ports:
     - "8080:8080"
   environment:
