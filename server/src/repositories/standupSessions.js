@@ -1,15 +1,28 @@
 
 import { NOW } from 'sequelize';
+import moment from 'moment'
 
 export default ({ db }) => {
     let SessionModel = db.models.standupSessions,
         SessionCardModel = db.models.standupCards
 
     return {
-        create: teamId =>
-            SessionModel.create({ teamId, sessionStartedAt: new Date() }, {
-                fields: ['teamId', 'sessionStartedAt']
-            }),
+        create: teamId => new Promise(resolve => SessionModel
+            .findOrCreate({
+                where: { 
+                    teamId,
+                    sessionStartedAt: {
+                        $gt: moment().subtract(15, 'minutes').toDate(),
+                        $lt: moment().toDate()
+                    },
+                    sessionEndedAt: {
+                        $eq: null
+                    }
+                },
+                defaults: { teamId: teamId, sessionStartedAt: new Date(), sessionEndedAt: null }})
+            .spread((session, created) => {
+                resolve({ session, created });
+            })),
         /**
          * Returns { rows: [...], count: int }, with the most recently ended sessions
          * shown first.

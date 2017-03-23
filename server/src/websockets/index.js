@@ -2,6 +2,8 @@
 import socket from 'socket.io';
 import socketioJwt from 'socketio-jwt';
 
+import standupSessionsFactory from '../repositories/standupSessions';
+
 const getLobbyUrl = teamId => `lobby/${teamId}`;
 const getUserUrl = username => `user/${username}`;
 
@@ -17,6 +19,7 @@ const getLobbyList = (client, lobby) => client.hkeysAsync(lobby);
 const getUserActiveLobbies = (client, user) => client.hkeysAsync(getUserUrl(user));
 
 export default ({ app, db, redisClient }) => {
+    let sessionsRepo = standupSessionsFactory({ db });
     let io = socket(app);
 
     let standupIo = io
@@ -30,7 +33,7 @@ export default ({ app, db, redisClient }) => {
         let username = socket.decoded_token.username;
         console.log('[Connection Established]', username);
 
-        socket.on('join_lobby', function(teamId, cb) {
+        socket.on('join_lobby', function (teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             socket.join(lobbyUrl); // add user to lobby
@@ -38,7 +41,7 @@ export default ({ app, db, redisClient }) => {
             getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
             standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
-            
+
             if (cb) {
                 cb(teamId);
             }
@@ -46,7 +49,7 @@ export default ({ app, db, redisClient }) => {
             console.log('[Joined Lobby]', username);
         });
 
-        socket.on('leave_lobby', function(teamId, cb) {
+        socket.on('leave_lobby', function (teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             socket.leave(lobbyUrl);
@@ -60,8 +63,38 @@ export default ({ app, db, redisClient }) => {
             console.log('[Left Lobby]', username, teamId);
         });
 
-        // socket.on('start_session') // initialize.
-        // socket.on('end_session') // commit to postgres. cleanup.
+        socket.on('start_session', (teamId, cb) => {
+            sessionsRepo.create(teamId).then(({ session, created }) => {
+                if (!created) { // session already exists
+                    cb(session.id)
+                } else { // just started a new session.
+                    standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
+                        sessionId: session.id
+                    })
+                }
+            })
+        })
+        socket.on('end_session', (teamId, sessionId, cb) => {
+            sessionsRepo.read(sessionId)
+                .then(session => {
+                    if (!session) {
+                        return Promise.reject("session does not exist.");
+                    } else if (session.sessionEndedAt) {
+                        return Promise.reject("session has already ended.");
+                    } else {
+                        return Promise.resolve()
+                    }
+                })
+                .then(() => sessionsRepo.endSession(sessionId))
+                .then(() => {
+                    console.log("[Session Ended]", sessionId);
+                    
+                    standupIo.to(getLobbyUrl(teamId)).emit('session_ended', {
+                        sessionId: sessionId
+                    })
+                })
+                .catch(reason => cb(reason))
+        }) // commit to postgres. cleanup.
 
         // socket.on('card_modified') // update current in card descr.
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
@@ -69,7 +102,7 @@ export default ({ app, db, redisClient }) => {
         // socket.on('typing_message')
         // socket.on('new_message')
 
-        socket.on('send_message', function(teamId, messageContent) {
+        socket.on('send_message', function (teamId, messageContent) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             const message = {
