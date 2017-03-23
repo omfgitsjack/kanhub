@@ -106,13 +106,24 @@ class StandupContainer extends Component {
       socket.on('join_lobby_success', this._onJoinSuccess.bind(this));
       socket.on('user_joined_lobby', this._onUserJoin.bind(this));
       socket.on('user_left_lobby', this._onUserLeave.bind(this));
+      socket.on('message_received', this._onMessageReceive.bind(this));
     }
+  };
+
+  handleMessageChange = (e) => {
+    this.setState({
+      message: e.target.value,
+    });
+  };
+
+  handleSendMessage = () => {
+    socket.emit('send_message', this.state.selectedTeamId, this.state.message);
+
+    // TODO: should probably push message right away here instead of waiting for server
   };
 
   handleNavSelect = (teamId) => {
     // leave current lobby first
-    // TODO: this causes the state of leaving lobby to trigger AFTER we already reset state
-    
     socket.emit('leave_lobby', this.state.selectedTeamId, function(id) {
 
       window.history.pushState({}, "", "#Standup?id=" + teamId);
@@ -153,7 +164,7 @@ class StandupContainer extends Component {
 
         return (
           <div>
-            <Chat teamName={team.displayName} messages={this.state.messages}/>
+            <Chat teamName={team.displayName} messages={this.state.messages} handleMessageChange={this.handleMessageChange} handleSendMessage={this.handleSendMessage} />
             <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
             <WaitingRoom users={this.state.users}/>
             <StandupBox>

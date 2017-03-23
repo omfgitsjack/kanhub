@@ -60,6 +60,17 @@ export default ({ app, db, redisClient }) => {
             console.log('[Left Lobby]', username, teamId);
         });
 
+        socket.on('send_message', function(teamId, messageContent) {
+            const lobbyUrl = getLobbyUrl(teamId);
+
+            message = {
+                author: username,
+                content: messageContent,
+            };
+
+            standupIo.to(lobbyUrl).emit('message_received', message);
+        });
+
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby

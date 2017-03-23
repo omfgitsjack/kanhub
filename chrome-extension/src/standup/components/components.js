@@ -36,9 +36,7 @@ export const Chat = (props) => {
         </ul>
       </div>
       <div style={styles.chatFooter}>
-        <textarea style={styles.chatText} rows="4">
-          
-        </textarea>
+        <textarea style={styles.chatText} rows="4" onChange={props.handleMessageChange}/>
         <div style={styles.chatGroup}>
           <PrimaryButtonSmall onClick={props.handleSendMessage}>Send</PrimaryButtonSmall>
         </div>
