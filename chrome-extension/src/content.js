@@ -9,9 +9,7 @@ import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
-import { getUsernameCookie, authKanhub } from './modelCommon';
-
-import './settings.css';
+import { getUsernameCookie, getSocketToken, authKanhub } from './modelCommon';
 
 var octicons = require("octicons");
 
@@ -65,14 +63,14 @@ function handleHashLocation(e) {
 
 function renderStandupTab(query, renderAnchor) {
 
-  document.body.style.width = "80%";
   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
+  Promise.all([getUsernameCookie(), getSocketToken(), teamModel.getTeams({repo: repoName})]).then((res) => {
+
     ReactDOM.render(
       <MuiThemeProvider>
-        <StandupContainer query={query} username={res[0]} teams={res[1]} repo={repoName} />
+        <StandupContainer query={query} username={res[0]} socketToken={res[1].token} teams={res[2]} repo={repoName} />
       </MuiThemeProvider>,
       renderAnchor
     );

@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { NotInTeam, Chat, WaitingRoom, StandupBox, StandupProfile, StandupCard } from '../components/components';
 import { TeamSubNav } from '../../team/components/components';
 import { changeLocationHash } from '../../pageHelper';
+import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
+
+let socket;
 
 class StandupContainer extends Component {
 
@@ -11,13 +14,59 @@ class StandupContainer extends Component {
 
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
+      users: new Set(),
+      messages: [],
+      message: '',
     };
+  };
+
+  _onJoinSuccess(lobbyUsers) {
+    this.setState({
+      users: new Set(lobbyUsers),
+    });
+
+    console.log(this.state.users);
+  };
+
+  _onMessageReceive(message) {
+      let { messages } = this.state;
+      messages.push(message);
+      this.setState({
+        messages: messages,
+      });
+  };
+
+  _onUserJoin(username) {
+      let { users, messages } = this.state;
+      users.add(username);
+      messages.push({
+          author: '!kanhub_bot!',
+          content: username +' Joined'
+      });
+      this.setState({
+        users: users,
+        messages: messages,
+      });
+
+      console.log(users);
   };
 
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
-      
-    }
+
+      const team = this.props.teams.find(function (team) {
+          return team.id === this.state.selectedTeamId;
+      }.bind(this));
+
+      socket = createSocket(this.props.socketToken);
+
+      socket.on('connect', function () {
+        socket.emit('join_lobby', team.displayName + "_" + team.id);
+      }.bind(this));
+
+      socket.on('join_lobby_success', this._onJoinSuccess.bind(this));
+      socket.on('user_joined_lobby', this._onUserJoin.bind(this));
+      }
   };
 
   handleNavSelect = (teamId) => {
@@ -37,6 +86,8 @@ class StandupContainer extends Component {
 
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
+
+        document.body.style.width = "80%";
 
         const team = this.props.teams.find(function (team) {
           return team.id === this.state.selectedTeamId;

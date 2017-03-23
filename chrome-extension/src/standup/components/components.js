@@ -70,7 +70,7 @@ export const NotInTeam = (props) => {
   const heading = "You are not part of a team.";
   const description = "Find one to start sharing your ideas and progress.";
   return (
-    <BlankSlateSpacious heading={heading} description={description} icon={octicon.megaphone.toSVG({ "width": 45, "height": 45 })}>
+    <BlankSlateSpacious heading={heading} description={description} icon={octicons.megaphone.toSVG({ "width": 45, "height": 45 })}>
       <p><PrimaryButtonSmall onClick={props.handleFindTeam}>Find Team</PrimaryButtonSmall></p>
     </BlankSlateSpacious>
   );
