@@ -76,8 +76,10 @@ initializeDb(db => {
 	app.use('/api', api({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port);
+
+	let client = redisFactory();
 	
-	initSocket({ app: app.server, db, redis: redisFactory() });
+	initSocket({ app: app.server, db, redisClient: client });
 
 	console.log(`Started on port ${app.server.address().port}`);
 });

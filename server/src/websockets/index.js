@@ -2,8 +2,21 @@
 import socket from 'socket.io';
 import socketioJwt from 'socketio-jwt';
 
+const getLobbyUrl = teamId => `lobby/${teamId}`;
+const getUserUrl = username => `user/${username}`;
 
-export default ({ app, db }) => {
+const saveUserToLobby = (client, lobby, username) => {
+    client.hset(lobby, username, true)
+    client.hset(getUserUrl(username), lobby, true)
+};
+const removeUserFromLobby = (client, lobby, username) => {
+    client.hdel(lobby, username);
+    client.hdel(getUserUrl(username), lobby);
+};
+const getLobbyList = (client, lobby) => client.hkeysAsync(lobby);
+const getUserActiveLobbies = (client, user) => client.hkeysAsync(getUserUrl(user))
+
+export default ({ app, db, redisClient }) => {
     let io = socket(app);
 
     let standupIo = io
@@ -15,53 +28,26 @@ export default ({ app, db }) => {
 
     standupIo.on('connection', function (socket) {
         let username = socket.decoded_token.username;
-
         console.log('[Connection Established]', username);
 
         socket.on('join_lobby', teamId => {
-            // Join the lobby
-            socket.join('lobby/' + teamId)
+            const lobbyUrl = getLobbyUrl(teamId)
 
-            // Broadcast to everyone in lobby that user has joined
-            standupIo.to('lobby/' + teamId).emit('user_joined_lobby', username)
+            socket.join(lobbyUrl); // add user to lobby
+            saveUserToLobby(redisClient, lobbyUrl, username);
+            getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
-            socket.emit('join_lobby_success');
-
+            standupIo.to(lobbyUrl).emit('user_joined_lobby', username) // Broadcast to everyone in lobby that user has joined
             console.log('[Joined Lobby]', username);
         })
+
+        socket.on('disconnect', socket => {
+            getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
+                removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
+                standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
+            }))
+
+            console.log('[Disconnected]', username);
+        })
     })
-
-
-    // io.use(socketioJwt.authorize({
-    //     secret: "koocat",
-    //     handshake: true
-    // }))
-
-
-    // // Given token lookup their name from db..
-    // let getUsername = token => "bobby"
-
-
-    // standupIo.on('connection', socket => {
-    //     console.log(socket.decoded_token, 'connected');
-    // socket.emit('require_auth');
-
-    // socket.on('auth_request', token => {
-    //     console.log("[socket-auth]:", token);
-    // });
-
-    // socket.on('join_lobby', ({ token, teamId }) => {
-
-    //     if (!token) {
-    //         socket.emit('join_lobby_fail', { reason: 'require_auth' });
-    //     } else {
-    //         socket.join('lobby/' + teamId)
-    //         standupIo.to('lobby/' + teamId).emit('user_joined_lobby', getUsername(token))
-
-    //         socket.emit('join_lobby_success');
-    //         console.log("[join_team_standup_lobby]: ", teamId);
-    //     }
-    // })
-    // })
-
 }
