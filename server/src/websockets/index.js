@@ -49,13 +49,14 @@ export default ({ app, db, redisClient }) => {
         socket.on('leave_lobby', function(teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
+            socket.leave(lobbyUrl);
             removeUserFromLobby(redisClient, lobbyUrl, username);
             standupIo.to(lobbyUrl).emit('user_left_lobby', username);
 
             if (cb) {
                 cb(teamId);
             }
-            
+
             console.log('[Left Lobby]', username, teamId);
         });
 

@@ -113,7 +113,8 @@ class StandupContainer extends Component {
     // leave current lobby first
     // TODO: this causes the state of leaving lobby to trigger AFTER we already reset state
     
-    socket.emit('leave_lobby', this.state.selectedTeamId, function() {
+    socket.emit('leave_lobby', this.state.selectedTeamId, function(id) {
+
       window.history.pushState({}, "", "#Standup?id=" + teamId);
 
       this.setState({
@@ -125,7 +126,7 @@ class StandupContainer extends Component {
 
       // join new lobby
       socket.emit('join_lobby', teamId);
-    });
+    }.bind(this));
 
   };
 
