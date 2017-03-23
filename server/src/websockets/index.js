@@ -50,6 +50,15 @@ export default ({ app, db, redisClient }) => {
             console.log('[Left Lobby]', username, teamId);
         });
 
+        // socket.on('start_session') // initialize.
+        // socket.on('end_session') // commit to postgres. cleanup.
+
+        // socket.on('card_modified') // update current in card descr.
+        // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
+
+        // socket.on('typing_message')
+        // socket.on('new_message')
+
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
