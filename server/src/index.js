@@ -75,7 +75,7 @@ initializeDb(db => {
 
 	app.server.listen(process.env.PORT || config.port);
 	
-	initSocket({ app, db });
+	// initSocket({ app, db });
 
 	console.log(`Started on port ${app.server.address().port}`);
 });

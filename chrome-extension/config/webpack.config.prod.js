@@ -56,6 +56,7 @@ module.exports = {
     index: [require.resolve('./polyfills'), paths.appIndexJs],
     settings: paths.appSettingsJs,
     content: paths.appContentJs,
+    background: paths.backgroundJs
   },
   output: {
     // The build folder.
