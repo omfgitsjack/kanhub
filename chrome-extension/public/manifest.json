@@ -27,7 +27,7 @@
     }
   ],
   "background": {
-    "scripts": ["static/js/backgroundpage.js"],
+    "scripts": ["static/js/background.js"],
     "persistent": false
   },
   "icons": {

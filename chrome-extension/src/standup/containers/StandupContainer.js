@@ -10,7 +10,7 @@ class StandupContainer extends Component {
     super(props);
 
     this.state = {
-      selectedTeamId: parseInt(props.query.id) || this.props.teams[0].id,
+      selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
     };
   };
 
