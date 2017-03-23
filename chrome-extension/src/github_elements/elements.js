@@ -147,3 +147,15 @@ export const UserCard = (props) => {
         </div>
     );
 }
+
+export const Box = (props) => {
+    
+    return (
+        <div className="boxed-group flush">
+            <h3>{props.heading}</h3>
+            <div className="boxed-group-inner">
+                {props.children}
+            </div>
+        </div>
+    );
+}

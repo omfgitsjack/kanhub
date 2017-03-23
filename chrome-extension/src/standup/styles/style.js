@@ -1,10 +1,11 @@
 export const styles = {
   chatContainer: {
-    position: "absolute",
+    position: "fixed",
     right: "0px",
     bottom: "0px",
     top: "0px",
-    width: "320px",
+    width: "20vw",
+    minWidth: "250px",
     zIndex: "500",
     background: "#fafbfc",
   },
@@ -68,6 +69,39 @@ export const styles = {
     width: "100%",
     resize: "none",
   },
+  waitingRoomMemberList: {
+    display: "block",
+    overflow: "hidden",
+    overflowY: "auto",
+    width: "100%",
+    height: "150px",
+  },
+  waitingRoomButtonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: "20px 0px",
+  },
+  standUpProfile: {
+    borderRadius: "50%",
+    height: "100px",
+    width: "100px",
+    overflow: "hidden",
+    margin: "20px",
+  },
+  standUpCard: {
+    display: "block",
+    width: "550px",
+    height: "420px",
+    boxShadow: "0px 0px 66px 7px rgba(0,0,0,0.1)",
+    borderRadius: "2px",
+    background: "#fafbfc",
+  },
+  standUpBox: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  }
 };
 
 export default styles;

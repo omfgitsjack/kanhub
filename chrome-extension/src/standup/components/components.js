@@ -3,7 +3,7 @@ import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
   SectionTitle, SectionHeader, SectionButtonGroup, PrimaryButton,
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
-  UserCard
+  UserCard, Box
 } from '../../github_elements/elements';
 import styles from '../styles/style';
 import 'primer-css/build/build.css';
@@ -23,7 +23,7 @@ export const Chat = (props) => {
   return (
     <div className="border-left" style={styles.chatContainer}>
       <div style={styles.chatHeader}>
-        This is chat room
+        {props.teamName}
       </div>
       <div style={styles.chatSection}>
         <ul style={styles.chatMessageList}>
@@ -46,11 +46,24 @@ export const Chat = (props) => {
           
         </textarea>
         <div style={styles.chatGroup}>
-          <PrimaryButtonSmall>Send</PrimaryButtonSmall>
+          <PrimaryButtonSmall onClick={props.handleSendMessage}>Send</PrimaryButtonSmall>
         </div>
       </div>
     </div>
   );
+}
+
+export const WaitingRoom = (props) => {
+  return (
+    <Box heading="Waiting Room">
+      <div style={styles.waitingRoomMemberList}>
+        {props.children}
+      </div>
+      <div style={styles.waitingRoomButtonGroup}>
+        <PrimaryButton>Start Standup</PrimaryButton>
+      </div>
+    </Box>
+  )
 }
 
 export const NotInTeam = (props) => {
@@ -60,5 +73,27 @@ export const NotInTeam = (props) => {
     <BlankSlateSpacious heading={heading} description={description} icon={octicon.megaphone.toSVG({ "width": 45, "height": 45 })}>
       <p><PrimaryButtonSmall onClick={props.handleFindTeam}>Find Team</PrimaryButtonSmall></p>
     </BlankSlateSpacious>
+  );
+};
+
+export const StandupProfile = (props) => {
+  return (
+    <img style={styles.standUpProfile} src={props.src} alt="user" />
+  );
+};
+
+export const StandupCard = (props) => {
+  return (
+    <div style={styles.standUpCard}>
+      {props.children}
+    </div>
+  );
+};
+
+export const StandupBox = (props) => {
+  return (
+    <div style={styles.standUpBox}>
+      {props.children}
+    </div>
   );
 };

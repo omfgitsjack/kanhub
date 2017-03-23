@@ -67,10 +67,10 @@ export function checkPromise(response) {
     }
 }
 
-export function createPromise(request) {
+export function createPromise(request, notJson) {
     return fetch(request)
         .then((res) => { return checkPromise(res); })
-        .then((res) => res.json());
+        .then((res) => { return notJson ? res : res.json() });
 }
 
 export function createPromises(requests) {
@@ -85,4 +85,10 @@ export function getAuthUser() {
 
         return createPromise(getUser);
     });
+}
+
+export function authKanhub() {
+    const authReq = createRequest('GET', '/api/auth/github', null, false);
+
+    return createPromise(authReq, true);
 }

@@ -9,7 +9,7 @@ import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
-import { getUsernameCookie } from './modelCommon';
+import { getUsernameCookie, authKanhub } from './modelCommon';
 
 import './settings.css';
 
@@ -105,20 +105,22 @@ function renderTeamTab(query, renderAnchor) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  gitHubInjection(window, () => {
-    // reset the body width to original
-    document.body.style.width = null;
-  });
 
-  if (pageHelper.isRepo()) {
+  authKanhub().then(() => {
     gitHubInjection(window, () => {
-      addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
-      addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
+      // reset the body width to original
+      document.body.style.width = null;
     });
 
-    handleHashLocation(null);
-  }
+    if (pageHelper.isRepo()) {
+      gitHubInjection(window, () => {
+        addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
+        addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
+      });
 
+      handleHashLocation(null);
+    }
+  });
 });
 
 window.addEventListener('hashchange', handleHashLocation, false);

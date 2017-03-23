@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NotInTeam, Chat } from '../components/components';
+import { NotInTeam, Chat, WaitingRoom, StandupBox, StandupProfile, StandupCard } from '../components/components';
 import { TeamSubNav } from '../../team/components/components';
 import { changeLocationHash } from '../../pageHelper';
 import * as model from '../model/model';
@@ -22,6 +22,10 @@ class StandupContainer extends Component {
 
   handleNavSelect = (teamId) => {
     window.history.pushState({}, "", "#Standup?id=" + teamId);
+
+    this.setState({
+      selectedTeamId: teamId,
+    });
   };
 
 
@@ -33,11 +37,21 @@ class StandupContainer extends Component {
 
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
+
+        const team = this.props.teams.find(function (team) {
+          return team.id === this.state.selectedTeamId;
+        }.bind(this));
+
         return (
           <div>
-            <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
-            <Chat>
+            <Chat teamName={team.displayName}>
             </Chat>
+            <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
+            <WaitingRoom/>
+            <StandupBox>
+              <StandupProfile src="https://avatars0.githubusercontent.com/u/4117654?v=3&s=460"/>
+              <StandupCard/>
+            </StandupBox>
           </div>
         );
       } else {

@@ -38,8 +38,7 @@ export function joinTeam(data) {
     return getAuthUser().then((user) => {
         const joinTeam = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: user.login}, true);
 
-        return fetch(joinTeam)
-            .then((res) => { return checkPromise(res); });
+        return createPromise(joinTeam, true);
     });
 
 }
