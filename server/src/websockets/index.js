@@ -6,15 +6,15 @@ const getLobbyUrl = teamId => `lobby/${teamId}`;
 const getUserUrl = username => `user/${username}`;
 
 const saveUserToLobby = (client, lobby, username) => {
-    client.hset(lobby, username, true)
-    client.hset(getUserUrl(username), lobby, true)
+    client.hset(lobby, username, true);
+    client.hset(getUserUrl(username), lobby, true);
 };
 const removeUserFromLobby = (client, lobby, username) => {
     client.hdel(lobby, username);
     client.hdel(getUserUrl(username), lobby);
 };
 const getLobbyList = (client, lobby) => client.hkeysAsync(lobby);
-const getUserActiveLobbies = (client, user) => client.hkeysAsync(getUserUrl(user))
+const getUserActiveLobbies = (client, user) => client.hkeysAsync(getUserUrl(user));
 
 export default ({ app, db, redisClient }) => {
     let io = socket(app);
@@ -31,23 +31,32 @@ export default ({ app, db, redisClient }) => {
         console.log('[Connection Established]', username);
 
         socket.on('join_lobby', teamId => {
-            const lobbyUrl = getLobbyUrl(teamId)
+            const lobbyUrl = getLobbyUrl(teamId);
 
             socket.join(lobbyUrl); // add user to lobby
             saveUserToLobby(redisClient, lobbyUrl, username);
             getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
-            standupIo.to(lobbyUrl).emit('user_joined_lobby', username) // Broadcast to everyone in lobby that user has joined
+            standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
             console.log('[Joined Lobby]', username);
-        })
+        });
+
+        socket.on('leave_lobby', teamId => {
+            const lobbyUrl = getLobbyUrl(teamId);
+
+            removeUserFromLobby(redisClient, lobbyUrl, username);
+            standupIo.to(lobbyUrl).emit('user_left_lobby', username);
+
+            console.log('[Left Lobby]', username, teamId);
+        });
 
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
-            }))
+            }));
 
             console.log('[Disconnected]', username);
-        })
-    })
+        });
+    });
 }
