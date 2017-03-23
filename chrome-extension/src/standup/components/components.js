@@ -20,6 +20,11 @@ export const Message = (props) => {
 }
 
 export const Chat = (props) => {
+
+  const messages = props.messages.map(function(message, i) {
+    return <Message key={i} author={message.author} content={message.content} />;
+  });
+
   return (
     <div className="border-left" style={styles.chatContainer}>
       <div style={styles.chatHeader}>
@@ -27,18 +32,7 @@ export const Chat = (props) => {
       </div>
       <div style={styles.chatSection}>
         <ul style={styles.chatMessageList}>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
-          <Message author={"Klampz"} content="dasjdkasjdl sadaskdasldd sa dsadkjaslkdasd aslkdnaskldnaslkdnklsad klsa dklsa dklnaskldnasklndklasd"/>
+          {messages}
         </ul>
       </div>
       <div style={styles.chatFooter}>
@@ -54,16 +48,24 @@ export const Chat = (props) => {
 }
 
 export const WaitingRoom = (props) => {
+  let users = [];
+
+  for (var key in props.users) {
+    if (props.users[key]) {
+      users.push(<UserCard key={key} user={props.users[key]} />)
+    }
+  }
+
   return (
     <Box heading="Waiting Room">
       <div style={styles.waitingRoomMemberList}>
-        {props.children}
+        {users}
       </div>
       <div style={styles.waitingRoomButtonGroup}>
         <PrimaryButton>Start Standup</PrimaryButton>
       </div>
     </Box>
-  )
+  );
 }
 
 export const NotInTeam = (props) => {
@@ -78,7 +80,10 @@ export const NotInTeam = (props) => {
 
 export const StandupProfile = (props) => {
   return (
-    <img style={styles.standUpProfile} src={props.src} alt="user" />
+    <div style={styles.standUpProfile}>
+      <h2>{props.username}</h2>
+      <img style={styles.standUpProfilePicture} src={props.src} alt="user" />
+    </div>
   );
 };
 

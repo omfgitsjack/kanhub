@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NotInTeam, Chat, WaitingRoom, StandupBox, StandupProfile, StandupCard } from '../components/components';
-import { TeamSubNav } from '../../team/components/components';
+import { NoTeamFound, TeamSubNav } from '../../team/components/components';
 import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
@@ -14,18 +14,27 @@ class StandupContainer extends Component {
 
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
-      users: new Set(),
+      users: {},
       messages: [],
       message: '',
     };
   };
 
   _onJoinSuccess(lobbyUsers) {
-    this.setState({
-      users: new Set(lobbyUsers),
-    });
+    model.getAllUserInfo({users: lobbyUsers}).then(function(users) {
 
-    console.log(this.state.users);
+      var usersMap = users.reduce(function(map, user) {
+        map[user.login] = user;
+        return map;
+      }, {});
+
+      this.setState({
+        users: usersMap,
+      });
+
+      console.log(usersMap);
+      
+    }.bind(this));
   };
 
   _onMessageReceive(message) {
@@ -38,45 +47,87 @@ class StandupContainer extends Component {
 
   _onUserJoin(username) {
       let { users, messages } = this.state;
-      users.add(username);
+
       messages.push({
           author: '!kanhub_bot!',
           content: username +' Joined'
+      });
+
+      // user not found in user list, add it
+      if (!users[username]) {
+        model.getUserInfo({username: username}).then(function(user) {
+          users[username] = user;
+
+          this.setState({
+            users: users,
+            messages: messages,
+          });
+
+          console.log(users);
+        }.bind(this));
+      } else {
+        this.setState({
+          messages: messages,
+        });
+
+        console.log(users);
+      }
+  };
+
+  _onUserLeave(username) {
+      let { users, messages } = this.state;
+      users[username] = null;
+      messages.push({
+          author: '!kanhub_bot!',
+          content: username +' Left'
       });
       this.setState({
         users: users,
         messages: messages,
       });
-
-      console.log(users);
   };
 
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
-
       const team = this.props.teams.find(function (team) {
           return team.id === this.state.selectedTeamId;
       }.bind(this));
 
+      if (!team) {
+        return;
+      }
+
       socket = createSocket(this.props.socketToken);
 
       socket.on('connect', function () {
-        socket.emit('join_lobby', team.displayName + "_" + team.id);
+        socket.emit('join_lobby', team.id);
       }.bind(this));
 
       socket.on('join_lobby_success', this._onJoinSuccess.bind(this));
       socket.on('user_joined_lobby', this._onUserJoin.bind(this));
-      }
+      socket.on('user_left_lobby', this._onUserLeave.bind(this));
+    }
   };
 
   handleNavSelect = (teamId) => {
-    window.history.pushState({}, "", "#Standup?id=" + teamId);
+    // leave current lobby first
+    // TODO: this causes the state of leaving lobby to trigger AFTER we already reset state
+    
+    socket.emit('leave_lobby', this.state.selectedTeamId, function() {
+      window.history.pushState({}, "", "#Standup?id=" + teamId);
 
-    this.setState({
-      selectedTeamId: teamId,
+      this.setState({
+        selectedTeamId: teamId,
+        users: {},
+        messages: [],
+        message: '',
+      });
+
+      // join new lobby
+      socket.emit('join_lobby', teamId);
     });
-  };
 
+  };
 
   handleFindTeam() {
     changeLocationHash("#Team");
@@ -87,20 +138,25 @@ class StandupContainer extends Component {
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
 
-        document.body.style.width = "80%";
-
         const team = this.props.teams.find(function (team) {
           return team.id === this.state.selectedTeamId;
         }.bind(this));
 
+        if (!team) {
+          return (
+            <NoTeamFound />
+          );
+        }
+
+        document.body.style.width = "80%";
+
         return (
           <div>
-            <Chat teamName={team.displayName}>
-            </Chat>
+            <Chat teamName={team.displayName} messages={this.state.messages}/>
             <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
-            <WaitingRoom/>
+            <WaitingRoom users={this.state.users}/>
             <StandupBox>
-              <StandupProfile src="https://avatars0.githubusercontent.com/u/4117654?v=3&s=460"/>
+              <StandupProfile username="omfgitsjack" src="https://avatars0.githubusercontent.com/u/4117654?v=3&s=460"/>
               <StandupCard/>
             </StandupBox>
           </div>

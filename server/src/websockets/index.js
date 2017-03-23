@@ -30,7 +30,7 @@ export default ({ app, db, redisClient }) => {
         let username = socket.decoded_token.username;
         console.log('[Connection Established]', username);
 
-        socket.on('join_lobby', teamId => {
+        socket.on('join_lobby', (teamId, cb) => {
             const lobbyUrl = getLobbyUrl(teamId);
 
             socket.join(lobbyUrl); // add user to lobby
@@ -38,15 +38,18 @@ export default ({ app, db, redisClient }) => {
             getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
             standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
+            
+            cb(teamId);
             console.log('[Joined Lobby]', username);
         });
 
-        socket.on('leave_lobby', teamId => {
+        socket.on('leave_lobby', (teamId, cb) => {
             const lobbyUrl = getLobbyUrl(teamId);
 
             removeUserFromLobby(redisClient, lobbyUrl, username);
             standupIo.to(lobbyUrl).emit('user_left_lobby', username);
 
+            cb(teamId);
             console.log('[Left Lobby]', username, teamId);
         });
 

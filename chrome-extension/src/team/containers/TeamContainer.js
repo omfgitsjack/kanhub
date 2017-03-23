@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TeamSubNav, TeamInfo, NoTeams, TeamMembers, NoMembers } from '../components/components';
+import { TeamSubNav, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
 import { SectionButtonGroup, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
@@ -39,7 +39,7 @@ class TeamContainer extends Component {
 
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
-      window.history.pushState({}, "", "#Team?id=" + this.props.teams[0].id);
+      window.history.pushState({}, "", "#Team?id=" + (this.state.selectedTeamId || this.props.teams[0].id));
       this.getTeamMembers(this.state.selectedTeamId || this.props.teams[0].id);
     }
   };
@@ -76,6 +76,12 @@ class TeamContainer extends Component {
         const team = this.props.teams.find(function (team) {
           return team.id === this.state.selectedTeamId;
         }.bind(this));
+
+        if (!team) {
+          return (
+            <NoTeamFound />
+          );
+        }
 
         return (
           <RepoContent>
