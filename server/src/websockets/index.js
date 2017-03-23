@@ -63,7 +63,7 @@ export default ({ app, db, redisClient }) => {
         socket.on('send_message', function(teamId, messageContent) {
             const lobbyUrl = getLobbyUrl(teamId);
 
-            message = {
+            const message = {
                 author: username,
                 content: messageContent,
             };
