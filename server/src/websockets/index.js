@@ -30,7 +30,7 @@ export default ({ app, db, redisClient }) => {
         let username = socket.decoded_token.username;
         console.log('[Connection Established]', username);
 
-        socket.on('join_lobby', (teamId, cb) => {
+        socket.on('join_lobby', function(teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             socket.join(lobbyUrl); // add user to lobby
@@ -43,7 +43,7 @@ export default ({ app, db, redisClient }) => {
             console.log('[Joined Lobby]', username);
         });
 
-        socket.on('leave_lobby', (teamId, cb) => {
+        socket.on('leave_lobby', function(teamId, cb) {
             const lobbyUrl = getLobbyUrl(teamId);
 
             removeUserFromLobby(redisClient, lobbyUrl, username);
