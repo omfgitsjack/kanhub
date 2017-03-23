@@ -39,7 +39,10 @@ export default ({ app, db, redisClient }) => {
 
             standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
             
-            cb(teamId);
+            if (cb) {
+                cb(teamId);
+            }
+
             console.log('[Joined Lobby]', username);
         });
 
@@ -49,7 +52,10 @@ export default ({ app, db, redisClient }) => {
             removeUserFromLobby(redisClient, lobbyUrl, username);
             standupIo.to(lobbyUrl).emit('user_left_lobby', username);
 
-            cb(teamId);
+            if (cb) {
+                cb(teamId);
+            }
+            
             console.log('[Left Lobby]', username, teamId);
         });
 
