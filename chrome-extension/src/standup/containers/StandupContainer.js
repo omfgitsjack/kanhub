@@ -209,19 +209,16 @@ class StandupContainer extends Component {
   };
 
   handleSendMessage = () => {
-    
-    if (this.state.message.length === 0) {
-      return;
-    }
+    if (this.state.message.length === 0) return;
 
-    socket.emit('send_message', this.state.selectedTeamId, this.state.message);
+    let activeSession = this.state.session ? this.state.session.sessionId : null;
+
+    socket.emit('send_message', this.state.selectedTeamId, this.state.message, activeSession);
 
     // push message right away without waiting for server response
     this._onMessageReceive({'author': this.state.me.login, 'content': this.state.message});
 
-    this.setState({
-      message: '',
-    });
+    this.setState({ message: '' });
   };
 
   handleKeyPress = (e) => {
