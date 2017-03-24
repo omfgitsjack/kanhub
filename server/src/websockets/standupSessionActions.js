@@ -44,7 +44,7 @@ export default (redis, io, teamId, sessionId) => {
                     sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
                     currentUser: username,
                     currentCard: card,
-                    chat: rows
+                    chat: rows.map(row => row.get({ plain: true }))
                 }
             })
         },
