@@ -8,7 +8,7 @@ import chatFactory from '../repositories/chat';
 
 import moment from 'moment'
 
-const getLobbyUrl = teamId => `lobby/${teamId}`;
+const getLobbyUrl = (repo, teamId) => `repo/${repo}/lobby/${teamId}`;
 const getUserUrl = username => `user/${username}`;
 const getSessionQueue = sessionId => `queue/${sessionId}`
 
@@ -31,7 +31,7 @@ export default ({ app, db, redisClient }) => {
         chatRepo = chatFactory({ db }),
         io = socket(app);
 
-    let standupIo = io
+    let standupIo = io  
         .of('/auth/standup')
         .use(socketioJwt.authorize({
             secret: 'koocat',
@@ -42,8 +42,8 @@ export default ({ app, db, redisClient }) => {
         let username = socket.decoded_token.username;
         console.log('[Connection Established]', username);
 
-        socket.on('join_lobby', function (teamId, cb) {
-            const lobbyUrl = getLobbyUrl(teamId);
+        socket.on('join_lobby', function (repo, teamId, cb) {
+            const lobbyUrl = getLobbyUrl(repo, teamId);
 
             socket.join(lobbyUrl); // add user to lobby
             saveUserToLobby(redisClient, lobbyUrl, username);
@@ -57,7 +57,7 @@ export default ({ app, db, redisClient }) => {
                         cb(teamId)
                     } else {
                         let session = val.get({ plain: true });
-                        let actions = sessionActions(redisClient, standupIo, teamId, session.id);
+                        let actions = sessionActions(redisClient, standupIo, teamId, session.id, repo);
 
                         actions.getSessionDetails(chatRepo).then(details => cb(teamId, details))
 
@@ -69,8 +69,8 @@ export default ({ app, db, redisClient }) => {
             console.log('[Joined Lobby]', username);
         });
 
-        socket.on('leave_lobby', function (teamId, cb) {
-            const lobbyUrl = getLobbyUrl(teamId);
+        socket.on('leave_lobby', function (repo, teamId, cb) {
+            const lobbyUrl = getLobbyUrl(repo, teamId);
 
             socket.leave(lobbyUrl);
             removeUserFromLobby(redisClient, lobbyUrl, username);
@@ -86,13 +86,13 @@ export default ({ app, db, redisClient }) => {
         /**
          * cb called if there's a problem.
          */
-        socket.on('start_session', (teamId, cb) => {
+        socket.on('start_session', (repo, teamId, cb) => {
             sessionsRepo.create(teamId).then(({ session, created }) => {
-                let actions = sessionActions(redisClient, standupIo, teamId, session.id);
+                let actions = sessionActions(redisClient, standupIo, teamId, session.id, repo);
                 if (!created) { // session already exists
                     actions.getSessionDetails(chatRepo).then(details => cb(details));
                 } else { // just started a new session.
-                    getLobbyList(redisClient, getLobbyUrl(teamId)).then(users => {
+                    getLobbyList(redisClient, getLobbyUrl(repo, teamId)).then(users => {
                         console.log('Initializing queue w/ ', users);
                         let time = new Date()
 
@@ -104,13 +104,13 @@ export default ({ app, db, redisClient }) => {
                             .then(nextUser => sessionsCard.create(session.id, nextUser))
                             .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
                             .then(() => actions.getSessionDetails(chatRepo))
-                            .then(details => standupIo.to(getLobbyUrl(teamId)).emit('session_started', details))
+                            .then(details => standupIo.to(getLobbyUrl(repo, teamId)).emit('session_started', details))
                     })
                 }
             })
         })
-        socket.on('end_session', (teamId, sessionId, cb) => {
-            let actions = sessionActions(redisClient, standupIo, teamId, sessionId);
+        socket.on('end_session', (repo, teamId, sessionId, cb) => {
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId, repo);
 
             actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
 
@@ -118,8 +118,8 @@ export default ({ app, db, redisClient }) => {
         })
 
         // Should add guards & checks.
-        socket.on('card_modified', (teamId, sessionId, payload) => {
-            let actions = sessionActions(redisClient, standupIo, teamId, sessionId)
+        socket.on('card_modified', (repo, teamId, sessionId, payload) => {
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId, repo);
 
             actions.updateCurrentCard(payload.id, payload)
                 .then(() => {
@@ -128,8 +128,8 @@ export default ({ app, db, redisClient }) => {
         })
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
 
-        socket.on('next_person', (teamId, sessionId) => {
-            let actions = sessionActions(redisClient, standupIo, teamId, sessionId)
+        socket.on('next_person', (repo, teamId, sessionId) => {
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId, repo)
 
             // Save current user's card
             actions.getCurrentCard()
@@ -150,8 +150,8 @@ export default ({ app, db, redisClient }) => {
 
         // socket.on('typing_message')
         // socket.on('new_message')
-        socket.on('send_message', function (teamId, messageContent, sessionId=false) {
-            const lobbyUrl = getLobbyUrl(teamId);
+        socket.on('send_message', function (repo, teamId, messageContent, sessionId=false) {
+            const lobbyUrl = getLobbyUrl(repo, teamId);
 
             chatRepo.create({ 
                 teamId, 
@@ -167,8 +167,8 @@ export default ({ app, db, redisClient }) => {
             socket.broadcast.to(lobbyUrl).emit('message_received', message);
         });
 
-        socket.on('disconnect', socket => {
-            getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
+        socket.on('disconnect', () => {
+            getUserActiveLobbies(redisClient, username).then(lobbies => console.log('[activelobies]', lobbies) && lobbies.forEach(lobby => {
                 console.log();
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.

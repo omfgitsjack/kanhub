@@ -68,7 +68,7 @@ function renderStandupTab(query, renderAnchor) {
     ReactDOM.unmountComponentAtNode(renderAnchor);
     ReactDOM.render(
       <MuiThemeProvider>
-        <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={res[2]} repo={repoName} />
+        <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={res[2]} owner={ownerName} repo={repoName} />
       </MuiThemeProvider>,
       renderAnchor
     );
