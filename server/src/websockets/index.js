@@ -174,7 +174,7 @@ export default ({ app, db, redisClient }) => {
                 content: messageContent,
             };
 
-            standupIo.to(lobbyUrl).broadcast.emit('message_received', message);
+            standupIo.broadcast.to(lobbyUrl).emit('message_received', message);
         });
 
         socket.on('disconnect', socket => {
