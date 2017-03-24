@@ -34,6 +34,20 @@ export default ({ config, db, requireAuth }) => {
         });
     }));
 
+    api.get('/cookies', requireAuth, (req, res) => {
+        let user = req.session.user;
+        res.cookie('kh_username', user.username, {
+            secure: true,
+            sameSite: false // TODO: toggle to true and access cookie from background page
+        });
+        res.cookie('kh_github_token', user.token, {
+            secure: true,
+            sameSite: false // TODO: toggle to true and access cookie from background page
+        })
+
+        res.json();
+    })
+
     api.get('/socket', requireAuth, (req, res) => {
         let token = jwt.sign(req.session.user, "koocat", {
             expiresIn: "360d"

@@ -18,6 +18,7 @@ export default ({ db }) => {
 
     // team relations
     team.belongsToMany(user, { through: 'TeamList' });
+    team.hasMany(standupSessions, { foreignKey: 'teamId' });
 
     // standupSessions relations
     standupSessions.belongsTo(team, { foreignKey: 'teamId' })

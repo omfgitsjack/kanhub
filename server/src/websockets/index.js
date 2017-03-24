@@ -50,7 +50,26 @@ export default ({ app, db, redisClient }) => {
             standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
 
             if (cb) {
-                cb(teamId);
+                sessionsRepo.findActiveSession(teamId).then(val => {
+                    if (!val) {
+                        cb(teamId)
+                    } else {
+                        let session = val.get({ plain: true });
+                        let actions = sessionActions(redisClient, standupIo, teamId, session.id);
+
+                        actions.getSessionDetails().then(({ username, card, startingTime }) => {
+                            cb(teamId, {
+                                sessionId: session.id,
+                                sessionStartTime: moment(new Date(startingTime)),
+                                sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
+                                currentUser: username,
+                                currentCard: card
+                            });
+                        })
+
+                        console.log(val.get({ plain: true }), 'found active session!');
+                    }
+                })
             }
 
             console.log('[Joined Lobby]', username);
@@ -102,8 +121,8 @@ export default ({ app, db, redisClient }) => {
                             .then(({ username, card, startingTime }) => {
                                 standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
                                     sessionId: session.id,
-                                    sessionStartTime: moment(startingTime),
-                                    sessionEndTime: moment(startingTime).add(15, 'minutes'),
+                                    sessionStartTime: moment(new Date(startingTime)),
+                                    sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
                                     currentUser: username,
                                     currentCard: card
                                 })
@@ -114,6 +133,9 @@ export default ({ app, db, redisClient }) => {
         })
         socket.on('end_session', (teamId, sessionId, cb) => {
             let actions = sessionActions(redisClient, standupIo, teamId, sessionId);
+
+            actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
+
             actions.sessionEnd(sessionsRepo, cb);
         })
 
@@ -133,7 +155,7 @@ export default ({ app, db, redisClient }) => {
 
             // Save current user's card
             actions.getCurrentCard()
-                .then(card => console.log(card) && sessionsCard.edit(card.id, card))
+                .then(card => sessionsCard.edit(card.id, card))
                 .then(actions.setNewCurrentFromQueue)
                 .then(nextUser => sessionsCard.create(sessionId, nextUser))
                 .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
@@ -160,8 +182,6 @@ export default ({ app, db, redisClient }) => {
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
             }));
-
-
 
             console.log('[Disconnected]', username);
         });

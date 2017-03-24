@@ -8,6 +8,7 @@ import team from './teams'
 import passport from 'passport';
 
 const requireAuth = (req, res, next) => {
+	console.log(req.session, 'session');
 	if (req.session && req.session.user) {
 		next()
 	} else {

@@ -9,7 +9,7 @@ export default ({ db }) => {
     return {
         create: teamId => new Promise(resolve => SessionModel
             .findOrCreate({
-                where: { 
+                where: {
                     teamId,
                     sessionStartedAt: {
                         $gt: moment().subtract(15, 'minutes').toDate(),
@@ -19,10 +19,23 @@ export default ({ db }) => {
                         $eq: null
                     }
                 },
-                defaults: { teamId: teamId, sessionStartedAt: new Date(), sessionEndedAt: null }})
+                defaults: { teamId: teamId, sessionStartedAt: new Date(), sessionEndedAt: null }
+            })
             .spread((session, created) => {
                 resolve({ session, created });
             })),
+        findActiveSession: teamId => SessionModel.find({
+            where: {
+                teamId,
+                sessionStartedAt: {
+                    $gt: moment().subtract(15, 'minutes').toDate(),
+                    $lt: moment().toDate()
+                },
+                sessionEndedAt: {
+                    $eq: null
+                }
+            }
+        }),
         /**
          * Returns { rows: [...], count: int }, with the most recently ended sessions
          * shown first.
