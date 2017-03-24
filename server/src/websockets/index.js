@@ -75,11 +75,18 @@ export default ({ app, db, redisClient }) => {
          */
         socket.on('start_session', (teamId, cb) => {
             sessionsRepo.create(teamId).then(({ session, created }) => {
+                let actions = sessionActions(redisClient, standupIo, teamId, session.id);
                 if (!created) { // session already exists
-                    cb(session.id)
+                    actions.getSessionDetails().then(({ username, card, startingTime }) => {
+                        cb({
+                            sessionId: session.id,
+                            sessionStartTime: moment(new Date(startingTime)),
+                            sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
+                            currentUser: username,
+                            currentCard: card
+                        })
+                    })
                 } else { // just started a new session.
-                    let actions = sessionActions(redisClient, standupIo, teamId, session.id);
-
                     getLobbyList(redisClient, getLobbyUrl(teamId)).then(users => {
                         console.log('Initializing queue w/ ', users);
                         let time = new Date()
@@ -110,7 +117,15 @@ export default ({ app, db, redisClient }) => {
             actions.sessionEnd(sessionsRepo, cb);
         })
 
-        // socket.on('card_modified') // update current in card descr.
+        // Should add guards & checks.
+        socket.on('card_modified', (teamId, sessionId, payload) => {
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId)
+
+            actions.updateCurrentCard(payload.id, payload)
+                .then(() => {
+                    standupIo.emit('current_card', payload);
+                })
+        })
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
 
         socket.on('next_person', (teamId, sessionId) => {
