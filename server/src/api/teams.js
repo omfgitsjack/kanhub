@@ -79,13 +79,20 @@ export default ({ config, db }) => {
 
     // TODO: Add validation here.
     api.post('/:teamId/members', (req, res) => {
-        let username = req.body.username
+        let username = req.session.user.username
 
         TeamRepository.addTeamMember(req.params.teamId, username).then(() => {
             res.json();
         }).catch(err => {
             res.status(400).json({ success: false, code: "INTERNAL_ERROR" })
         })
+    })
+    api.delete('/:teamId/members/:username', (req, res) => {
+        let username = req.session.user.username;
+
+        TeamRepository.removeTeamMember(req.params.teamId, username)
+            .then(() => res.json())
+            .catch(err => res.status(400).json({ success: false, code: "INTERNAL_ERROR" }))
     })
 
     api.use('/:teamId/standups', standupRoutes({ config, db }));

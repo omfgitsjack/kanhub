@@ -41,6 +41,7 @@ export default ({ db }) => {
             Promise.all([
                 TeamModel.findById(teamId),
                 UserModel.findById(userId)
-            ]).then(([ team, user ]) => team.addUser(userId))
+            ]).then(([ team, user ]) => team.addUser(userId)),
+        removeTeamMember: (teamId, userId) => TeamModel.findById(teamId).then(team => team.removeUser(userId))
     }
 }
