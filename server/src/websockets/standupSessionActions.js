@@ -1,12 +1,12 @@
 
 const getSessionQueue = sessionId => `queue/${sessionId}`
-const getLobbyUrl = teamId => `lobby/${teamId}`;
+const getLobbyUrl = (repo, teamId) => `repo/${repo}/lobby/${teamId}`;
 const getStartTime = sessionId => `startTime/${sessionId}`;
 
 import moment from 'moment'
 
-export default (redis, io, teamId, sessionId) => {
-    let room = io.to(getLobbyUrl(teamId))
+export default (redis, io, teamId, sessionId, repo) => {
+    let room = io.to(getLobbyUrl(repo, teamId))
 
     let api = {
         sessionStart: time => redis.setAsync(getStartTime(sessionId), time),
@@ -26,7 +26,7 @@ export default (redis, io, teamId, sessionId) => {
                 .then(() => {
                     console.log("[Session Ended]", sessionId);
                     
-                    room.to(getLobbyUrl(teamId)).emit('session_ended', {
+                    room.emit('session_ended', {
                         sessionId: sessionId
                     })
                 })
