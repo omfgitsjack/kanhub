@@ -99,6 +99,16 @@ export const NoTeams = (props) => {
   );
 }
 
+export const NoPresenter = (props) => {
+  const heading = "Oh no! The presenter left the session!";
+  const description = props.timeLeft;
+  return (
+    <BlankSlateSpacious heading={heading} description={description} icon={octicons['issue-opened'].toSVG({ "width": 45, "height": 45 })}>
+      <p><PrimaryButtonSmall onClick={props.handleNextPerson}>Skip Presenter</PrimaryButtonSmall></p>
+    </BlankSlateSpacious>
+  );
+}
+
 export const NoMembers = (props) => {
   const heading = `There aren't any members in ${props.teamName}.`;
   return (

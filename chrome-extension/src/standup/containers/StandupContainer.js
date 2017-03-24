@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { NotInTeam, WaitingRoom, StandupBox, StandupProfile } from '../components/components';
 import Chat from '../components/Chat';
 import StandupCard from '../components/StandupCard';
-import { NoTeamFound, TeamSubNav } from '../../team/components/components';
+import { NoTeamFound, NoPresenter, TeamSubNav } from '../../team/components/components';
 import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
@@ -44,7 +44,6 @@ class StandupContainer extends Component {
 
   _onJoinSuccess(lobbyUsers) {
     model.getAllUserInfo({users: lobbyUsers}).then(function(users) {
-
       var usersMap = users.reduce(function(map, user) {
         map[user.login] = user;
         return map;
@@ -93,6 +92,8 @@ class StandupContainer extends Component {
   };
 
   _onUserJoin(username, cb) {
+      console.log(cb);
+
       let { users, messages } = this.state;
 
       messages.push({
@@ -172,7 +173,7 @@ class StandupContainer extends Component {
   };
 
   _onCardReceive(card) {
-
+    
     this.setState({
       currentCard: card,
     }, function() {
@@ -208,7 +209,7 @@ class StandupContainer extends Component {
 
       socket.on('connect', function () {
         socket.emit('join_lobby', this.uniqueId, team.id, function(teamId, session) {
-          this._onUserJoin(this.state.me.login, () => {this._onSessionStart(session)});
+          this._onSessionStart(session);
         }.bind(this));
       }.bind(this));
 
@@ -230,6 +231,7 @@ class StandupContainer extends Component {
     }
     
     if (socket) {
+      socket.emit('leave_lobby', this.uniqueId, this.state.selectedTeamId);
       socket.disconnect();
     }
   };
@@ -279,7 +281,7 @@ class StandupContainer extends Component {
       }, function() {
         // join new lobby
         socket.emit('join_lobby', this.uniqueId, teamId, function(teamId, session) {
-          this._onSessionStart(session);
+            this._onSessionStart(session);
         }.bind(this));
       });
     }.bind(this));
@@ -390,19 +392,19 @@ class StandupContainer extends Component {
         if (this.state.session && this.state.currentCard) {
           presentingUser = this.state.users[this.state.currentCard.username];
 
-          if (!presentingUser) {
-            return (<div></div>);
+          if (presentingUser) {
+            mePresenting = this.state.me.login === presentingUser.login;
           }
-
-          mePresenting = this.state.me.login === presentingUser.login;
         }
 
         return (
           <RepoContent>
             <Chat ref="chat" teamName={team.displayName} messages={this.state.messages} message={this.state.message} {...this} />
             <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
+
             {!this.state.session || !this.state.currentCard ?
             <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
+            presentingUser ?
             <StandupBox>
               <h1>{this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}</h1>
               <StandupProfile username={presentingUser && presentingUser.login} src={presentingUser && presentingUser['avatar_url']}/>
@@ -416,7 +418,8 @@ class StandupContainer extends Component {
                 <DangerButton onClick={this.handleEndSession}>End Session</DangerButton>
                 {mePresenting ? <PrimaryButton onClick={this.handleNextPerson}>Done</PrimaryButton> : <div></div>}
               </SpreadSectionButtonGroup>
-            </StandupBox>}
+            </StandupBox> :
+            <NoPresenter handleNextPerson={this.handleNextPerson} timeLeft={this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}></NoPresenter>}
           </RepoContent>
         );
       } else {
