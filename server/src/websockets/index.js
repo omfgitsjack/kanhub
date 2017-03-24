@@ -112,7 +112,7 @@ export default ({ app, db, redisClient }) => {
 
                         actions.sessionStart(time)
                             // End the session in 15 minutes.
-                            .then(() => setInterval(() => actions.sessionEnd(sessionsRepo, () => { }), 15 * 60 * 1000))
+                            .then(() => setTimeout(() => actions.sessionEnd(sessionsRepo, () => { }), 15 * 60 * 1000))
                             .then(() => actions.pushUsersIntoQueue(users))
                             .then(() => actions.setNewCurrentFromQueue(false))
                             .then(nextUser => sessionsCard.create(session.id, nextUser))
@@ -134,7 +134,7 @@ export default ({ app, db, redisClient }) => {
         socket.on('end_session', (teamId, sessionId, cb) => {
             let actions = sessionActions(redisClient, standupIo, teamId, sessionId);
 
-            actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
+            // actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
 
             actions.sessionEnd(sessionsRepo, cb);
         })
@@ -145,7 +145,7 @@ export default ({ app, db, redisClient }) => {
 
             actions.updateCurrentCard(payload.id, payload)
                 .then(() => {
-                    socket.broadcast.emit('current_card', payload);
+                    standupIo.emit('current_card', payload);
                 })
         })
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
@@ -159,13 +159,7 @@ export default ({ app, db, redisClient }) => {
                 .then(actions.setNewCurrentFromQueue)
                 .then(nextUser => sessionsCard.create(sessionId, nextUser))
                 .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
-                .then(card => {
-                    if (card.username) {
-                        standupIo.emit('current_card', card);
-                    } else {
-                        actions.sessionEnd(sessionsRepo, ()=>{});
-                    }
-                })
+                .then(card => standupIo.emit('current_card', card))
         });
 
         // Say a person disconnected & they're in the queue, we need to remove them.
@@ -180,7 +174,7 @@ export default ({ app, db, redisClient }) => {
                 content: messageContent,
             };
 
-            socket.broadcast.to(lobbyUrl).emit('message_received', message);
+            standupIo.to(lobbyUrl).emit('message_received', message);
         });
 
         socket.on('disconnect', socket => {
