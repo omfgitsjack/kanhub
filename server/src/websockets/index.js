@@ -4,6 +4,7 @@ import socketioJwt from 'socketio-jwt';
 
 import standupSessionsFactory from '../repositories/standupSessions';
 import standupCardsFactory from '../repositories/standupCards';
+import chatFactory from '../repositories/chat';
 
 import moment from 'moment'
 
@@ -27,6 +28,7 @@ import sessionActions from './standupSessionActions';
 export default ({ app, db, redisClient }) => {
     let sessionsRepo = standupSessionsFactory({ db }),
         sessionsCard = standupCardsFactory({ db }),
+        chatRepo = chatFactory({ db }),
         io = socket(app);
 
     let standupIo = io
@@ -57,15 +59,7 @@ export default ({ app, db, redisClient }) => {
                         let session = val.get({ plain: true });
                         let actions = sessionActions(redisClient, standupIo, teamId, session.id);
 
-                        actions.getSessionDetails().then(({ username, card, startingTime }) => {
-                            cb(teamId, {
-                                sessionId: session.id,
-                                sessionStartTime: moment(new Date(startingTime)),
-                                sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
-                                currentUser: username,
-                                currentCard: card
-                            });
-                        })
+                        actions.getSessionDetails(chatRepo).then(details => cb(teamId, details))
 
                         console.log(val.get({ plain: true }), 'found active session!');
                     }
@@ -96,15 +90,7 @@ export default ({ app, db, redisClient }) => {
             sessionsRepo.create(teamId).then(({ session, created }) => {
                 let actions = sessionActions(redisClient, standupIo, teamId, session.id);
                 if (!created) { // session already exists
-                    actions.getSessionDetails().then(({ username, card, startingTime }) => {
-                        cb({
-                            sessionId: session.id,
-                            sessionStartTime: moment(new Date(startingTime)),
-                            sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
-                            currentUser: username,
-                            currentCard: card
-                        })
-                    })
+                    actions.getSessionDetails(chatRepo).then(details => cb(details));
                 } else { // just started a new session.
                     getLobbyList(redisClient, getLobbyUrl(teamId)).then(users => {
                         console.log('Initializing queue w/ ', users);
@@ -117,16 +103,8 @@ export default ({ app, db, redisClient }) => {
                             .then(() => actions.setNewCurrentFromQueue(false))
                             .then(nextUser => sessionsCard.create(session.id, nextUser))
                             .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
-                            .then(actions.getSessionDetails)
-                            .then(({ username, card, startingTime }) => {
-                                standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
-                                    sessionId: session.id,
-                                    sessionStartTime: moment(new Date(startingTime)),
-                                    sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
-                                    currentUser: username,
-                                    currentCard: card
-                                })
-                            })
+                            .then(() => actions.getSessionDetails(chatRepo))
+                            .then(details => standupIo.to(getLobbyUrl(teamId)).emit('session_started', details))
                     })
                 }
             })
@@ -134,7 +112,7 @@ export default ({ app, db, redisClient }) => {
         socket.on('end_session', (teamId, sessionId, cb) => {
             let actions = sessionActions(redisClient, standupIo, teamId, sessionId);
 
-            // actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
+            actions.getCurrentCard().then(card => sessionsCard.edit(card.id, card))
 
             actions.sessionEnd(sessionsRepo, cb);
         })
@@ -145,7 +123,7 @@ export default ({ app, db, redisClient }) => {
 
             actions.updateCurrentCard(payload.id, payload)
                 .then(() => {
-                    standupIo.emit('current_card', payload);
+                    socket.broadcast.emit('current_card', payload);
                 })
         })
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
@@ -159,22 +137,34 @@ export default ({ app, db, redisClient }) => {
                 .then(actions.setNewCurrentFromQueue)
                 .then(nextUser => sessionsCard.create(sessionId, nextUser))
                 .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
-                .then(card => standupIo.emit('current_card', card))
+                .then(card => {
+                    if (card.username) {
+                        standupIo.emit('current_card', card);
+                    } else {
+                        actions.sessionEnd(sessionsRepo, ()=>{});
+                    }
+                })
         });
 
         // Say a person disconnected & they're in the queue, we need to remove them.
 
         // socket.on('typing_message')
         // socket.on('new_message')
-        socket.on('send_message', function (teamId, messageContent) {
+        socket.on('send_message', function (teamId, messageContent, sessionId=false) {
             const lobbyUrl = getLobbyUrl(teamId);
+
+            chatRepo.create({ 
+                teamId, 
+                username, 
+                message: messageContent, 
+                sessionId: sessionId ? sessionId : null })
 
             const message = {
                 author: username,
                 content: messageContent,
             };
 
-            standupIo.to(lobbyUrl).emit('message_received', message);
+            socket.broadcast.to(lobbyUrl).emit('message_received', message);
         });
 
         socket.on('disconnect', socket => {

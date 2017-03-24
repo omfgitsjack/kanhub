@@ -1,6 +1,5 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import facets from './facets';
 
 import auth from './auth'
 import user from './users'
@@ -25,7 +24,6 @@ export default ({ config, db }) => {
 		res.json({ version });
 	});
 
-	// api.use('/facets', facets({ config, db }));
 	api.use('/auth', auth({ config, db, requireAuth }));
 	api.use('/users', requireAuth, user({ config, db }));
 	api.use('/repository/:repository/teams', requireAuth, team({ config, db }));

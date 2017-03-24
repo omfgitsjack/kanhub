@@ -31,16 +31,20 @@ export default (redis, io, teamId, sessionId) => {
                     })
                 })
                 .catch(reason => cb(reason)),
-        getSessionDetails: () => {
+        getSessionDetails: (chatRepo) => {
             return Promise.all([
                 api.getCurrentPerson(),
                 api.getCurrentCard(),
-                redis.getAsync(getStartTime(sessionId))
-            ]).then(([ username, card, startingTime ]) => {
+                redis.getAsync(getStartTime(sessionId)),
+                chatRepo.readAll({ sessionId, pageSize: 1000000 })
+            ]).then(([ username, card, startingTime, { rows, count } ]) => {
                 return {
-                    username,
-                    card,
-                    startingTime
+                    sessionId,
+                    sessionStartTime: moment(new Date(startingTime)),
+                    sessionEndTime: moment(new Date(startingTime)).add(15, 'minutes'),
+                    currentUser: username,
+                    currentCard: card,
+                    chat: rows
                 }
             })
         },
