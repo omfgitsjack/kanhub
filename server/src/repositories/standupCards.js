@@ -11,7 +11,7 @@ export default ({ db }) => {
                     defaults: { sessionId, username }
                 })
                 .spread((card, created) => {
-                    resolve({ card, created })
+                    resolve({ card: card.get({ plain: true }), created })
                 })
         }),
         readAllFromSession: ({ sessionId, page = 0, pageSize = 10 }) =>

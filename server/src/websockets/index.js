@@ -3,9 +3,11 @@ import socket from 'socket.io';
 import socketioJwt from 'socketio-jwt';
 
 import standupSessionsFactory from '../repositories/standupSessions';
+import standupCardsFactory from '../repositories/standupCards';
 
 const getLobbyUrl = teamId => `lobby/${teamId}`;
 const getUserUrl = username => `user/${username}`;
+const getSessionQueue = sessionId => `queue/${sessionId}`
 
 const saveUserToLobby = (client, lobby, username) => {
     client.hset(lobby, username, true);
@@ -18,9 +20,12 @@ const removeUserFromLobby = (client, lobby, username) => {
 const getLobbyList = (client, lobby) => client.hkeysAsync(lobby);
 const getUserActiveLobbies = (client, user) => client.hkeysAsync(getUserUrl(user));
 
+import sessionActions from './standupSessionActions';
+
 export default ({ app, db, redisClient }) => {
-    let sessionsRepo = standupSessionsFactory({ db });
-    let io = socket(app);
+    let sessionsRepo = standupSessionsFactory({ db }),
+        sessionsCard = standupCardsFactory({ db }),
+        io = socket(app);
 
     let standupIo = io
         .of('/auth/standup')
@@ -63,45 +68,66 @@ export default ({ app, db, redisClient }) => {
             console.log('[Left Lobby]', username, teamId);
         });
 
+        /**
+         * cb called if there's a problem.
+         */
         socket.on('start_session', (teamId, cb) => {
             sessionsRepo.create(teamId).then(({ session, created }) => {
                 if (!created) { // session already exists
                     cb(session.id)
                 } else { // just started a new session.
-                    standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
-                        sessionId: session.id
+                    let actions = sessionActions(redisClient, standupIo, teamId, session.id);
+
+                    getLobbyList(redisClient, getLobbyUrl(teamId)).then(users => {
+                        console.log('Initializing queue w/ ', users);
+                        let time = new Date()
+
+                        actions.sessionStart(time)
+                            // End the session in 15 minutes.
+                            .then(() => setInterval(() => actions.sessionEnd(sessionsRepo, () => { }), 15 * 60 * 1000))
+                            .then(() => actions.pushUsersIntoQueue(users))
+                            .then(() => actions.setNewCurrentFromQueue(false))
+                            .then(nextUser => sessionsCard.create(session.id, nextUser))
+                            .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
+                            .then(actions.getSessionDetails)
+                            .then(({ username, card, startingTime }) => {
+                                standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
+                                    sessionId: session.id,
+                                    sessionStartTime: startingTime,
+                                    currentUser: username,
+                                    currentCard: card
+                                })
+                            })
                     })
                 }
             })
         })
         socket.on('end_session', (teamId, sessionId, cb) => {
-            sessionsRepo.read(sessionId)
-                .then(session => {
-                    if (!session) {
-                        return Promise.reject("session does not exist.");
-                    } else if (session.sessionEndedAt) {
-                        return Promise.reject("session has already ended.");
-                    } else {
-                        return Promise.resolve()
-                    }
-                })
-                .then(() => sessionsRepo.endSession(sessionId))
-                .then(() => {
-                    console.log("[Session Ended]", sessionId);
-                    
-                    standupIo.to(getLobbyUrl(teamId)).emit('session_ended', {
-                        sessionId: sessionId
-                    })
-                })
-                .catch(reason => cb(reason))
-        }) // commit to postgres. cleanup.
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId);
+            actions.sessionEnd(sessionsRepo, cb);
+        })
 
         // socket.on('card_modified') // update current in card descr.
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
 
+        socket.on('next_person', (teamId, sessionId) => {
+            let actions = sessionActions(redisClient, standupIo, teamId, sessionId)
+
+            // Save current user's card
+            actions.getCurrentCard()
+                .then(card => console.log(card) && sessionsCard.edit(card.id, card))
+                .then(actions.setNewCurrentFromQueue)
+                .then(nextUser => sessionsCard.create(sessionId, nextUser))
+                .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
+                .then(card => standupIo.emit('current_card', card))
+
+            // actions.setNewCurrentFromQueue()
+        });
+
+        // Say a person disconnected & they're in the queue, we need to remove them.
+
         // socket.on('typing_message')
         // socket.on('new_message')
-
         socket.on('send_message', function (teamId, messageContent) {
             const lobbyUrl = getLobbyUrl(teamId);
 
@@ -118,6 +144,8 @@ export default ({ app, db, redisClient }) => {
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
             }));
+
+
 
             console.log('[Disconnected]', username);
         });
