@@ -145,7 +145,7 @@ export default ({ app, db, redisClient }) => {
 
             actions.updateCurrentCard(payload.id, payload)
                 .then(() => {
-                    standupIo.emit('current_card', payload);
+                    standupIo.broadcast.emit('current_card', payload);
                 })
         })
         // socket.on('card_save') // commit to postgres, mark current guy as done, pop next guy from queue & let everyone know.
@@ -174,7 +174,7 @@ export default ({ app, db, redisClient }) => {
                 content: messageContent,
             };
 
-            standupIo.to(lobbyUrl).emit('message_received', message);
+            standupIo.to(lobbyUrl).broadcast.emit('message_received', message);
         });
 
         socket.on('disconnect', socket => {

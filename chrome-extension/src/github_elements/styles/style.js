@@ -15,6 +15,7 @@ export const styles = {
   sectionHeader: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
   },
   sectionButtonGroup: {
     display: "flex",

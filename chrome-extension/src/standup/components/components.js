@@ -19,32 +19,6 @@ export const Message = (props) => {
   );
 }
 
-export const Chat = (props) => {
-
-  const messages = props.messages.map(function(message, i) {
-    return <Message key={i} author={message.author} content={message.content} />;
-  });
-
-  return (
-    <div className="border-left" style={styles.chatContainer}>
-      <div style={styles.chatHeader}>
-        {props.teamName}
-      </div>
-      <div style={styles.chatSection}>
-        <ul style={styles.chatMessageList}>
-          {messages}
-        </ul>
-      </div>
-      <div style={styles.chatFooter}>
-        <textarea style={styles.chatText} rows="4" onChange={props.handleMessageChange}/>
-        <div style={styles.chatGroup}>
-          <PrimaryButtonSmall onClick={props.handleSendMessage}>Send</PrimaryButtonSmall>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export const WaitingRoom = (props) => {
   let users = [];
 
@@ -60,7 +34,7 @@ export const WaitingRoom = (props) => {
         {users}
       </div>
       <div style={styles.waitingRoomButtonGroup}>
-        <PrimaryButton>Start Standup</PrimaryButton>
+        <PrimaryButton onClick={props.handleStartSession}>Start Session</PrimaryButton>
       </div>
     </Box>
   );
@@ -81,14 +55,6 @@ export const StandupProfile = (props) => {
     <div style={styles.standUpProfile}>
       <h2>{props.username}</h2>
       <img style={styles.standUpProfilePicture} src={props.src} alt="user" />
-    </div>
-  );
-};
-
-export const StandupCard = (props) => {
-  return (
-    <div style={styles.standUpCard}>
-      {props.children}
     </div>
   );
 };

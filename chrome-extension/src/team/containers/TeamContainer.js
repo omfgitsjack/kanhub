@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TeamSubNav, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
-import { SectionButtonGroup, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
+import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
@@ -53,6 +53,10 @@ class TeamContainer extends Component {
     changeLocationHash("#Team?action=new");
   };
 
+  handleEditTeamSelect = () => {
+    changeLocationHash("#Team?action=edit&id=" + this.state.selectedTeamId);
+  };
+
   handleJoinTeam = () => {
     const requestData = {
       repo: this.props.repo,
@@ -89,7 +93,10 @@ class TeamContainer extends Component {
               <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
               <SectionButtonGroup>
                 {isMember ?
-                  <DangerButton extraClass="ml-2">Leave Team</DangerButton>
+                  <div>
+                    <DangerButton extraClass="ml-2">Leave Team</DangerButton>
+                    <NormalButton extraClass="ml-2" onClick={this.handleEditTeamSelect}>Edit Team</NormalButton>
+                  </div>
                   : <PrimaryButton extraClass="ml-2" onClick={this.handleJoinTeam}>Join Team</PrimaryButton>}
                 <PrimaryButton extraClass="ml-2" onClick={this.handleCreateTeamSelect}>New Team</PrimaryButton>
               </SectionButtonGroup>

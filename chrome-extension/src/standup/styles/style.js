@@ -94,18 +94,30 @@ export const styles = {
     marginTop: "10px",
   },
   standUpCard: {
-    display: "block",
+    display: "flex",
+    flexDirection: "column",
     width: "550px",
-    height: "420px",
+    minHeight: "420px",
     boxShadow: "0px 0px 66px 7px rgba(0,0,0,0.1)",
     borderRadius: "2px",
     background: "#fafbfc",
+    padding: "20px",
+  },
+  standUpCardHeader: {
+    marginTop: "10px",
+  },
+  standUpCardText: {
+    minHeight: "65px",
+    maxHeight: "250px",
+    width: "100%",
+    resize: "none",
+    overflow: "auto",
   },
   standUpBox: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-  }
+  },
 };
 
 export default styles;

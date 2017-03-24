@@ -127,6 +127,13 @@ export const PrimaryButtonSmall = (props) => {
     );
 }
 
+export const PrimaryInputSmall = (props) => {
+
+    return (
+        <input className="btn btn-sm btn-primary" type="submit" value={props.value}/>
+    );
+}
+
 export const DangerButton = (props) => {
 
     return (

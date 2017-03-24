@@ -3,10 +3,22 @@ createRequest, createGithubRequest,
 checkPromise, createPromise, createPromises,
 getAuthUser } from '../../modelCommon';
 
+export function getTeam(data) {
+    const teamReq = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id, null, false);
+
+    return createPromise(teamReq);
+}
+
 export function getTeams(data) {
     const getTeams = createRequest('GET', '/api/repository/' + data.repo + '/teams/', null, false);
 
     return createPromise(getTeams);
+}
+
+export function editTeam(data) {
+    const editReq = createRequest('PUT', '/api/repository/' + data.repo + '/teams/' + data.id, data.teamEdit, true);
+
+    return createPromise(editReq, true);
 }
 
 export function getTeamMembers(data) {

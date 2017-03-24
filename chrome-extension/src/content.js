@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import StandupContainer from './standup/containers/StandupContainer';
 import TeamContainer from './team/containers/TeamContainer';
 import CreateTeam from './team/containers/CreateTeam';
+import EditTeam from './team/containers/EditTeam';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import $ from 'jquery';
 import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
-import { getUsernameCookie, getSocketToken, authKanhub } from './modelCommon';
+import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser } from './modelCommon';
 
 var octicons = require("octicons");
 
@@ -40,21 +41,16 @@ function handleHashLocation(e) {
   const location = pageHelper.getLocationHash();
   const query = pageHelper.queryToObject(pageHelper.getQuery());
   const repoContainer = elements.getRepoContainer();
-  const oldHash = e && pageHelper.urlToHash(e.oldURL);
   const reactRepoContainer = elements.getReactRepoContainer();
-
+  
   switch (location) {
     case '#Standup':
-      if (oldHash !== "#Standup") {
-        repoContainer.empty();
-      }
+      repoContainer.empty();
       selectRepoTab($(".reponav-standup"));
       renderStandupTab(query, reactRepoContainer);
       break;
     case '#Team':
-      if (oldHash !== "#Team") {
-        repoContainer.empty();
-      }
+      repoContainer.empty();
       selectRepoTab($(".reponav-team"));
       renderTeamTab(query, reactRepoContainer);
       break;
@@ -67,12 +63,12 @@ function renderStandupTab(query, renderAnchor) {
   const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getUsernameCookie(), getSocketToken(), teamModel.getTeams({repo: repoName})]).then((res) => {
+  Promise.all([getAuthUser(), getSocketToken(), teamModel.getTeams({repo: repoName})]).then((res) => {
 
     ReactDOM.unmountComponentAtNode(renderAnchor);
     ReactDOM.render(
       <MuiThemeProvider>
-        <StandupContainer query={query} username={res[0]} socketToken={res[1].token} teams={res[2]} repo={repoName} />
+        <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={res[2]} repo={repoName} />
       </MuiThemeProvider>,
       renderAnchor
     );
@@ -90,6 +86,14 @@ function renderTeamTab(query, renderAnchor) {
     ReactDOM.render(
       <MuiThemeProvider>
         <CreateTeam repo={repoName} />
+      </MuiThemeProvider>,
+      renderAnchor
+    );
+  } else if (query.action === "edit") {
+
+    ReactDOM.render(
+      <MuiThemeProvider>
+        <EditTeam query={query} repo={repoName} />
       </MuiThemeProvider>,
       renderAnchor
     );

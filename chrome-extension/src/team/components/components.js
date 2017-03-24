@@ -107,3 +107,32 @@ export const CreateTeamForm = (props) => {
     </SectionContainer>
   );
 }
+
+export const EditTeamForm = (props) => {
+
+  return (
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>{'Editing ' + props.team.displayName}</SectionTitle>
+      </SectionHeader>
+      <form>
+        <dl className="form-group">
+          <dt><label>Team Name</label></dt>
+          <dd><input className="form-control" type="text" placeholder="Team name" value={props.teamName} onChange={props.handleTeamNameChange}/></dd>
+        </dl>
+
+        <dl className="form-group">
+          <dt><label>Team Description</label></dt>
+          <dd>
+            <textarea className="form-control" placeholder="Briefly describe what this team is for..." value={props.teamDescription} onChange={props.handleTeamDescriptionChange}></textarea>
+          </dd>
+        </dl>
+
+        <div className="form-actions">
+          <PrimaryButton onClick={props.handleEditTeamSelect}>Save</PrimaryButton>
+          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
+        </div>
+      </form>
+    </SectionContainer>
+  );
+}
