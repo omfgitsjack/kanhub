@@ -49,7 +49,7 @@ export default ({ app, db, redisClient }) => {
             saveUserToLobby(redisClient, lobbyUrl, username);
             getLobbyList(redisClient, lobbyUrl).then(users => socket.emit('join_lobby_success', users));
 
-            standupIo.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby that user has joined
+            socket.broadcast.to(lobbyUrl).emit('user_joined_lobby', username); // Broadcast to everyone in lobby except sender that user has joined
 
             if (cb) {
                 sessionsRepo.findActiveSession(teamId).then(val => {
@@ -74,7 +74,7 @@ export default ({ app, db, redisClient }) => {
 
             socket.leave(lobbyUrl);
             removeUserFromLobby(redisClient, lobbyUrl, username);
-            standupIo.to(lobbyUrl).emit('user_left_lobby', username);
+            socket.broadcast.to(lobbyUrl).emit('user_left_lobby', username);
 
             if (cb) {
                 cb(teamId);

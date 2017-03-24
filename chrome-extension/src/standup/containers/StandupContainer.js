@@ -92,7 +92,7 @@ class StandupContainer extends Component {
     });
   };
 
-  _onUserJoin(username) {
+  _onUserJoin(username, cb) {
       let { users, messages } = this.state;
 
       messages.push({
@@ -107,16 +107,24 @@ class StandupContainer extends Component {
           this.setState({
             users: users,
             messages: messages,
+          }, function() {
+            if (cb) {
+              cb();
+            }
           });
         }.bind(this));
       } else {
         this.setState({
           messages: messages,
+        }, function() {
+          if (cb) {
+            cb();
+          }
         });
       }
   };
 
-  _onUserLeave(username) {
+  _onUserLeave(username, cb) {
       let { users, messages } = this.state;
       users[username] = null;
       messages.push({
@@ -126,6 +134,10 @@ class StandupContainer extends Component {
       this.setState({
         users: users,
         messages: messages,
+      }, function() {
+        if (cb) {
+          cb();
+        }
       });
   };
 
@@ -196,7 +208,7 @@ class StandupContainer extends Component {
 
       socket.on('connect', function () {
         socket.emit('join_lobby', this.uniqueId, team.id, function(teamId, session) {
-          this._onSessionStart(session);
+          this._onUserJoin(this.state.me.login, () => {this._onSessionStart(session)});
         }.bind(this));
       }.bind(this));
 
