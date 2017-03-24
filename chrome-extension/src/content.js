@@ -33,7 +33,7 @@ function selectRepoTab(tab) {
 function handleHashLocation(e) {
 
   document.body.style.width = null;
-  
+
   if (!pageHelper.isRepo()) {
     return;
   }
@@ -42,7 +42,7 @@ function handleHashLocation(e) {
   const query = pageHelper.queryToObject(pageHelper.getQuery());
   const repoContainer = elements.getRepoContainer();
   const reactRepoContainer = elements.getReactRepoContainer();
-  
+
   switch (location) {
     case '#Standup':
       repoContainer.empty();
@@ -60,10 +60,10 @@ function handleHashLocation(e) {
 
 function renderStandupTab(query, renderAnchor) {
 
-  const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
+  const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getAuthUser(), getSocketToken(), teamModel.getTeams({repo: repoName})]).then((res) => {
+  Promise.all([getAuthUser(), getSocketToken(), teamModel.getTeams({ repo: repoName })]).then((res) => {
 
     ReactDOM.unmountComponentAtNode(renderAnchor);
     ReactDOM.render(
@@ -77,7 +77,7 @@ function renderStandupTab(query, renderAnchor) {
 
 function renderTeamTab(query, renderAnchor) {
 
-  const {ownerName, repoName} = pageHelper.getOwnerAndRepo();
+  const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
   ReactDOM.unmountComponentAtNode(renderAnchor);
 
@@ -99,7 +99,7 @@ function renderTeamTab(query, renderAnchor) {
     );
   } else {
     // render team container
-    Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
+    Promise.all([getUsernameCookie(), teamModel.getTeams({ repo: repoName })]).then((res) => {
       ReactDOM.render(
         <MuiThemeProvider>
           <TeamContainer query={query} username={res[0]} teams={res[1]} repo={repoName} />
@@ -112,14 +112,14 @@ function renderTeamTab(query, renderAnchor) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  authKanhub().then(() => {
 
-    gitHubInjection(window, () => {
-      // reset the body width to original
-      document.body.style.width = null;
-    });
+  gitHubInjection(window, () => {
+    // reset the body width to original
+    document.body.style.width = null;
+  });
 
-    if (pageHelper.isRepo()) {
+  if (pageHelper.isRepo()) {
+
       elements.createReactRepoContainer();
 
       gitHubInjection(window, () => {
@@ -129,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       handleHashLocation(null);
-    }
-  });
+  }
+
 });
 
 window.addEventListener('hashchange', handleHashLocation, false);

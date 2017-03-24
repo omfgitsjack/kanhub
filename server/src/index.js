@@ -31,9 +31,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 import session from 'express-session';
 import passport from 'passport';
+import moment from 'moment'
 app.use(session({ 
 	secret: 'brandon was here',
-	cookie: { secure: true, sameSite: false }, // TODO: toggle to true and access cookie from background page }
+	cookie: { expires: moment().add(100, 'years').toDate(), secure: true, sameSite: false }, // TODO: toggle to true and access cookie from background page }
     resave: false,
     saveUninitialized: true
 }));

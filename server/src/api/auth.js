@@ -5,6 +5,7 @@ import { Router } from 'express';
 import GithubStrategy from 'passport-github2';
 
 import jwt from 'jsonwebtoken';
+import moment from 'moment';
 
 import UserRepositoryFactory from '../repositories/users';
 
@@ -36,14 +37,6 @@ export default ({ config, db, requireAuth }) => {
 
     api.get('/cookies', requireAuth, (req, res) => {
         let user = req.session.user;
-        res.cookie('kh_username', user.username, {
-            secure: true,
-            sameSite: false // TODO: toggle to true and access cookie from background page
-        });
-        res.cookie('kh_github_token', user.token, {
-            secure: true,
-            sameSite: false // TODO: toggle to true and access cookie from background page
-        })
 
         res.json();
     })
@@ -65,11 +58,13 @@ export default ({ config, db, requireAuth }) => {
             req.session.user = user;
             res.cookie('kh_username', user.username, {
                 secure: true,
-                sameSite: false // TODO: toggle to true and access cookie from background page
+                sameSite: false, // TODO: toggle to true and access cookie from background page,
+                expires: moment().add(100, 'years').toDate()
             });
             res.cookie('kh_github_token', user.token, {
                 secure: true,
-                sameSite: false // TODO: toggle to true and access cookie from background page
+                sameSite: false, // TODO: toggle to true and access cookie from background page
+                expires: moment().add(100, 'years').toDate()
             })
 
             res.redirect(user.profileUrl);
