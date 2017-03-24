@@ -160,8 +160,8 @@ export default ({ app, db, redisClient }) => {
                 sessionId: sessionId ? sessionId : null })
 
             const message = {
-                author: username,
-                content: messageContent,
+                username: username,
+                message: messageContent,
             };
 
             socket.broadcast.to(lobbyUrl).emit('message_received', message);
@@ -169,6 +169,7 @@ export default ({ app, db, redisClient }) => {
 
         socket.on('disconnect', socket => {
             getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
+                console.log();
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
             }));
