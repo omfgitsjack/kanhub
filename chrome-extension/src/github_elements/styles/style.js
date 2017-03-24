@@ -9,7 +9,7 @@ export const styles = {
     marginBottom: "20px",
   },
   sectionTitle: {
-    fontSize: "36px",
+    fontSize: "24px",
     marginRight: "10px",
   },
   sectionHeader: {

@@ -114,7 +114,7 @@ class StandupContainer extends Component {
     }, function() {
       if (session && session.currentCard) {
         this._onCardReceive(session.currentCard);
-
+        console.log(session);
         this.updateTimer();
 
         if (this.timer) {

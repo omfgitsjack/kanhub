@@ -20,10 +20,11 @@ export function LoadingHOC(WrappedComponent) {
       };
     };
 
-    setLoading = (loading) => {
+    setLoading = (loading, cb) => {
+      cb = cb || (() => {});
       this.setState({
         loading: loading,
-      })
+      }, cb)
     };
 
     render() {

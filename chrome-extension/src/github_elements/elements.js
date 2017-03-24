@@ -196,3 +196,12 @@ export const Box = (props) => {
         </div>
     );
 }
+
+export const PlainBox = (props) => {
+
+    return (
+        <div className="border">
+            {props.children}
+        </div>
+    );
+}

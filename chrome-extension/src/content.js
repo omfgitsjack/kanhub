@@ -102,7 +102,7 @@ function renderTeamTab(query, renderAnchor) {
     Promise.all([getUsernameCookie(), teamModel.getTeams({repo: repoName})]).then((res) => {
       ReactDOM.render(
         <MuiThemeProvider>
-          <TeamContainer query={query} username={res[0]} teams={res[1]} repo={repoName} />
+          <TeamContainer query={query} username={res[0]} teams={res[1]} repo={repoName} owner={ownerName} />
         </MuiThemeProvider>,
         renderAnchor
       );

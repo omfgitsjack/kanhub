@@ -3,7 +3,7 @@ import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
   SectionTitle, SectionHeader, SectionButtonGroup, NormalButton, PrimaryButton,
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
-  UserCard
+  UserCard, Box
 } from '../../github_elements/elements';
 
 import 'primer-css/build/build.css';
@@ -36,6 +36,25 @@ export const TeamInfo = (props) => {
     </SectionContainer>
   );
 }
+
+export const TeamOverview = (props) => {
+  return (
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>Overview</SectionTitle>
+      </SectionHeader>
+      {props.children}
+    </SectionContainer>
+  )
+};
+
+export const TeamIssues = (props) => {
+  return (
+    <Box heading="Issues">
+
+    </Box>
+  );
+};
 
 export const TeamMembers = (props) => {
 
