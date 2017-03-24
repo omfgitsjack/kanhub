@@ -31,6 +31,8 @@ class StandupContainer extends Component {
     };
 
     this.timer = null;
+    this.uniqueId = props.owner + '/' + props.repo;
+
     this.handleYesterdayChange = this.handleYesterdayChange.bind(this);
     this.handleTodayChange = this.handleTodayChange.bind(this);
     this.handleObstacleChange = this.handleObstacleChange.bind(this);
@@ -193,7 +195,7 @@ class StandupContainer extends Component {
       socket = createSocket(this.props.socketToken);
 
       socket.on('connect', function () {
-        socket.emit('join_lobby', this.props.owner + '/' + this.props.repo, team.id, function(teamId, session) {
+        socket.emit('join_lobby', this.uniqueId, team.id, function(teamId, session) {
           this._onSessionStart(session);
         }.bind(this));
       }.bind(this));
@@ -232,7 +234,7 @@ class StandupContainer extends Component {
 
     let activeSession = this.state.session ? this.state.session.sessionId : null;
 
-    socket.emit('send_message', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, this.state.message, activeSession);
+    socket.emit('send_message', this.uniqueId, this.state.selectedTeamId, this.state.message, activeSession);
 
     // push message right away without waiting for server response
     this._onMessageReceive({'username': this.state.me.login, 'message': this.state.message});
@@ -249,7 +251,7 @@ class StandupContainer extends Component {
 
   handleNavSelect = (teamId) => {
     // leave current lobby first
-    socket.emit('leave_lobby', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, function(id) {
+    socket.emit('leave_lobby', this.uniqueId, this.state.selectedTeamId, function(id) {
 
       if (this.timer) {
         clearInterval(this.timer);
@@ -264,7 +266,7 @@ class StandupContainer extends Component {
         message: '',
       }, function() {
         // join new lobby
-        socket.emit('join_lobby', this.props.owner + '/' + this.props.repo, teamId, function(teamId, session) {
+        socket.emit('join_lobby', this.uniqueId, teamId, function(teamId, session) {
           this._onSessionStart(session);
         }.bind(this));
       });
@@ -278,7 +280,7 @@ class StandupContainer extends Component {
 
   handleCardChange() {
     if (this.state.session) {
-      socket.emit('card_modified', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, this.state.session.sessionId, this.state.currentCard);
+      socket.emit('card_modified', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId, this.state.currentCard);
     }
   };
 
@@ -321,7 +323,7 @@ class StandupContainer extends Component {
 
   handleStartSession(e) {
     e.preventDefault();
-    socket.emit('start_session', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, function(session) {
+    socket.emit('start_session', this.uniqueId, this.state.selectedTeamId, function(session) {
       // if this is called then the session has already begun
 
     }.bind(this));
@@ -330,7 +332,7 @@ class StandupContainer extends Component {
   handleEndSession() {
 
     if (this.state.session) {
-      socket.emit('end_session', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, this.state.session.sessionId, function(err) {
+      socket.emit('end_session', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId, function(err) {
         console.log(err);
       }.bind(this));
     }
@@ -340,7 +342,7 @@ class StandupContainer extends Component {
     e.preventDefault();
 
     if (this.state.session) {
-      socket.emit('next_person', this.props.owner + '/' + this.props.repo, this.state.selectedTeamId, this.state.session.sessionId);
+      socket.emit('next_person', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId);
     }
   }
 
