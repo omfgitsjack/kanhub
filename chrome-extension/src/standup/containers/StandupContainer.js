@@ -7,6 +7,7 @@ import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, Re
 import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
+import moment from 'moment';
 
 let socket;
 
@@ -26,14 +27,17 @@ class StandupContainer extends Component {
       currentCard: null,
       session: null,
       me: props.user,
+      timeLeft: [0,0],
     };
 
+    this.timer = null;
     this.handleYesterdayChange = this.handleYesterdayChange.bind(this);
     this.handleTodayChange = this.handleTodayChange.bind(this);
     this.handleObstacleChange = this.handleObstacleChange.bind(this);
     this.handleStartSession = this.handleStartSession.bind(this);
     this.handleEndSession = this.handleEndSession.bind(this);
     this.handleNextPerson = this.handleNextPerson.bind(this);
+    this.updateTimer = this.updateTimer.bind(this);
   };
 
   _onJoinSuccess(lobbyUsers) {
@@ -110,6 +114,14 @@ class StandupContainer extends Component {
     }, function() {
       if (session && session.currentCard) {
         this._onCardReceive(session.currentCard);
+
+        this.updateTimer();
+
+        if (this.timer) {
+          clearInterval(this.timer);
+        }
+
+        this.timer = setInterval(function() {this.updateTimer()}.bind(this), 1000);
       }
     });
   };
@@ -119,11 +131,14 @@ class StandupContainer extends Component {
       session: null,
       currentCard: null,
     });
+
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   };
 
   _onCardReceive(card) {
-    console.log(card);
-    
+
     this.setState({
       currentCard: card,
     }, function() {
@@ -134,6 +149,13 @@ class StandupContainer extends Component {
 
     console.log('i receive a card');
   }
+
+  updateTimer() {
+    let diff = moment.duration(moment(this.state.session.sessionEndTime).diff(moment()));
+    this.setState({
+      timeLeft: [diff.minutes(), diff.seconds()],
+    });
+  };
 
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
@@ -322,6 +344,7 @@ class StandupContainer extends Component {
 
         let presentingUser;
         let mePresenting;
+
         if (this.state.session && this.state.currentCard) {
           presentingUser = this.state.users[this.state.currentCard.username];
 
@@ -339,6 +362,7 @@ class StandupContainer extends Component {
             {!this.state.session || !this.state.currentCard ?
             <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
             <StandupBox>
+              <h1>{this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}</h1>
               <StandupProfile username={presentingUser && presentingUser.login} src={presentingUser && presentingUser['avatar_url']}/>
               <StandupCard ref="standup-card"
                 presenting={mePresenting}
