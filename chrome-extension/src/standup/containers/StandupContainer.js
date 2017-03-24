@@ -31,8 +31,6 @@ class StandupContainer extends Component {
       this.setState({
         users: usersMap,
       });
-
-      console.log(usersMap);
       
     }.bind(this));
   };
@@ -62,15 +60,11 @@ class StandupContainer extends Component {
             users: users,
             messages: messages,
           });
-
-          console.log(users);
         }.bind(this));
       } else {
         this.setState({
           messages: messages,
         });
-
-        console.log(users);
       }
   };
 
@@ -97,6 +91,7 @@ class StandupContainer extends Component {
         return;
       }
 
+      document.body.style.width = "80%";
       socket = createSocket(this.props.socketToken);
 
       socket.on('connect', function () {
@@ -107,6 +102,13 @@ class StandupContainer extends Component {
       socket.on('user_joined_lobby', this._onUserJoin.bind(this));
       socket.on('user_left_lobby', this._onUserLeave.bind(this));
       socket.on('message_received', this._onMessageReceive.bind(this));
+    }
+  };
+
+  componentWillUnmount() {
+    console.log('unmounting');
+    if (socket) {
+      socket.disconnect();
     }
   };
 
@@ -159,8 +161,6 @@ class StandupContainer extends Component {
             <NoTeamFound />
           );
         }
-
-        document.body.style.width = "80%";
 
         return (
           <div>

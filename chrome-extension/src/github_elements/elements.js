@@ -11,6 +11,30 @@ export function getRepoContainer() {
     return $('.container.new-discussion-timeline.experiment-repo-nav');
 };
 
+export function getParentRepoContainer() {
+    return document.getElementById('js-repo-pjax-container');
+};
+
+export function createReactRepoContainer() {
+    const container = document.createElement('div');
+    container.id = 'kanhub-react-container';
+    Object.assign(container.style, styles.reactRepoContainer);
+
+    const sibling = getParentRepoContainer();
+
+    if (sibling && sibling.parentElement) {
+        sibling.parentElement.appendChild(container);
+    } else {
+        document.body.appendChild(container);
+    }
+};
+
+export function getReactRepoContainer() {
+    const container = document.getElementById('kanhub-react-container');
+
+    return container || document.createElement('div');
+}
+
 export function createRepoTab(label, icon, url, customClass) {
     return $(`
         <a href=${url} class="js-selected-navigation-item reponav-item ${customClass}">

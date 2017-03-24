@@ -37,6 +37,11 @@ export const styles = {
     flexDirection: "row",
     alignItems: "center",
   },
+  reactRepoContainer: {
+    width: "980px",
+    marginRight: "auto",
+    marginLeft: "auto",
+  }
 };
 
 export default styles;
