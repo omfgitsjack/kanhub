@@ -106,38 +106,44 @@ export const SectionButtonGroup = (props) => {
     );
 }
 
+export const SpreadSectionButtonGroup = (props) => {
+    return (
+        <div style={styles.spreadSectionButtonGroup}>{props.children}</div>
+    );
+}
+
 export const NormalButton = (props) => {
     
     return (
-        <button className={"btn " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
+        <button style={styles.button} className={"btn " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 
 export const PrimaryButton = (props) => {
 
     return (
-        <button className={"btn btn-primary " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
+        <button style={styles.button} className={"btn btn-primary " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 
 export const PrimaryButtonSmall = (props) => {
 
     return (
-        <button className="btn btn-sm btn-primary" type="button" onClick={props.onClick}>{props.children}</button>
+        <button style={styles.button} className="btn btn-sm btn-primary" type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 
 export const PrimaryInputSmall = (props) => {
 
     return (
-        <input className="btn btn-sm btn-primary" type="submit" value={props.value}/>
+        <input style={styles.button} className="btn btn-sm btn-primary" type="submit" value={props.value}/>
     );
 }
 
 export const DangerButton = (props) => {
 
     return (
-        <button className={"btn btn-danger " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
+        <button style={styles.button} className={"btn btn-danger " + props.extraClass} type="button" onClick={props.onClick}>{props.children}</button>
     );
 }
 

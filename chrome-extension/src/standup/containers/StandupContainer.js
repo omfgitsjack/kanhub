@@ -3,7 +3,7 @@ import { NotInTeam, WaitingRoom, StandupBox, StandupProfile } from '../component
 import Chat from '../components/Chat';
 import StandupCard from '../components/StandupCard';
 import { NoTeamFound, TeamSubNav } from '../../team/components/components';
-import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, NavHeader } from '../../github_elements/elements';
+import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
@@ -33,6 +33,7 @@ class StandupContainer extends Component {
     this.handleObstacleChange = this.handleObstacleChange.bind(this);
     this.handleStartSession = this.handleStartSession.bind(this);
     this.handleEndSession = this.handleEndSession.bind(this);
+    this.handleNextPerson = this.handleNextPerson.bind(this);
   };
 
   _onJoinSuccess(lobbyUsers) {
@@ -55,15 +56,15 @@ class StandupContainer extends Component {
       messages.push(message);
       this.setState({
         messages: messages,
-      });
-
-      const chatContainer = this.refs['chat'];
-      if (chatContainer) {
-        const messageContainer = chatContainer.refs['chat-container'];
-        if (messageContainer) {
-          messageContainer.scrollTop = messageContainer.scrollHeight; 
+      }, function() {
+        const chatContainer = this.refs['chat'];
+        if (chatContainer) {
+          const messageContainer = chatContainer.refs['chat-container'];
+          if (messageContainer) {
+            messageContainer.scrollTop = messageContainer.scrollHeight; 
+          }
         }
-      }
+      });
   };
 
   _onUserJoin(username) {
@@ -74,7 +75,6 @@ class StandupContainer extends Component {
           content: username +' joined'
       });
 
-      // user not found in user list, add it
       if (!users[username]) {
         model.getUserInfo({username: username}).then(function(user) {
           users[username] = user;
@@ -105,15 +105,16 @@ class StandupContainer extends Component {
   };
 
   _onSessionStart(session) {
-    console.log(session);
     this.setState({
       session: session,
-      currentCard: session && session.currentCard,
+    }, function() {
+      if (session && session.currentCard) {
+        this._onCardReceive(session.currentCard);
+      }
     });
   };
 
   _onSessionEnd(sessionId) {
-    console.log(sessionId);
     this.setState({
       session: null,
       currentCard: null,
@@ -122,9 +123,16 @@ class StandupContainer extends Component {
 
   _onCardReceive(card) {
     console.log(card);
+    
     this.setState({
       currentCard: card,
+    }, function() {
+      this.setTextAreaHeight('standup-yesterday');
+      this.setTextAreaHeight('standup-today');
+      this.setTextAreaHeight('standup-obstacle');
     });
+
+    console.log('i receive a card');
   }
 
   componentDidMount() {
@@ -178,11 +186,12 @@ class StandupContainer extends Component {
 
     socket.emit('send_message', this.state.selectedTeamId, this.state.message);
 
+    // push message right away without waiting for server response
+    this._onMessageReceive({'author': this.state.me.login, 'content': this.state.message});
+
     this.setState({
       message: '',
     });
-
-    // TODO: should probably push message right away here instead of waiting for server
   };
 
   handleKeyPress = (e) => {
@@ -218,28 +227,32 @@ class StandupContainer extends Component {
   };
 
   handleCardChange() {
-    if (this.session) {
-      socket.emit('card_modified', this.state.selectedTeamId, this.session.sessionId, this.state.currentCard);
+    if (this.state.session) {
+      socket.emit('card_modified', this.state.selectedTeamId, this.state.session.sessionId, this.state.currentCard);
     }
   };
 
-  cardDetailsReceived(cardDetails) {
-    this.setState(cardDetails);
-  };
-
-  handleTextAreaChange(key, value, textAreaRef) {
-    let { currentCard } = this.state;
-
-    currentCard[key] = value;
-
-    this.setState({currentCard: currentCard}, function() {
+  setTextAreaHeight(textAreaRef) {
       const standupCard = this.refs['standup-card'];
       const textArea = standupCard && standupCard.refs[textAreaRef];
       if (textArea) {
         textArea.style.height = 'auto';
         textArea.style.height = textArea.scrollHeight + 'px';
       }
+  };
 
+  handleTextAreaChange(key, value, textAreaRef) {
+
+    if (!this.state.session) {
+      return;
+    }
+
+    let { currentCard } = this.state;
+
+    currentCard[key] = value;
+
+    this.setState({currentCard: currentCard}, function() {
+      this.setTextAreaHeight(textAreaRef);
       this.handleCardChange();
     });
   };
@@ -264,8 +277,7 @@ class StandupContainer extends Component {
     }.bind(this));
   };
 
-  handleEndSession(e) {
-    e.preventDefault();
+  handleEndSession() {
 
     if (this.state.session) {
       socket.emit('end_session', this.state.selectedTeamId, this.state.session.sessionId, function(err) {
@@ -282,12 +294,19 @@ class StandupContainer extends Component {
     }
   }
 
+  isObjectEmpty(obj) {
+    for (var key in obj) {
+      return false;
+    }
+    return true;
+  };
+
   render() {
 
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
 
-        if (this.state.users.length === 0) {
+        if (this.isObjectEmpty(this.state.users)) {
           return <div></div>;
         }
 
@@ -302,29 +321,35 @@ class StandupContainer extends Component {
         }
 
         let presentingUser;
-        if (this.state.session) {
-          presentingUser = this.state.users[this.state.session.currentUser];
+        let mePresenting;
+        if (this.state.session && this.state.currentCard) {
+          presentingUser = this.state.users[this.state.currentCard.username];
+
+          if (!presentingUser) {
+            return (<div></div>);
+          }
+
+          mePresenting = this.state.me.login === presentingUser.login;
         }
 
         return (
           <RepoContent>
             <Chat ref="chat" teamName={team.displayName} messages={this.state.messages} message={this.state.message} {...this} />
-            <NavHeader>
-              <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
-              <SectionButtonGroup>
-                {this.state.session && <DangerButton onClick={this.handleEndSession}>End Session</DangerButton>}
-              </SectionButtonGroup>
-            </NavHeader>
-            {!this.state.session ?
+            <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
+            {!this.state.session || !this.state.currentCard ?
             <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
             <StandupBox>
               <StandupProfile username={presentingUser && presentingUser.login} src={presentingUser && presentingUser['avatar_url']}/>
               <StandupCard ref="standup-card"
-                presenting={this.state.me.login === presentingUser.login}
+                presenting={mePresenting}
                 card={this.state.currentCard}
                 handleYesterdayChange={this.handleYesterdayChange}
                 handleTodayChange={this.handleTodayChange}
                 handleObstacleChange={this.handleObstacleChange} />
+              <SpreadSectionButtonGroup>
+                <DangerButton onClick={this.handleEndSession}>End Session</DangerButton>
+                {mePresenting ? <PrimaryButton onClick={this.handleNextPerson}>Done</PrimaryButton> : <div></div>}
+              </SpreadSectionButtonGroup>
             </StandupBox>}
           </RepoContent>
         );

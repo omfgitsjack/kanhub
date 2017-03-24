@@ -159,7 +159,13 @@ export default ({ app, db, redisClient }) => {
                 .then(actions.setNewCurrentFromQueue)
                 .then(nextUser => sessionsCard.create(sessionId, nextUser))
                 .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
-                .then(card => standupIo.emit('current_card', card))
+                .then(card => {
+                    if (card.username) {
+                        standupIo.emit('current_card', card);
+                    } else {
+                        actions.sessionEnd(sessionsRepo, ()=>{});
+                    }
+                })
         });
 
         // Say a person disconnected & they're in the queue, we need to remove them.

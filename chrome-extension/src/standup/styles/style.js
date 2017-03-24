@@ -102,6 +102,7 @@ export const styles = {
     borderRadius: "2px",
     background: "#fafbfc",
     padding: "20px",
+    marginBottom: "20px",
   },
   standUpCardHeader: {
     marginTop: "10px",

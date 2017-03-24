@@ -22,6 +22,13 @@ export const styles = {
     flexDirection: "row",
     height: "33px",
   },
+  spreadSectionButtonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "550px",
+  },
   userCard: {
     display: "inline-block",
     margin: "10px",
@@ -42,6 +49,9 @@ export const styles = {
     width: "980px",
     marginRight: "auto",
     marginLeft: "auto",
+  },
+  button: {
+    height: "33.6px",
   }
 };
 

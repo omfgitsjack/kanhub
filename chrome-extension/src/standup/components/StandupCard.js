@@ -17,21 +17,24 @@ class StandupCard extends Component {
           style={styles.standUpCardText}
           placeholder="things accomplished yesterday..."
           maxLength="150"
-          onChange={this.props.handleYesterdayChange}/>
+          value={this.props.card.yesterdayDescription || ''}
+          onChange={this.props.presenting ? this.props.handleYesterdayChange : (()=>{})}/>
         <h2 style={styles.standUpCardHeader}>What I will do today</h2>
         <textarea ref="standup-today"
           className="border"
           style={styles.standUpCardText}
           placeholder="things I will do today..."
           maxLength="150"
-          onChange={this.props.handleTodayChange}/>
+          value={this.props.card.todayDescription || ''}
+          onChange={this.props.presenting ? this.props.handleTodayChange : (()=>{})}/>
         <h2 style={styles.standUpCardHeader}>Obstacles</h2>
         <textarea ref="standup-obstacle"
           className="border"
           style={styles.standUpCardText}
           placeholder="roadblocks impeding progress..."
           maxLength="150"
-          onChange={this.props.handleObstacleChange}/>
+          value={this.props.card.obstaclesDescription || ''}
+          onChange={this.props.presenting ? this.props.handleObstacleChange : (()=>{})}/>
       </div>
     );
   };
