@@ -5,6 +5,8 @@ import socketioJwt from 'socketio-jwt';
 import standupSessionsFactory from '../repositories/standupSessions';
 import standupCardsFactory from '../repositories/standupCards';
 
+import moment from 'moment'
+
 const getLobbyUrl = teamId => `lobby/${teamId}`;
 const getUserUrl = username => `user/${username}`;
 const getSessionQueue = sessionId => `queue/${sessionId}`
@@ -93,7 +95,8 @@ export default ({ app, db, redisClient }) => {
                             .then(({ username, card, startingTime }) => {
                                 standupIo.to(getLobbyUrl(teamId)).emit('session_started', {
                                     sessionId: session.id,
-                                    sessionStartTime: startingTime,
+                                    sessionStartTime: moment(startingTime),
+                                    sessionEndTime: moment(startingTime).add(15, 'minutes'),
                                     currentUser: username,
                                     currentCard: card
                                 })
@@ -120,8 +123,6 @@ export default ({ app, db, redisClient }) => {
                 .then(nextUser => sessionsCard.create(sessionId, nextUser))
                 .then(({ card, created }) => actions.updateCurrentCard(card.id, card).then(() => card))
                 .then(card => standupIo.emit('current_card', card))
-
-            // actions.setNewCurrentFromQueue()
         });
 
         // Say a person disconnected & they're in the queue, we need to remove them.
