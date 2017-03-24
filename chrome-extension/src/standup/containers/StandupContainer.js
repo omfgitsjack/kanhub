@@ -130,6 +130,7 @@ class StandupContainer extends Component {
     this.setState({
       session: null,
       currentCard: null,
+      timeLeft: [0,0],
     });
 
     if (this.timer) {
@@ -151,10 +152,12 @@ class StandupContainer extends Component {
   }
 
   updateTimer() {
-    let diff = moment.duration(moment(this.state.session.sessionEndTime).diff(moment()));
-    this.setState({
-      timeLeft: [diff.minutes(), diff.seconds()],
-    });
+    if (this.state.session) {
+      let diff = moment.duration(moment(this.state.session.sessionEndTime).diff(moment()));
+      this.setState({
+        timeLeft: [diff.minutes(), diff.seconds()],
+      });
+    }
   };
 
   componentDidMount() {
@@ -188,6 +191,11 @@ class StandupContainer extends Component {
 
   componentWillUnmount() {
     console.log('unmounting');
+
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    
     if (socket) {
       socket.disconnect();
     }
@@ -226,6 +234,10 @@ class StandupContainer extends Component {
   handleNavSelect = (teamId) => {
     // leave current lobby first
     socket.emit('leave_lobby', this.state.selectedTeamId, function(id) {
+
+      if (this.timer) {
+        clearInterval(this.timer);
+      }
 
       window.history.pushState({}, "", "#Standup?id=" + teamId);
 
