@@ -13,8 +13,8 @@ var octicons = require("octicons");
 export const Message = (props) => {
   return (
     <li style={styles.chatMessage}>
-      <span style={styles.chatMessageAuthor}>{props.author + ":"}</span>
-      <span style={styles.chatMessageContent}>{props.content}</span>
+      <span style={styles.chatMessageAuthor}>{props.username + ":"}</span>
+      <span style={styles.chatMessageContent}>{props.message}</span>
     </li>
   );
 }

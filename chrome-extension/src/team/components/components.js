@@ -3,10 +3,11 @@ import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
   SectionTitle, SectionHeader, SectionButtonGroup, NormalButton, PrimaryButton,
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
-  UserCard
+  UserCard, Box
 } from '../../github_elements/elements';
 
 import 'primer-css/build/build.css';
+import styles from '../styles/style';
 
 var octicons = require("octicons");
 
@@ -28,14 +29,47 @@ export const TeamSubNav = (props) => {
 
 export const TeamInfo = (props) => {
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>{props.team.displayName}</SectionTitle>
-      </SectionHeader>
-      <p className="lead">{props.team.description}</p>
-    </SectionContainer>
+      <p className="lead">{props.description}</p>
   );
 }
+
+export const TeamSection = (props) => {
+  return (
+    <SectionContainer>
+      <SectionHeader>
+        <SectionTitle>{props.heading}</SectionTitle>
+      </SectionHeader>
+      {props.children}
+    </SectionContainer>
+  )
+};
+
+export const TeamIssues = (props) => {
+  return (
+    <Box heading="Issues">
+      <ul className="summary-stats">
+        <li style={styles.issueListItem}>
+          <a href="#closed-issues">
+            <div style={styles.issueHeader}>
+              <div style={styles.issueClosedIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-closed'].toSVG() }}></div>
+              <div style={styles.issueCount}>{props.closedIssues}</div>
+            </div>
+            Closed Issues
+          </a>
+        </li>
+        <li style={styles.issueListItem}>
+          <a href="#new-issues">
+            <div style={styles.issueHeader}>
+              <div style={styles.issueOpenIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-opened'].toSVG() }}></div>
+              <div style={styles.issueCount}>{props.openIssues}</div>
+            </div>
+            Open Issues
+          </a>
+        </li>
+      </ul>
+    </Box>
+  );
+};
 
 export const TeamMembers = (props) => {
 
@@ -44,12 +78,7 @@ export const TeamMembers = (props) => {
   });
 
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>Members</SectionTitle>
-      </SectionHeader>
-      {members}
-    </SectionContainer>
+    <div>{members}</div>
   );
 }
 
@@ -66,6 +95,16 @@ export const NoTeams = (props) => {
   return (
     <BlankSlateSpacious heading={heading} description={description} icon={octicons.octoface.toSVG({ "width": 45, "height": 45 })}>
       <p><PrimaryButtonSmall onClick={props.handleCreateTeamSelect}>New Team</PrimaryButtonSmall></p>
+    </BlankSlateSpacious>
+  );
+}
+
+export const NoPresenter = (props) => {
+  const heading = "Oh no! The presenter left the session!";
+  const description = props.timeLeft;
+  return (
+    <BlankSlateSpacious heading={heading} description={description} icon={octicons['issue-opened'].toSVG({ "width": 45, "height": 45 })}>
+      <p><PrimaryButtonSmall onClick={props.handleNextPerson}>Skip Presenter</PrimaryButtonSmall></p>
     </BlankSlateSpacious>
   );
 }

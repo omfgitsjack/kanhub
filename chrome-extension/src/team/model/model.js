@@ -52,5 +52,13 @@ export function joinTeam(data) {
 
         return createPromise(joinTeam, true);
     });
+}
 
+export function getTeamIssues(data) {
+
+    return getTokenCookie().then((token) => {
+        const issueReq = createGithubRequest('GET', '/repos/' + data.owner + '/' + data.repo + '/issues?labels=' + data.label + '&state=all', token);
+
+        return createPromise(issueReq);
+    });
 }

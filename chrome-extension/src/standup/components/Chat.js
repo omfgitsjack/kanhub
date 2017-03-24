@@ -17,7 +17,7 @@ class Chat extends Component {
 
   render() {
     const messages = this.props.messages.map(function(message, i) {
-      return <Message key={i} author={message.author} content={message.content} />;
+      return <Message key={i} username={message.username} message={message.message} />;
     });
 
     return (

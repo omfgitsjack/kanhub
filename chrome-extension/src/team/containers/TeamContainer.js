@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TeamSubNav, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
+import { TeamSubNav, TeamSection, TeamIssues, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
 import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
@@ -13,6 +13,8 @@ class TeamContainer extends Component {
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
       members: [],
+      openIssues: 0,
+      closedIssues: 0,
     };
   };
 
@@ -22,31 +24,72 @@ class TeamContainer extends Component {
       id: teamId,
     };
 
-    this.props.setLoading(true);
-
-    model.getTeamMembers(requestData).then(function (data) {
-      model.getTeamMembersInfo({ members: data }).then(function (members) {
-        this.setState({
+    return model.getTeamMembers(requestData).then(function (data) {
+      return model.getTeamMembersInfo({ members: data }).then(function (members) {
+        return {
           members: members,
           selectedTeamId: teamId,
-        });
-
-        this.props.setLoading(false);
-
+        };
       }.bind(this));
     }.bind(this));
   };
 
+  getTeamIssues(teamId) {
+    const requestData = {
+      repo: this.props.repo,
+      owner: this.props.owner,
+      label: 'backend',
+    }
+
+    let openIssues = 0;
+    let closedIssues = 0;
+
+    // get label assigned to this team
+    return model.getTeamIssues(requestData).then((issues) => {
+      issues.map(function(issue) {
+        if (issue.state === 'open') {
+          openIssues++;
+        } else if (issue.state === 'closed') {
+          closedIssues++;
+        }
+      });
+
+      return {
+        openIssues: openIssues,
+        closedIssues: closedIssues,
+      };
+    });
+  };
+
+  _loadTeamInfo(teamId) {
+    if (this.props.teams && this.props.teams.length > 0) {
+      window.history.pushState({}, "", "#Team?id=" + teamId);
+
+      this.props.setLoading(true, function() {
+        Promise.all([this.getTeamMembers(teamId), this.getTeamIssues(teamId)]).then((res) => {
+          console.log(res);
+          this.setState({
+            members: res[0].members,
+            selectedTeamId: res[0].selectedTeamId,
+            openIssues: res[1].openIssues,
+            closedIssues: res[1].closedIssues,
+          }, function() {
+            this.props.setLoading(false);
+          });
+        });
+      }.bind(this));
+    }
+  }
+
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
-      window.history.pushState({}, "", "#Team?id=" + (this.state.selectedTeamId || this.props.teams[0].id));
-      this.getTeamMembers(this.state.selectedTeamId || this.props.teams[0].id);
+      const teamId = (this.state.selectedTeamId || this.props.teams[0].id);
+      this._loadTeamInfo(teamId);
     }
   };
 
   handleNavSelect = (teamId) => {
-    window.history.pushState({}, "", "#Team?id=" + teamId);
-    this.getTeamMembers(teamId);
+    this._loadTeamInfo(teamId);
   };
 
   handleCreateTeamSelect = () => {
@@ -63,9 +106,19 @@ class TeamContainer extends Component {
       id: this.state.selectedTeamId,
     };
 
-    model.joinTeam(requestData).then(function (data) {
-      this.getTeamMembers(this.state.selectedTeamId);
+    this.props.setLoading(true, function() {
+      model.joinTeam(requestData).then(function (data) {
+        this.getTeamMembers(this.state.selectedTeamId).then(function (members) {
+          this.setState({
+            members: members.members,
+            selectedTeamId: members.selectedTeamId,
+          }, function() {
+            this.props.setLoading(false);
+          });
+        }.bind(this));
+      }.bind(this));
     }.bind(this));
+
   };
 
   render() {
@@ -101,11 +154,17 @@ class TeamContainer extends Component {
                 <PrimaryButton extraClass="ml-2" onClick={this.handleCreateTeamSelect}>New Team</PrimaryButton>
               </SectionButtonGroup>
             </NavHeader>
-            <TeamInfo team={team} />
-            {this.state.members.length > 0 ?
+            <TeamSection heading={team.displayName}>
+              <TeamInfo description={team.description} />
+            </TeamSection>
+            <TeamSection heading="Overview">
+              <TeamIssues openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
+            </TeamSection>
+            <TeamSection heading="Members">
+              {this.state.members.length > 0 ?
               <TeamMembers members={this.state.members} /> :
-              <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />
-            }
+              <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />}
+            </TeamSection>
           </RepoContent>
         );
       } else {
