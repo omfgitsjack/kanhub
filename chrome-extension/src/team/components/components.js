@@ -7,6 +7,7 @@ import {
 } from '../../github_elements/elements';
 
 import 'primer-css/build/build.css';
+import styles from '../styles/style';
 
 var octicons = require("octicons");
 
@@ -28,20 +29,15 @@ export const TeamSubNav = (props) => {
 
 export const TeamInfo = (props) => {
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>{props.team.displayName}</SectionTitle>
-      </SectionHeader>
-      <p className="lead">{props.team.description}</p>
-    </SectionContainer>
+      <p className="lead">{props.description}</p>
   );
 }
 
-export const TeamOverview = (props) => {
+export const TeamSection = (props) => {
   return (
     <SectionContainer>
       <SectionHeader>
-        <SectionTitle>Overview</SectionTitle>
+        <SectionTitle>{props.heading}</SectionTitle>
       </SectionHeader>
       {props.children}
     </SectionContainer>
@@ -51,7 +47,26 @@ export const TeamOverview = (props) => {
 export const TeamIssues = (props) => {
   return (
     <Box heading="Issues">
-
+      <ul className="summary-stats">
+        <li style={styles.issueListItem}>
+          <a href="#closed-issues">
+            <div style={styles.issueHeader}>
+              <div style={styles.issueClosedIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-closed'].toSVG() }}></div>
+              <div style={styles.issueCount}>{props.closedIssues}</div>
+            </div>
+            Closed Issues
+          </a>
+        </li>
+        <li style={styles.issueListItem}>
+          <a href="#new-issues">
+            <div style={styles.issueHeader}>
+              <div style={styles.issueOpenIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-opened'].toSVG() }}></div>
+              <div style={styles.issueCount}>{props.openIssues}</div>
+            </div>
+            Open Issues
+          </a>
+        </li>
+      </ul>
     </Box>
   );
 };
@@ -63,12 +78,7 @@ export const TeamMembers = (props) => {
   });
 
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>Members</SectionTitle>
-      </SectionHeader>
-      {members}
-    </SectionContainer>
+    <div>{members}</div>
   );
 }
 

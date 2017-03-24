@@ -71,12 +71,31 @@ class StandupContainer extends Component {
       });
   };
 
+  _onMessagesReceive(sessionMessages) {
+    let messages = [];
+    sessionMessages.reverse().map(function(message) {
+      messages.push({username: message.username, message: message.message});
+    });
+
+    this.setState({
+      messages: messages,
+    }, function() {
+      const chatContainer = this.refs['chat'];
+      if (chatContainer) {
+        const messageContainer = chatContainer.refs['chat-container'];
+        if (messageContainer) {
+          messageContainer.scrollTop = messageContainer.scrollHeight; 
+        }
+      }
+    });
+  };
+
   _onUserJoin(username) {
       let { users, messages } = this.state;
 
       messages.push({
-          author: 'KANHUB_BOT',
-          content: username +' joined'
+          username: 'KANHUB_BOT',
+          message: username +' joined'
       });
 
       if (!users[username]) {
@@ -99,8 +118,8 @@ class StandupContainer extends Component {
       let { users, messages } = this.state;
       users[username] = null;
       messages.push({
-          author: 'KANHUB_BOT',
-          content: username +' left'
+          username: 'KANHUB_BOT',
+          message: username +' left'
       });
       this.setState({
         users: users,
@@ -112,9 +131,9 @@ class StandupContainer extends Component {
     this.setState({
       session: session,
     }, function() {
-      if (session && session.currentCard) {
+      if (session && session.currentCard && session.chat) {
         this._onCardReceive(session.currentCard);
-        console.log(session);
+        this._onMessagesReceive(session.chat);
         this.updateTimer();
 
         if (this.timer) {
@@ -216,7 +235,7 @@ class StandupContainer extends Component {
     socket.emit('send_message', this.state.selectedTeamId, this.state.message, activeSession);
 
     // push message right away without waiting for server response
-    this._onMessageReceive({'author': this.state.me.login, 'content': this.state.message});
+    this._onMessageReceive({'username': this.state.me.login, 'message': this.state.message});
 
     this.setState({ message: '' });
   };

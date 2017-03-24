@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TeamSubNav, TeamOverview, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
+import { TeamSubNav, TeamSection, TeamIssues, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
 import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
@@ -154,12 +154,17 @@ class TeamContainer extends Component {
                 <PrimaryButton extraClass="ml-2" onClick={this.handleCreateTeamSelect}>New Team</PrimaryButton>
               </SectionButtonGroup>
             </NavHeader>
-            <TeamInfo team={team} />
-            <TeamOverview openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
-            {this.state.members.length > 0 ?
+            <TeamSection heading={team.displayName}>
+              <TeamInfo description={team.description} />
+            </TeamSection>
+            <TeamSection heading="Overview">
+              <TeamIssues openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
+            </TeamSection>
+            <TeamSection heading="Members">
+              {this.state.members.length > 0 ?
               <TeamMembers members={this.state.members} /> :
-              <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />
-            }
+              <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />}
+            </TeamSection>
           </RepoContent>
         );
       } else {
