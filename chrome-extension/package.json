@@ -43,6 +43,7 @@
     "whatwg-fetch": "2.0.2"
   },
   "dependencies": {
+    "immutable": "^3.8.1",
     "jquery": "^3.1.1",
     "lodash": "^4.17.4",
     "material-ui": "^0.17.0",

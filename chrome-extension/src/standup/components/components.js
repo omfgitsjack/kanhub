@@ -11,10 +11,11 @@ import 'primer-css/build/build.css';
 var octicons = require("octicons");
 
 export const Message = (props) => {
+
   return (
     <li style={styles.chatMessage}>
-      <span style={styles.chatMessageAuthor}>{props.username + ":"}</span>
-      <span style={styles.chatMessageContent}>{props.message}</span>
+      <span style={props.presenting ? styles.chatMessagePresenter : styles.chatMessageAuthor}>{props.username + ":"}</span>
+      <span style={props.forMe ? styles.chatMessageContentForMe : styles.chatMessageContent}>{props.message}</span>
     </li>
   );
 }
@@ -22,11 +23,11 @@ export const Message = (props) => {
 export const WaitingRoom = (props) => {
   let users = [];
 
-  for (var key in props.users) {
-    if (props.users[key]) {
-      users.push(<UserCard key={key} user={props.users[key]} />)
+  props.users.toArray().map(function(user, key) {
+    if (user) {
+      users.push(<UserCard key={key} user={user} />)
     }
-  }
+  });
 
   return (
     <Box heading="Waiting Room">

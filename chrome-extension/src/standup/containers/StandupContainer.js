@@ -9,6 +9,7 @@ import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
 import moment from 'moment';
 import _ from 'lodash';
+import { Map, List } from 'immutable';
 
 let socket;
 
@@ -19,8 +20,8 @@ class StandupContainer extends Component {
 
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
-      users: {},
-      messages: [],
+      users: Map(),
+      messages: List(),
       message: '',
       yesterdayDescription: '',
       todayDescription: '',
@@ -51,33 +52,15 @@ class StandupContainer extends Component {
       }, {});
 
       this.setState({
-        users: usersMap,
+        users: Map(usersMap),
       });
       
     }.bind(this));
   };
 
   _onMessageReceive(message) {
-      let { messages } = this.state;
-      messages.push(message);
-      this.setState({
-        messages: messages,
-      }, function() {
-        const chatContainer = this.refs['chat'];
-        if (chatContainer) {
-          const messageContainer = chatContainer.refs['chat-container'];
-          if (messageContainer) {
-            messageContainer.scrollTop = messageContainer.scrollHeight; 
-          }
-        }
-      });
-  };
 
-  _onMessagesReceive(sessionMessages) {
-
-    const messages = _.map(sessionMessages.reverse(), function(message) {
-      return {username: message.username, message: message.message};
-    });
+    let messages = this.state.messages.push(message);
 
     this.setState({
       messages: messages,
@@ -92,18 +75,37 @@ class StandupContainer extends Component {
     });
   };
 
+  _onMessagesReceive(sessionMessages) {
+
+    const messages = _.map(sessionMessages.reverse(), function(message) {
+      return {username: message.username, message: message.message};
+    });
+
+    this.setState({
+      messages: List(messages),
+    }, function() {
+      const chatContainer = this.refs['chat'];
+      if (chatContainer) {
+        const messageContainer = chatContainer.refs['chat-container'];
+        if (messageContainer) {
+          messageContainer.scrollTop = messageContainer.scrollHeight; 
+        }
+      }
+    });
+  };
+
   _onUserJoin(username, cb) {
 
-      let { users, messages } = this.state;
-
-      messages.push({
+      let messages = this.state.messages.push({
           username: 'KANHUB_BOT',
           message: username +' joined'
       });
 
-      if (!users[username]) {
+      let users = this.state.users;
+
+      if (!users.get(username)) {
         model.getUserInfo({username: username}).then(function(user) {
-          users[username] = user;
+          users = users.set(username, user);
 
           this.setState({
             users: users,
@@ -126,9 +128,8 @@ class StandupContainer extends Component {
   };
 
   _onUserLeave(username, cb) {
-      let { users, messages } = this.state;
-      users[username] = null;
-      messages.push({
+      let users = this.state.users.set(username, null);
+      let messages = this.state.messages.push({
           username: 'KANHUB_BOT',
           message: username +' left'
       });
@@ -273,8 +274,8 @@ class StandupContainer extends Component {
 
       this.setState({
         selectedTeamId: teamId,
-        users: {},
-        messages: [],
+        users: Map(),
+        messages: List(),
         message: '',
       }, function() {
         // join new lobby
@@ -359,7 +360,6 @@ class StandupContainer extends Component {
   }
 
   render() {
-
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
 
@@ -373,13 +373,13 @@ class StandupContainer extends Component {
           );
         }
 
-        const userListSize = _.size(this.state.users);
+        const userListSize = this.state.users.size;
 
         let presentingUser;
         let mePresenting;
 
         if (this.state.session && this.state.currentCard && userListSize > 0) {
-          presentingUser = this.state.users[this.state.currentCard.username];
+          presentingUser = this.state.users.get(this.state.currentCard.username);
 
           if (presentingUser) {
             mePresenting = this.state.me.login === presentingUser.login;
@@ -388,7 +388,14 @@ class StandupContainer extends Component {
 
         return (
           <RepoContent>
-            <Chat ref="chat" teamName={team.displayName} messages={this.state.messages} message={this.state.message} {...this} />
+            <Chat ref="chat" me={this.state.me}
+              presentingUser={presentingUser}
+              teamName={team.displayName}
+              messages={this.state.messages}
+              message={this.state.message}
+              handleMessageChange={this.handleMessageChange}
+              handleSendMessage={this.handleSendMessage}
+              handleKeyPress={this.handleKeyPress} />
             <NavHeader>
               <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
             </NavHeader>

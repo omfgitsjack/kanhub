@@ -48,6 +48,17 @@ export const styles = {
     padding: "0px",
     boxSizing: "border-box",
   },
+  chatMessagePresenter: {
+    fontWeight: "bold",
+    marginRight: "5px",
+    color: "#ff4f4f",
+  },
+  chatMessageContentForMe: {
+    margin: "0px",
+    padding: "0px",
+    boxSizing: "border-box",
+    background: "#fffcc9",
+  },
   chatMessage: {
     fontSize: "12px",
     lineHeight: "20px",

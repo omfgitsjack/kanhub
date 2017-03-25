@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
   SectionTitle, SectionHeader, SectionButtonGroup, PrimaryButton,
@@ -8,17 +8,23 @@ import {
 import { Message } from './components';
 import styles from '../styles/style';
 import 'primer-css/build/build.css';
+import _ from 'lodash';
 
-class Chat extends Component {
+class Chat extends PureComponent {
 
   constructor(props) {
     super(props);
+
+    this.meString = "@" + this.props.me.login;
   };
 
   render() {
+    console.log('test');
     const messages = this.props.messages.map(function(message, i) {
-      return <Message key={i} username={message.username} message={message.message} />;
-    });
+      const forMe = _.includes(message.message, this.meString);
+      const presenting = this.props.presentingUser && (message.username === this.props.presentingUser.login);
+      return <Message key={i} username={message.username} message={message.message} presenting={presenting} forMe={forMe}/>;
+    }.bind(this));
 
     return (
       <div className="border-left" style={styles.chatContainer}>
