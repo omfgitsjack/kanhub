@@ -23,8 +23,8 @@ export function getUserInfo(data) {
     });
 }
 
-export function getUserTeams(data) {
-    const teamReq = createRequest('GET', '/users/' + data.username, null, false);
+export function getKanhubUser(data) {
+    const teamReq = createRequest('GET', '/api/users/' + data.username, null, false);
 
     return createPromise(teamReq);
 }

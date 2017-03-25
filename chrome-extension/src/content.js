@@ -10,6 +10,7 @@ import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
+import * as standupModel from './standup/model/model';
 import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser } from './modelCommon';
 
 var octicons = require("octicons");
@@ -63,15 +64,20 @@ function renderStandupTab(query, renderAnchor) {
   const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getAuthUser(), getSocketToken(), teamModel.getTeams({ repo: repoName })]).then((res) => {
+  Promise.all([getAuthUser(), getSocketToken()]).then((res) => {
+    standupModel.getKanhubUser({username: res[0].login}).then((user) => {
+      const teams = _.filter(user.user.teams, function(team) {
+        return team.repository === repoName;
+      });
 
-    ReactDOM.unmountComponentAtNode(renderAnchor);
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={res[2]} owner={ownerName} repo={repoName} />
-      </MuiThemeProvider>,
-      renderAnchor
-    );
+      ReactDOM.unmountComponentAtNode(renderAnchor);
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} />
+        </MuiThemeProvider>,
+        renderAnchor
+      );
+    });
   });
 }
 

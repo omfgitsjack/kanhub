@@ -8,6 +8,7 @@ import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
 import moment from 'moment';
+import _ from 'lodash';
 
 let socket;
 
@@ -73,9 +74,9 @@ class StandupContainer extends Component {
   };
 
   _onMessagesReceive(sessionMessages) {
-    let messages = [];
-    sessionMessages.reverse().map(function(message) {
-      messages.push({username: message.username, message: message.message});
+
+    const messages = _.map(sessionMessages.reverse(), function(message) {
+      return {username: message.username, message: message.message};
     });
 
     this.setState({
@@ -92,7 +93,6 @@ class StandupContainer extends Component {
   };
 
   _onUserJoin(username, cb) {
-      console.log(cb);
 
       let { users, messages } = this.state;
 
@@ -181,8 +181,6 @@ class StandupContainer extends Component {
       this.setTextAreaHeight('standup-today');
       this.setTextAreaHeight('standup-obstacle');
     });
-
-    console.log('i receive a card');
   }
 
   updateTimer() {
@@ -360,21 +358,10 @@ class StandupContainer extends Component {
     }
   }
 
-  isObjectEmpty(obj) {
-    for (var key in obj) {
-      return false;
-    }
-    return true;
-  };
-
   render() {
 
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
-
-        if (this.isObjectEmpty(this.state.users)) {
-          return <div></div>;
-        }
 
         const team = this.props.teams.find(function (team) {
           return team.id === this.state.selectedTeamId;
@@ -386,10 +373,12 @@ class StandupContainer extends Component {
           );
         }
 
+        const userListSize = _.size(this.state.users);
+
         let presentingUser;
         let mePresenting;
 
-        if (this.state.session && this.state.currentCard) {
+        if (this.state.session && this.state.currentCard && userListSize > 0) {
           presentingUser = this.state.users[this.state.currentCard.username];
 
           if (presentingUser) {
@@ -403,7 +392,7 @@ class StandupContainer extends Component {
             <NavHeader>
               <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
             </NavHeader>
-            {!this.state.session || !this.state.currentCard ?
+            {!this.state.session || !this.state.currentCard || userListSize == 0 ?
             <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
             presentingUser ?
             <StandupBox>
