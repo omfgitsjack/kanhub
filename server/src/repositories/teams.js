@@ -4,12 +4,12 @@ export default ({ db }) => {
         UserModel = db.models.user;
 
     return {
-        create: ({ repository, displayName, description }) => new Promise(resolve => {
+        create: ({ repository, displayName, description, label }) => new Promise(resolve => {
             TeamModel
                 .findOrCreate({
                     where: { repository, displayName },
                     defaults: {
-                        repository, displayName, description
+                        repository, displayName, description, label
                     }
                 })
                 .spread((team, created) => {
@@ -27,7 +27,7 @@ export default ({ db }) => {
         }),
         edit: (id, payload) => TeamModel.update(payload, {
             where: { id },
-            fields: ['displayName', 'description']
+            fields: ['displayName', 'description', 'label']
         }),
 
         // Managing team members
