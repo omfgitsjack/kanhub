@@ -168,10 +168,11 @@ export default ({ app, db, redisClient }) => {
         });
 
         socket.on('disconnect', () => {
-            getUserActiveLobbies(redisClient, username).then(lobbies => console.log('[activelobies]', lobbies) && lobbies.forEach(lobby => {
-                console.log();
+            getUserActiveLobbies(redisClient, username).then(lobbies => lobbies.forEach(lobby => {
+                console.log('[active_lobby]', lobby);
                 removeUserFromLobby(redisClient, lobby, username); // Remove the user from the lobby
                 standupIo.to(lobby).emit('user_left_lobby', username); // broadcast to everyone that the user has left.
+
             }));
 
             console.log('[Disconnected]', username);
