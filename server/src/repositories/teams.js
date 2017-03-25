@@ -20,7 +20,7 @@ export default ({ db }) => {
             TeamModel
                 .findAll({
                     where: { repository },
-                    attributes: ['id', 'repository', 'displayName', 'description']
+                    attributes: ['id', 'repository', 'displayName', 'description', 'label']
                 }),
         remove: id => TeamModel.destroy({
             where: { id }

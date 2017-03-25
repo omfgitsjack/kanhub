@@ -22,6 +22,7 @@ class EditTeam extends Component {
   componentDidMount() {
     if (this.props.repo && this.props.query && this.props.query.id) {
         model.getTeam({repo: this.props.repo, id: this.props.query.id}).then(function(team) {
+          console.log(team);
           this.setState({
             teamName: team.displayName,
             teamDescription: team.description,
