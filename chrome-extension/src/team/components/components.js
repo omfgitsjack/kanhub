@@ -137,7 +137,7 @@ export const CreateTeamForm = (props) => {
             <textarea className="form-control" placeholder="Briefly describe what this team is for..." onChange={props.handleTeamDescriptionChange}></textarea>
           </dd>
         </dl>
-
+        <hr/>
         <div className="form-actions">
           <PrimaryButton onClick={props.handleCreateTeamSelect}>Create</PrimaryButton>
           <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
@@ -166,7 +166,7 @@ export const EditTeamForm = (props) => {
             <textarea className="form-control" placeholder="Briefly describe what this team is for..." value={props.teamDescription} onChange={props.handleTeamDescriptionChange}></textarea>
           </dd>
         </dl>
-
+        <hr/>
         <div className="form-actions">
           <PrimaryButton onClick={props.handleEditTeamSelect}>Save</PrimaryButton>
           <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>

@@ -114,6 +114,14 @@ export const styles = {
     resize: "none",
     overflow: "auto",
   },
+  standUpCardNoText: {
+    minHeight: "65px",
+    maxHeight: "250px",
+    width: "100%",
+    resize: "none",
+    overflow: "hidden",
+    background: "#fafbfc",
+  },
   standUpBox: {
     display: "flex",
     flexDirection: "column",
