@@ -15,13 +15,12 @@ class Chat extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.meString = "@" + this.props.me.login;
+    this.meString = "@" + this.props.me.login.toLowerCase();
   };
 
   render() {
-    console.log('test');
     const messages = this.props.messages.map(function(message, i) {
-      const forMe = _.includes(message.message, this.meString);
+      const forMe = _.includes(message.message.toLowerCase(), this.meString);
       const presenting = this.props.presentingUser && (message.username === this.props.presentingUser.login);
       return <Message key={i} username={message.username} message={message.message} presenting={presenting} forMe={forMe}/>;
     }.bind(this));
