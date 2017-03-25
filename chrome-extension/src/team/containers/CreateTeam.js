@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { RepoContent } from '../../github_elements/elements';
-import { CreateTeamForm } from '../components/components';
-import 'primer-css/build/build.css';
+import { RepoContent, SectionContainer, PrimaryButton, NormalButton, SectionHeader, SectionTitle } from '../../github_elements/elements';
+import { SelectLabelList } from '../components/components';
 import * as pageHelper from '../../pageHelper';
 import * as model from '../model/model';
 
@@ -13,7 +12,10 @@ class CreateTeam extends Component {
     this.state = {
       teamName: "",
       teamDescription: "",
+      teamLabel: "",
     }
+
+    this.handleOnSelectChange = this.handleOnSelectChange.bind(this);
   };
 
   handleTeamNameChange = (e) => {
@@ -35,6 +37,7 @@ class CreateTeam extends Component {
         displayName: this.state.teamName,
         repository: this.props.repo,
         description: this.state.teamDescription,
+        label: this.state.teamLabel,
       },
     }
 
@@ -55,10 +58,43 @@ class CreateTeam extends Component {
     pageHelper.changeLocationHash("#Team");
   };
 
+  handleOnSelectChange = (value) => {
+    this.setState({
+      teamLabel: value ? value.value : "",
+    });
+  };
+
   render() {
     return (
       <RepoContent>
-        <CreateTeamForm {...this} />
+        <SectionContainer>
+          <SectionHeader>
+            <SectionTitle>Create New Team</SectionTitle>
+          </SectionHeader>
+          <form>
+            <dl className="form-group">
+              <dt><label>Team Name</label></dt>
+              <dd><input className="form-control" type="text" placeholder="Team name" onChange={this.handleTeamNameChange}/></dd>
+            </dl>
+
+            <dl className="form-group">
+              <dt><label>Team Label</label></dt>
+              <dd><SelectLabelList labels={this.props.labels} teamLabel={this.state.teamLabel} handleOnSelectChange={this.handleOnSelectChange}/></dd>
+            </dl>
+
+            <dl className="form-group">
+              <dt><label>Team Description</label></dt>
+              <dd>
+                <textarea className="form-control" placeholder="Briefly describe what this team is for..." onChange={this.handleTeamDescriptionChange}></textarea>
+              </dd>
+            </dl>
+            <hr/>
+            <div className="form-actions">
+              <PrimaryButton onClick={this.handleCreateTeamSelect}>Create</PrimaryButton>
+              <NormalButton onClick={this.handleCancelTeamSelect}>Cancel</NormalButton>
+            </div>
+          </form>
+        </SectionContainer>
       </RepoContent>
     );
   };

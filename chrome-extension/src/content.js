@@ -11,13 +11,14 @@ import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
 import * as standupModel from './standup/model/model';
-import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser, logout } from './modelCommon';
+
+import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser, getRepoIssues, getRepoLabels, logout } from './modelCommon';
 
 var octicons = require("octicons");
 
 function addRepoTab(label, url, icon, customClass) {
 
-  if ($(customClass).length !== 0) {
+  if ($('.' + customClass).length !== 0) {
     return;
   }
 
@@ -47,12 +48,12 @@ function handleHashLocation(e) {
   switch (location) {
     case '#Standup':
       repoContainer.empty();
-      selectRepoTab($(".reponav-standup"));
+      selectRepoTab($(".kanhub-reponav-standup"));
       renderStandupTab(query, reactRepoContainer);
       break;
     case '#Team':
       repoContainer.empty();
-      selectRepoTab($(".reponav-team"));
+      selectRepoTab($(".kanhub-reponav-team"));
       renderTeamTab(query, reactRepoContainer);
       break;
     default:
@@ -64,7 +65,7 @@ function renderStandupTab(query, renderAnchor) {
   const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getAuthUser(), getSocketToken()]).then((res) => {
+  Promise.all([getAuthUser(), getSocketToken(), getRepoIssues({repo: repoName, owner: ownerName})]).then((res) => {
     standupModel.getKanhubUser({username: res[0].login}).then((user) => {
       const teams = _.filter(user.user.teams, function(team) {
         return team.repository === repoName;
@@ -73,7 +74,7 @@ function renderStandupTab(query, renderAnchor) {
       ReactDOM.unmountComponentAtNode(renderAnchor);
       ReactDOM.render(
         <MuiThemeProvider>
-          <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} />
+          <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} issues={res[2]} />
         </MuiThemeProvider>,
         renderAnchor
       );
@@ -88,27 +89,33 @@ function renderTeamTab(query, renderAnchor) {
   ReactDOM.unmountComponentAtNode(renderAnchor);
 
   if (query.action === "new") {
-    // render the create team container
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <CreateTeam repo={repoName} />
-      </MuiThemeProvider>,
-      renderAnchor
-    );
+    getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <CreateTeam repo={repoName} labels={labels} />
+        </MuiThemeProvider>,
+        renderAnchor
+      );
+    });
   } else if (query.action === "edit") {
-
-    ReactDOM.render(
-      <MuiThemeProvider>
-        <EditTeam query={query} repo={repoName} />
-      </MuiThemeProvider>,
-      renderAnchor
-    );
+    getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
+      ReactDOM.render(
+        <MuiThemeProvider>
+          <EditTeam query={query} repo={repoName} labels={labels} />
+        </MuiThemeProvider>,
+        renderAnchor
+      );
+    });
   } else {
     // render team container
     Promise.all([getUsernameCookie(), teamModel.getTeams({ repo: repoName })]).then((res) => {
+      const teams = _.sortBy(res[1], function(team) {
+        return team.id;
+      });
+
       ReactDOM.render(
         <MuiThemeProvider>
-          <TeamContainer query={query} username={res[0]} teams={res[1]} repo={repoName} owner={ownerName} />
+          <TeamContainer query={query} username={res[0]} teams={teams} repo={repoName} owner={ownerName} />
         </MuiThemeProvider>,
         renderAnchor
       );
@@ -136,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
       elements.createReactRepoContainer();
 
       gitHubInjection(window, () => {
-        addRepoTab("Team", "#Team", octicons.organization.toSVG(), "reponav-team");
-        addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "reponav-standup");
+        addRepoTab("Team", "#Team", octicons.organization.toSVG(), "kanhub-reponav-team");
+        addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "kanhub-reponav-standup");
         ReactDOM.unmountComponentAtNode(elements.getReactRepoContainer());
       });
 

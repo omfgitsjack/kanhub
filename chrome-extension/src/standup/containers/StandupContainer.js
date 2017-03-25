@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NotInTeam, WaitingRoom, StandupBox, StandupProfile } from '../components/components';
 import Chat from '../components/Chat';
+import IssueModal from '../components/IssueModal';
 import StandupCard from '../components/StandupCard';
 import { NoTeamFound, NoPresenter, TeamSubNav } from '../../team/components/components';
 import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, NavHeader } from '../../github_elements/elements';
@@ -30,6 +31,7 @@ class StandupContainer extends Component {
       session: null,
       me: props.user,
       timeLeft: [0,0],
+      isIssueModalOpen: true,
     };
 
     this.timer = null;
@@ -41,6 +43,8 @@ class StandupContainer extends Component {
     this.handleStartSession = this.handleStartSession.bind(this);
     this.handleEndSession = this.handleEndSession.bind(this);
     this.handleNextPerson = this.handleNextPerson.bind(this);
+    this.handleIssueLinkSelect = this.handleIssueLinkSelect.bind(this);
+    this.handleIssueModalClose = this.handleIssueModalClose.bind(this);
     this.updateTimer = this.updateTimer.bind(this);
   };
 
@@ -204,6 +208,8 @@ class StandupContainer extends Component {
       }
 
       document.body.style.width = "80%";
+      window.history.pushState({}, "", "#Standup?id=" + this.state.selectedTeamId);
+      
       socket = createSocket(this.props.socketToken);
 
       socket.on('connect', function () {
@@ -357,6 +363,21 @@ class StandupContainer extends Component {
     if (this.state.session) {
       socket.emit('next_person', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId);
     }
+  };
+
+  handleIssueLinkSelect(e) {
+    e.preventDefault();
+
+    this.setState({
+      isIssueModalOpen: true,
+    });
+  };
+
+  handleIssueModalClose() {
+
+    this.setState({
+      isIssueModalOpen: false,
+    });
   }
 
   render() {
@@ -388,6 +409,7 @@ class StandupContainer extends Component {
 
         return (
           <RepoContent>
+            <IssueModal isIssueModalOpen={this.state.isIssueModalOpen} handleIssueModalClose={this.handleIssueModalClose} />
             <Chat ref="chat" me={this.state.me}
               presentingUser={presentingUser}
               teamName={team.displayName}

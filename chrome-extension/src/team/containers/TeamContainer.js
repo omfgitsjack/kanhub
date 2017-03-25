@@ -4,6 +4,7 @@ import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoCont
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
+import { getRepoIssues } from '../../modelCommon';
 import { List } from 'immutable';
 
 class TeamContainer extends Component {
@@ -47,7 +48,7 @@ class TeamContainer extends Component {
     let closedIssues = 0;
 
     // get label assigned to this team
-    return model.getTeamIssues(requestData).then((issues) => {
+    return getRepoIssues(requestData).then((issues) => {
       issues.map(function(issue) {
         if (issue.state === 'open') {
           openIssues++;

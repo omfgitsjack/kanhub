@@ -57,6 +57,33 @@ export const styles = {
   box: {
     marginTop: "10px",
   },
+  popupBox: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    width: "300px",
+    boxShadow: "0 3px 12px rgba(27,31,35,0.15)",
+    fontSize: "12px",
+    marginTop: "5px",
+    background: "#fafbfc",
+    color: "#586069",
+    borderRadius: "3px",
+  },
+  popupBoxHeader: {
+    padding: "10px",
+    fontWeight: "bold",
+  },
+  popupBoxList: {
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    maxHeight: "320px",
+  },
+  popupBoxListItem: {
+    width: "100%",
+    padding: "10px",
+    background: "#ffffff",
+  },
 };
 
 export default styles;

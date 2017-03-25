@@ -17,6 +17,7 @@ export default ({ config, db }) => {
             repository: req.params.repository,
             displayName: req.body.displayName,
             description: req.body.description,
+            label: req.body.label,
         }).then(({ team, created }) => {
             if (!created) {
                 res.status(400).json({

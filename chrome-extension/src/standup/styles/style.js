@@ -136,6 +136,25 @@ export const styles = {
     flexDirection: "column",
     alignItems: "center",
   },
+  modalStyle: {
+    overlay: {
+      backgroundColor: "rgba(0,0,0, 0.5)",
+      zIndex: "1000",
+    },
+    content: {
+      top: "10%",
+      right: "20%",
+      bottom: "10%",
+      left: "20%",
+      minWidth: "700px",
+      padding: "0px",
+      zIndex: "1001",
+    }
+  },
+  issueFrame: {
+    width: "100%",
+    height: "100%",
+  },
 };
 
 export default styles;

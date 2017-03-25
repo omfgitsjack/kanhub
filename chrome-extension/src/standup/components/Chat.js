@@ -7,7 +7,6 @@ import {
 } from '../../github_elements/elements';
 import { Message } from './components';
 import styles from '../styles/style';
-import 'primer-css/build/build.css';
 import _ from 'lodash';
 
 class Chat extends PureComponent {

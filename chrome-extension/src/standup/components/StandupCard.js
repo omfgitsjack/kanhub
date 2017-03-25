@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styles from '../styles/style';
-import 'primer-css/build/build.css';
 
 class StandupCard extends Component {
 

@@ -102,3 +102,23 @@ export function getSocketToken() {
 
     return createPromise(tokenReq);
 }
+
+export function getRepoIssues(data) {
+
+    const label = data.label ? '/issues?labels=' + data.label + '&' : '/issues?';
+
+    return getTokenCookie().then((token) => {
+        const issueReq = createGithubRequest('GET', '/repos/' + data.owner + '/' + data.repo + label + 'state=all', token);
+
+        return createPromise(issueReq);
+    });
+}
+
+export function getRepoLabels(data) {
+
+    return getTokenCookie().then((token) => {
+        const labelReq = createGithubRequest('GET', '/repos/' + data.owner + '/' + data.repo + '/labels', token);
+
+        return createPromise(labelReq);
+    });
+}

@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import React from 'react';
-import 'primer-css/build/build.css';
 import styles from './styles/style';
 
 export function getRepoNavBar() {
@@ -201,6 +200,34 @@ export const PlainBox = (props) => {
 
     return (
         <div className="border">
+            {props.children}
+        </div>
+    );
+}
+
+export const PopupBox = (props) => {
+
+    return (
+        <div className="border" style={styles.popupBox}>
+            <div className="border-bottom" style={styles.popupBoxHeader}>{props.heading}</div>
+            {props.children}
+        </div>
+    );
+}
+
+export const PopupBoxList = (props) => {
+
+    return (
+        <div style={styles.popupBoxList}>
+            {props.children}
+        </div>
+    );
+}
+
+export const PopupBoxListItem = (props) => {
+
+    return (
+        <div className="border-bottom" style={styles.popupBoxListItem}>
             {props.children}
         </div>
     );

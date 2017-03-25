@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "manifest_version": 2,
   "author": "omfgitsklampz",
-  "description": "blueee",
+  "description": "Organize your GitHub team's internal structure with KanHub!",
   "homepage_url": "https://github.com/UTSCC09/omfgitsklampz",
   "browser_action": {
       "default_title": "KanHub",
@@ -23,6 +23,9 @@
       "matches": ["https://github.com/*"],
       "js": [
         "static/js/content.js"
+      ],
+      "css": [
+        "static/css/content.css"
       ]
     }
   ],

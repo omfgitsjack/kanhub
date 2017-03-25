@@ -3,11 +3,13 @@ import {
   RepoContent, SubNav, SubNavItem, SectionContainer,
   SectionTitle, SectionHeader, SectionButtonGroup, NormalButton, PrimaryButton,
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
-  UserCard, Box
+  UserCard, Box, PopupBox, PopupBoxList, PopupBoxListItem
 } from '../../github_elements/elements';
 
-import 'primer-css/build/build.css';
 import styles from '../styles/style';
+
+import 'react-select/dist/react-select.css';
+import Select from 'react-select';
 
 var octicons = require("octicons");
 
@@ -118,60 +120,54 @@ export const NoMembers = (props) => {
   );
 }
 
-export const CreateTeamForm = (props) => {
+export const LabelListItem = (props) => {
+
+    let colorStyle = Object.assign({}, styles.labelColorBox);
+    colorStyle.background = props.labelColor;
+
+    return (
+        <div style={styles.labelListItem}>
+            <div style={styles.labelCheckIcon} dangerouslySetInnerHTML={{ __html: props.labelCheck }}></div>
+            <div style={colorStyle}></div>
+            {props.children}
+        </div>
+    );
+}
+
+export const PopupLabelList = (props) => {
+
+  const labels = props.labels.map(function(label, key) {
+    return (
+      <PopupBoxListItem>
+        <LabelListItem
+          key={key}
+          labelColor={'#' + label.color}
+          labelCheck={octicons.check.toSVG({ "width": 16, "height": 16 })}>{label.name}
+        </LabelListItem>
+      </PopupBoxListItem>
+    );
+  });
 
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>Create New Team</SectionTitle>
-      </SectionHeader>
-      <form>
-        <dl className="form-group">
-          <dt><label>Team Name</label></dt>
-          <dd><input className="form-control" type="text" placeholder="Team name" onChange={props.handleTeamNameChange}/></dd>
-        </dl>
-
-        <dl className="form-group">
-          <dt><label>Team Description</label></dt>
-          <dd>
-            <textarea className="form-control" placeholder="Briefly describe what this team is for..." onChange={props.handleTeamDescriptionChange}></textarea>
-          </dd>
-        </dl>
-        <hr/>
-        <div className="form-actions">
-          <PrimaryButton onClick={props.handleCreateTeamSelect}>Create</PrimaryButton>
-          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
-        </div>
-      </form>
-    </SectionContainer>
+    <PopupBox heading="Apply a label to this team">
+      <PopupBoxList>
+        {labels}
+      </PopupBoxList>
+    </PopupBox>
   );
 }
 
-export const EditTeamForm = (props) => {
+export const SelectLabelList = (props) => {
+  const options = props.labels.map(function(label) {
+    return {value: label.name, label: label.name};
+  });
 
   return (
-    <SectionContainer>
-      <SectionHeader>
-        <SectionTitle>{'Editing ' + props.team.displayName}</SectionTitle>
-      </SectionHeader>
-      <form>
-        <dl className="form-group">
-          <dt><label>Team Name</label></dt>
-          <dd><input className="form-control" type="text" placeholder="Team name" value={props.teamName} onChange={props.handleTeamNameChange}/></dd>
-        </dl>
-
-        <dl className="form-group">
-          <dt><label>Team Description</label></dt>
-          <dd>
-            <textarea className="form-control" placeholder="Briefly describe what this team is for..." value={props.teamDescription} onChange={props.handleTeamDescriptionChange}></textarea>
-          </dd>
-        </dl>
-        <hr/>
-        <div className="form-actions">
-          <PrimaryButton onClick={props.handleEditTeamSelect}>Save</PrimaryButton>
-          <NormalButton onClick={props.handleCancelTeamSelect}>Cancel</NormalButton>
-        </div>
-      </form>
-    </SectionContainer>
+    <Select
+      placeholder="Select a label for this team..."
+      value={props.teamLabel || ''}
+      options={options}
+      onChange={props.handleOnSelectChange}
+    />
   );
 }

@@ -6,7 +6,6 @@ import {
   UserCard, Box
 } from '../../github_elements/elements';
 import styles from '../styles/style';
-import 'primer-css/build/build.css';
 
 var octicons = require("octicons");
 
