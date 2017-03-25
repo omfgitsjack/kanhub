@@ -121,6 +121,28 @@ class TeamContainer extends Component {
 
   };
 
+  handleLeaveTeam = () => {
+    const requestData = {
+      repo: this.props.repo,
+      id: this.state.selectedTeamId,
+      username: this.props.username,
+    };
+
+    this.props.setLoading(true, function() {
+      model.leaveTeam(requestData).then(function (data) {
+        this.getTeamMembers(this.state.selectedTeamId).then(function (members) {
+          this.setState({
+            members: members.members,
+            selectedTeamId: members.selectedTeamId,
+          }, function() {
+            this.props.setLoading(false);
+          });
+        }.bind(this));
+      }.bind(this))
+    }.bind(this));
+
+  };
+
   render() {
 
     if (this.props.teams) {
@@ -147,7 +169,7 @@ class TeamContainer extends Component {
               <SectionButtonGroup>
                 {isMember ?
                   <div>
-                    <DangerButton extraClass="ml-2">Leave Team</DangerButton>
+                    <DangerButton extraClass="ml-2" onClick={this.handleLeaveTeam}>Leave Team</DangerButton>
                     <NormalButton extraClass="ml-2" onClick={this.handleEditTeamSelect}>Edit Team</NormalButton>
                   </div>
                   : <PrimaryButton extraClass="ml-2" onClick={this.handleJoinTeam}>Join Team</PrimaryButton>}

@@ -38,9 +38,17 @@ class CreateTeam extends Component {
       },
     }
 
-    model.createTeam(requestData).then((data) => {
-      pageHelper.changeLocationHash("#Team?id=" + data.id);
-    });
+    model.createTeam(requestData).then(function(data) {
+      const requestData = {
+        repo: this.props.repo,
+        id: data.id,
+      };
+      
+      model.joinTeam(requestData).then((team) => {
+        pageHelper.changeLocationHash("#Team?id=" + data.id);
+      });
+
+    }.bind(this));
   };
 
   handleCancelTeamSelect = () => {
