@@ -79,6 +79,10 @@ export function createPromises(requests) {
     });
 }
 
+export function logout() {
+    return createPromise(createRequest('GET', '/api/auth/logout', null, false), true)
+}
+
 export function getAuthUser() {
     return getTokenCookie().then((token) => {
         const getUser = createGithubRequest('GET', '/user', token);

@@ -35,10 +35,18 @@ export default ({ config, db, requireAuth }) => {
         });
     }));
 
-    api.get('/cookies', requireAuth, (req, res) => {
+    api.get('/logout', requireAuth, (req, res) => {
         let user = req.session.user;
 
-        res.json();
+        res.clearCookie('kh_username');
+        res.clearCookie('kh_github_token');
+        req.session.destroy(err => {
+            if (err) {
+                res.status(400).json({ success: false, code: 'CANNOT_LOGOUT' });
+            } else {
+                res.json();
+            }
+        })
     })
 
     api.get('/socket', requireAuth, (req, res) => {

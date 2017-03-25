@@ -10,7 +10,7 @@ import gitHubInjection from './githubInjection';
 import * as pageHelper from './pageHelper';
 import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
-import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser } from './modelCommon';
+import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser, logout } from './modelCommon';
 
 var octicons = require("octicons");
 
@@ -112,6 +112,13 @@ function renderTeamTab(query, renderAnchor) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  $("button.dropdown-signout").click(e => {
+    console.log("github's logging out...");
+    logout()
+      .then(() => console.log("logged out of kanhub"))
+      .catch(() => console.log("tried to logout but didn't work"));
+
+  })
 
   gitHubInjection(window, () => {
     // reset the body width to original
