@@ -120,14 +120,12 @@ export const styles = {
   },
   standUpCardText: {
     minHeight: "65px",
-    maxHeight: "250px",
     width: "100%",
     resize: "none",
-    overflow: "auto",
+    overflow: "hidden",
   },
   standUpCardNoText: {
     minHeight: "65px",
-    maxHeight: "250px",
     width: "100%",
     resize: "none",
     overflow: "hidden",

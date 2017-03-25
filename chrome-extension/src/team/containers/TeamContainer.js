@@ -4,6 +4,7 @@ import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoCont
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
+import { List } from 'immutable';
 
 class TeamContainer extends Component {
 
@@ -12,8 +13,8 @@ class TeamContainer extends Component {
 
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
-      members: [],
-      issues: [],
+      members: List(),
+      issues: List(),
       openIssues: 0,
       closedIssues: 0,
     };
@@ -58,6 +59,7 @@ class TeamContainer extends Component {
       return {
         openIssues: openIssues,
         closedIssues: closedIssues,
+        issues: issues,
       };
     });
   };
@@ -70,10 +72,11 @@ class TeamContainer extends Component {
         Promise.all([this.getTeamMembers(teamId), this.getTeamIssues(teamId)]).then((res) => {
           console.log(res);
           this.setState({
-            members: res[0].members,
+            members: List(res[0].members),
             selectedTeamId: res[0].selectedTeamId,
             openIssues: res[1].openIssues,
             closedIssues: res[1].closedIssues,
+            issues: List(res[1].issues),
           }, function() {
             this.props.setLoading(false);
           });
@@ -111,7 +114,7 @@ class TeamContainer extends Component {
       model.joinTeam(requestData).then(function (data) {
         this.getTeamMembers(this.state.selectedTeamId).then(function (members) {
           this.setState({
-            members: members.members,
+            members: List(members.members),
             selectedTeamId: members.selectedTeamId,
           }, function() {
             this.props.setLoading(false);
@@ -133,7 +136,7 @@ class TeamContainer extends Component {
       model.leaveTeam(requestData).then(function (data) {
         this.getTeamMembers(this.state.selectedTeamId).then(function (members) {
           this.setState({
-            members: members.members,
+            members: List(members.members),
             selectedTeamId: members.selectedTeamId,
           }, function() {
             this.props.setLoading(false);
@@ -145,7 +148,6 @@ class TeamContainer extends Component {
   };
 
   render() {
-
     if (this.props.teams) {
       if (this.props.teams.length > 0) {
 
@@ -184,7 +186,7 @@ class TeamContainer extends Component {
               <TeamIssues openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
             </TeamSection>
             <TeamSection heading="Members">
-              {this.state.members.length > 0 ?
+              {this.state.members.size > 0 ?
               <TeamMembers members={this.state.members} /> :
               <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />}
             </TeamSection>

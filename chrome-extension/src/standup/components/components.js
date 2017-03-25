@@ -23,7 +23,7 @@ export const Message = (props) => {
 export const WaitingRoom = (props) => {
   let users = [];
 
-  props.users.toArray().map(function(user, key) {
+  props.users.map(function(user, key) {
     if (user) {
       users.push(<UserCard key={key} user={user} />)
     }
