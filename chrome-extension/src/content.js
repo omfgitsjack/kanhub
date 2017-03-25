@@ -113,7 +113,6 @@ function renderTeamTab(query, renderAnchor) {
         return team.id;
       });
 
-      console.log(teams);
       ReactDOM.render(
         <MuiThemeProvider>
           <TeamContainer query={query} username={res[0]} teams={teams} repo={repoName} owner={ownerName} />

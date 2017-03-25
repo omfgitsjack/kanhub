@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { TeamSubNav, TeamSection, TeamIssues, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
-import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader } from '../../github_elements/elements';
+import { TeamSubNav, TeamSection, TeamIssues, TeamLabel, TeamInfo, NoTeamFound, NoTeams, TeamMembers, NoMembers } from '../components/components';
+import { SectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, SubNav, NavHeader, SectionContainer, SectionHeader, SectionTitle } from '../../github_elements/elements';
 import { changeLocationHash } from '../../pageHelper';
 import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
-import { getRepoIssues } from '../../modelCommon';
+import { getRepoIssues, getSingleLabel } from '../../modelCommon';
 import { List } from 'immutable';
 
 class TeamContainer extends Component {
@@ -18,6 +18,7 @@ class TeamContainer extends Component {
       issues: List(),
       openIssues: 0,
       closedIssues: 0,
+      label: {},
     };
   };
 
@@ -38,30 +39,47 @@ class TeamContainer extends Component {
   };
 
   getTeamIssues(teamId) {
+
+    const team = this.props.teams.find(function (team) {
+      return team.id === teamId;
+    }.bind(this));
+
+    if (!team || !team.label) {
+      return {
+        openIssues: 0,
+        closedIssues: 0,
+        issues: [],
+        label: {},
+      };
+    }
+
     const requestData = {
       repo: this.props.repo,
       owner: this.props.owner,
-      label: 'backend',
+      label: team.label,
     }
 
     let openIssues = 0;
     let closedIssues = 0;
 
     // get label assigned to this team
-    return getRepoIssues(requestData).then((issues) => {
-      issues.map(function(issue) {
-        if (issue.state === 'open') {
-          openIssues++;
-        } else if (issue.state === 'closed') {
-          closedIssues++;
-        }
-      });
+    return getSingleLabel(requestData).then((label) => {
+      return getRepoIssues(requestData).then((issues) => {
+        issues.map(function(issue) {
+          if (issue.state === 'open') {
+            openIssues++;
+          } else if (issue.state === 'closed') {
+            closedIssues++;
+          }
+        });
 
-      return {
-        openIssues: openIssues,
-        closedIssues: closedIssues,
-        issues: issues,
-      };
+        return {
+          openIssues: openIssues,
+          closedIssues: closedIssues,
+          issues: issues,
+          label: label,
+        };
+      });
     });
   };
 
@@ -71,13 +89,13 @@ class TeamContainer extends Component {
 
       this.props.setLoading(true, function() {
         Promise.all([this.getTeamMembers(teamId), this.getTeamIssues(teamId)]).then((res) => {
-          console.log(res);
           this.setState({
             members: List(res[0].members),
             selectedTeamId: res[0].selectedTeamId,
             openIssues: res[1].openIssues,
             closedIssues: res[1].closedIssues,
             issues: List(res[1].issues),
+            label: res[1].label,
           }, function() {
             this.props.setLoading(false);
           });
@@ -180,9 +198,13 @@ class TeamContainer extends Component {
                 <PrimaryButton extraClass="ml-2" onClick={this.handleCreateTeamSelect}>New Team</PrimaryButton>
               </SectionButtonGroup>
             </NavHeader>
-            <TeamSection heading={team.displayName}>
+            <SectionContainer>
+              <SectionHeader>
+                <SectionTitle>{team.displayName}</SectionTitle>
+                <TeamLabel label={this.state.label}/>
+              </SectionHeader>
               <TeamInfo description={team.description} />
-            </TeamSection>
+            </SectionContainer>
             <TeamSection heading="Overview">
               <TeamIssues openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
             </TeamSection>

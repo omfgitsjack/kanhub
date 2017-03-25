@@ -5,7 +5,7 @@ import {
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
   UserCard, Box, PopupBox, PopupBoxList, PopupBoxListItem
 } from '../../github_elements/elements';
-
+import { getColorByBgColor } from '../../helper';
 import styles from '../styles/style';
 
 import 'react-select/dist/react-select.css';
@@ -120,43 +120,6 @@ export const NoMembers = (props) => {
   );
 }
 
-export const LabelListItem = (props) => {
-
-    let colorStyle = Object.assign({}, styles.labelColorBox);
-    colorStyle.background = props.labelColor;
-
-    return (
-        <div style={styles.labelListItem}>
-            <div style={styles.labelCheckIcon} dangerouslySetInnerHTML={{ __html: props.labelCheck }}></div>
-            <div style={colorStyle}></div>
-            {props.children}
-        </div>
-    );
-}
-
-export const PopupLabelList = (props) => {
-
-  const labels = props.labels.map(function(label, key) {
-    return (
-      <PopupBoxListItem>
-        <LabelListItem
-          key={key}
-          labelColor={'#' + label.color}
-          labelCheck={octicons.check.toSVG({ "width": 16, "height": 16 })}>{label.name}
-        </LabelListItem>
-      </PopupBoxListItem>
-    );
-  });
-
-  return (
-    <PopupBox heading="Apply a label to this team">
-      <PopupBoxList>
-        {labels}
-      </PopupBoxList>
-    </PopupBox>
-  );
-}
-
 export const SelectLabelList = (props) => {
   const options = props.labels.map(function(label) {
     return {value: label.name, label: label.name};
@@ -169,5 +132,20 @@ export const SelectLabelList = (props) => {
       options={options}
       onChange={props.handleOnSelectChange}
     />
+  );
+}
+
+export const TeamLabel = (props) => {
+
+  if (!props.label) {
+    return <div></div>;
+  }
+
+  let colorStyle = Object.assign({}, styles.teamLabel);
+  colorStyle.background = '#' + props.label.color;
+  colorStyle.color = getColorByBgColor('#' + props.label.color);
+
+  return (
+    <div style={colorStyle}>{props.label.name}</div>
   );
 }

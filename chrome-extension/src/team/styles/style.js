@@ -23,22 +23,16 @@ export const styles = {
     issueClosedIcon: {
         color: "#cb2431",
     },
-    labelListItem: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-    },
-    labelCheckIcon: {
-        width: "12px",
-        margin: "0px 5px 0px 5px"
-    },
-    labelColorBox: {
-        width: "14px",
-        height: "14px",
-        margin: "0px 5px 0px 5px",
+    teamLabel: {
+        height: "30px",
+        minWidth: "50px",
+        marginLeft: "10px",
         borderRadius: "4px",
         background: "#000000",
+        fontSize: "12px",
+        fontWeight: "bold",
+        padding: "5px 10px 5px 10px",
+        textAlign: "center",
     },
 };
 

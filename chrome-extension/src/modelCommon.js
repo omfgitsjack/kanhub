@@ -122,3 +122,12 @@ export function getRepoLabels(data) {
         return createPromise(labelReq);
     });
 }
+
+export function getSingleLabel(data) {
+    
+    return getTokenCookie().then((token) => {
+        const labelReq = createGithubRequest('GET', '/repos/' + data.owner + '/' + data.repo + '/labels/' + data.label, token);
+
+        return createPromise(labelReq);
+    });
+}
