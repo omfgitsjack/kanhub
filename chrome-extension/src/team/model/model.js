@@ -46,12 +46,15 @@ export function createTeam(data) {
 }
 
 export function joinTeam(data) {
-    
-    return getAuthUser().then((user) => {
-        const joinTeam = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', {username: user.login}, true);
+    const joinTeam = createRequest('POST', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/', null, false);
 
-        return createPromise(joinTeam, true);
-    });
+    return createPromise(joinTeam, true);
+}
+
+export function leaveTeam(data) {
+    const leaveTeam = createRequest('DELETE', '/api/repository/' + data.repo + '/teams/' + data.id + '/members/' + data.username, null, false);
+
+    return createPromise(leaveTeam, true);
 }
 
 export function getTeamIssues(data) {
