@@ -53,7 +53,10 @@ export const styles = {
   },
   button: {
     height: "33.6px",
-  }
+  },
+  box: {
+    marginTop: "10px",
+  },
 };
 
 export default styles;

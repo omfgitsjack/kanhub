@@ -13,6 +13,7 @@ class TeamContainer extends Component {
     this.state = {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
       members: [],
+      issues: [],
       openIssues: 0,
       closedIssues: 0,
     };

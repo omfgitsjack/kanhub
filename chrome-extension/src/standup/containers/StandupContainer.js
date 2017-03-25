@@ -400,8 +400,9 @@ class StandupContainer extends Component {
         return (
           <RepoContent>
             <Chat ref="chat" teamName={team.displayName} messages={this.state.messages} message={this.state.message} {...this} />
-            <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
-
+            <NavHeader>
+              <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
+            </NavHeader>
             {!this.state.session || !this.state.currentCard ?
             <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
             presentingUser ?

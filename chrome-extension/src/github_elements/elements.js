@@ -48,7 +48,7 @@ export function createRepoTab(label, icon, url, customClass) {
 
 export const NavHeader = (props) => {
     return (
-        <div style={styles.navHeader}>
+        <div className="border-bottom" style={styles.navHeader}>
             {props.children}
         </div>
     );
@@ -188,7 +188,7 @@ export const UserCard = (props) => {
 export const Box = (props) => {
     
     return (
-        <div className="boxed-group flush">
+        <div style={styles.box} className="boxed-group flush">
             <h3>{props.heading}</h3>
             <div className="boxed-group-inner">
                 {props.children}
