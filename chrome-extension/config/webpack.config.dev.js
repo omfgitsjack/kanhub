@@ -49,7 +49,6 @@ module.exports = {
       // Finally, this is your app's code:
       paths.appIndexJs
     ],
-    settings: paths.appSettingsJs,
     background: paths.backgroundJs,
     // We include the app code last so that if there is a runtime error during
     // initialization, it doesn't blow up the WebpackDevServer client, and
@@ -194,12 +193,6 @@ module.exports = {
       template: paths.appHtml,
     }),
 
-    new HtmlWebpackPlugin({
-      filename: "settings.html",
-      inject: true,
-      chunks: ['settings'],
-      template: paths.appSettingsHtml,
-    }),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin(env.stringified),

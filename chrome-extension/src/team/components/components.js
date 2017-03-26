@@ -127,7 +127,7 @@ export const SelectLabelList = (props) => {
 
   return (
     <Select
-      placeholder="Select a label for this team..."
+      placeholder="Select an issue label for this team to track..."
       value={props.teamLabel || ''}
       options={options}
       onChange={props.handleOnSelectChange}

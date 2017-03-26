@@ -54,7 +54,6 @@ module.exports = {
   // In production, we only want to load the polyfills and the app code.
   entry: {
     index: [require.resolve('./polyfills'), paths.appIndexJs],
-    settings: paths.appSettingsJs,
     content: paths.appContentJs,
     background: paths.backgroundJs
   },
@@ -194,25 +193,6 @@ module.exports = {
       inject: true,
       chunks: ['index'],
       template: paths.appHtml,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeEmptyAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        keepClosingSlash: true,
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true
-      }
-    }),
-
-    new HtmlWebpackPlugin({
-      filename: 'settings.html',
-      inject: true,
-      chunks: ['settings'],
-      template: paths.appSettingsHtml,
       minify: {
         removeComments: true,
         collapseWhitespace: true,
