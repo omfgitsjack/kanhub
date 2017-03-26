@@ -5,6 +5,7 @@ import {
   PrimaryButtonSmall, DangerButton, BlankSlate, BlankSlateSpacious,
   UserCard, Box, PopupBox, PopupBoxList, PopupBoxListItem
 } from '../../github_elements/elements';
+import IssuesCharts from './IssuesChart';
 import { getColorByBgColor } from '../../helper';
 import styles from '../styles/style';
 
@@ -47,29 +48,36 @@ export const TeamSection = (props) => {
 };
 
 export const TeamIssues = (props) => {
+  const closedURL = 'issues?q=is:closed+is:issue+label:' + props.label;
+  const openURL = 'issues?q=is:open+is:issue+label:' + props.label;
   return (
-    <Box heading="Issues">
-      <ul className="summary-stats">
-        <li style={styles.issueListItem}>
-          <a href="#closed-issues">
-            <div style={styles.issueHeader}>
-              <div style={styles.issueClosedIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-closed'].toSVG() }}></div>
-              <div style={styles.issueCount}>{props.closedIssues}</div>
-            </div>
-            Closed Issues
-          </a>
-        </li>
-        <li style={styles.issueListItem}>
-          <a href="#new-issues">
-            <div style={styles.issueHeader}>
-              <div style={styles.issueOpenIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-opened'].toSVG() }}></div>
-              <div style={styles.issueCount}>{props.openIssues}</div>
-            </div>
-            Open Issues
-          </a>
-        </li>
-      </ul>
-    </Box>
+    <div>
+      <Box heading="Issues">
+        <ul className="summary-stats">
+          <li style={styles.issueListItem}>
+            <a href={closedURL}>
+              <div style={styles.issueHeader}>
+                <div style={styles.issueClosedIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-closed'].toSVG() }}></div>
+                <div style={styles.issueCount}>{props.closedIssues.size}</div>
+              </div>
+              Closed Issues
+            </a>
+          </li>
+          <li style={styles.issueListItem}>
+            <a href={openURL}>
+              <div style={styles.issueHeader}>
+                <div style={styles.issueOpenIcon} dangerouslySetInnerHTML={{ __html: octicons['issue-opened'].toSVG() }}></div>
+                <div style={styles.issueCount}>{props.openIssues.size}</div>
+              </div>
+              Open Issues
+            </a>
+          </li>
+        </ul>
+        <div className="border-top">
+          <IssuesCharts issues={props.issues} issueDate="created_at" daysSince={7} />
+        </div>
+      </Box>
+    </div>
   );
 };
 

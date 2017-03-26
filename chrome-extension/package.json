@@ -54,6 +54,7 @@
     "react-dom": "^15.4.2",
     "react-select": "^1.0.0-rc.3",
     "react-tooltip": "^3.2.7",
+    "recharts": "^0.21.2",
     "socket.io-client": "^1.7.3",
     "write-file-webpack-plugin": "^4.0.0"
   },

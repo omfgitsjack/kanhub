@@ -16,8 +16,8 @@ class TeamContainer extends Component {
       selectedTeamId: parseInt(props.query.id) || (this.props.teams.length > 0 && this.props.teams[0].id),
       members: List(),
       issues: List(),
-      openIssues: 0,
-      closedIssues: 0,
+      openIssues: List(),
+      closedIssues: List(),
       label: {},
     };
   };
@@ -46,8 +46,8 @@ class TeamContainer extends Component {
 
     if (!team || !team.label) {
       return {
-        openIssues: 0,
-        closedIssues: 0,
+        openIssues: List(),
+        closedIssues: List(),
         issues: [],
         label: {},
       };
@@ -59,17 +59,18 @@ class TeamContainer extends Component {
       label: team.label,
     }
 
-    let openIssues = 0;
-    let closedIssues = 0;
-
     // get label assigned to this team
     return getSingleLabel(requestData).then((label) => {
       return getRepoIssues(requestData).then((issues) => {
+
+        let openIssues = [];
+        let closedIssues = [];
+        
         issues.map(function(issue) {
           if (issue.state === 'open') {
-            openIssues++;
+            openIssues.push(issue);
           } else if (issue.state === 'closed') {
-            closedIssues++;
+            closedIssues.push(issue);
           }
         });
 
@@ -92,8 +93,8 @@ class TeamContainer extends Component {
           this.setState({
             members: List(res[0].members),
             selectedTeamId: res[0].selectedTeamId,
-            openIssues: res[1].openIssues,
-            closedIssues: res[1].closedIssues,
+            openIssues: List(res[1].openIssues),
+            closedIssues: List(res[1].closedIssues),
             issues: List(res[1].issues),
             label: res[1].label,
           }, function() {
@@ -184,6 +185,7 @@ class TeamContainer extends Component {
           );
         }
 
+
         return (
           <RepoContent>
             <NavHeader>
@@ -206,7 +208,7 @@ class TeamContainer extends Component {
               <TeamInfo description={team.description} />
             </SectionContainer>
             <TeamSection heading="Overview">
-              <TeamIssues openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} />
+              <TeamIssues label={this.state.label.name} openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} issues={this.state.issues} />
             </TeamSection>
             <TeamSection heading="Members">
               {this.state.members.size > 0 ?
