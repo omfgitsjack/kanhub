@@ -163,6 +163,10 @@ class StandupContainer extends Component {
   };
 
   _onSessionEnd(sessionId) {
+    if (!this.state.session || (this.state.session.sessionId !== sessionId.sessionId)) {
+      return;
+    }
+
     this.setState({
       session: null,
       currentCard: null,
@@ -280,6 +284,12 @@ class StandupContainer extends Component {
         users: Map(),
         messages: List(),
         message: '',
+        yesterdayDescription: '',
+        todayDescription: '',
+        obstaclesDescription: '',
+        currentCard: null,
+        session: null,
+        timeLeft: [0,0],
       }, function() {
         // join new lobby
         socket.emit('join_lobby', this.uniqueId, teamId, function(teamId, session) {
