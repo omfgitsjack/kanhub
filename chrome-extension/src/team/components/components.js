@@ -48,8 +48,8 @@ export const TeamSection = (props) => {
 };
 
 export const TeamIssues = (props) => {
-  const closedURL = 'issues?q=is:closed+is:issue+label:' + props.label;
-  const openURL = 'issues?q=is:open+is:issue+label:' + props.label;
+  const closedURL = '/' + props.owner + '/' + props.repo + '/issues?q=is:closed+is:issue+label:' + props.label;
+  const openURL = '/' + props.owner + '/' + props.repo + '/issues?q=is:open+is:issue+label:' + props.label;
   return (
     <div>
       <Box heading="Issues">

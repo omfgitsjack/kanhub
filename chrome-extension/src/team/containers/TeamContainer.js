@@ -208,7 +208,7 @@ class TeamContainer extends Component {
               <TeamInfo description={team.description} />
             </SectionContainer>
             <TeamSection heading="Overview">
-              <TeamIssues label={this.state.label.name} openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} issues={this.state.issues} />
+              <TeamIssues owner={this.props.owner} repo={this.props.repo} label={this.state.label.name} openIssues={this.state.openIssues} closedIssues={this.state.closedIssues} issues={this.state.issues} />
             </TeamSection>
             <TeamSection heading="Members">
               {this.state.members.size > 0 ?
