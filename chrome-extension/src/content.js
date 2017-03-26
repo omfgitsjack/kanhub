@@ -12,7 +12,8 @@ import * as elements from './github_elements/elements';
 import * as teamModel from './team/model/model';
 import * as standupModel from './standup/model/model';
 
-import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser, getRepoIssues, getRepoLabels, logout } from './modelCommon';
+import { getUsernameCookie, getTokenCookie, getSocketToken, getAuthUser, getRepoIssues, getRepoLabels, logout } from './modelCommon';
+import UnauthorizedSlate from './github_elements/components/UnauthorizedSlate';
 
 var octicons = require("octicons");
 
@@ -114,65 +115,84 @@ function handleHashLocation(e) {
 
 function renderStandupTab(query, renderAnchor) {
 
-  const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
+  Promise.all([getUsernameCookie(), getTokenCookie()]).then((checkRes) => {
+    
+    const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
+    // render standup container
+    Promise.all([getAuthUser(), getSocketToken()]).then((res) => {
+      standupModel.getKanhubUser({username: res[0].login}).then((user) => {
+        const teams = _.filter(user.user.teams, function(team) {
+          return team.repository === repoName;
+        });
 
-  // render standup container
-  Promise.all([getAuthUser(), getSocketToken()]).then((res) => {
-    standupModel.getKanhubUser({username: res[0].login}).then((user) => {
-      const teams = _.filter(user.user.teams, function(team) {
-        return team.repository === repoName;
+        ReactDOM.unmountComponentAtNode(renderAnchor);
+        ReactDOM.render(
+          <MuiThemeProvider>
+            <StandupContainer showIssueModal={showIssueModal} query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} />
+          </MuiThemeProvider>,
+          renderAnchor
+        );
       });
-
-      ReactDOM.unmountComponentAtNode(renderAnchor);
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <StandupContainer showIssueModal={showIssueModal} query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} />
-        </MuiThemeProvider>,
-        renderAnchor
-      );
     });
+  }).catch((e) => {
+    ReactDOM.render(
+      <MuiThemeProvider>
+        <UnauthorizedSlate />
+      </MuiThemeProvider>,
+      renderAnchor
+    );
   });
 }
 
 function renderTeamTab(query, renderAnchor) {
 
-  const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
+  Promise.all([getUsernameCookie(), getTokenCookie()]).then((checkRes) => {
 
-  ReactDOM.unmountComponentAtNode(renderAnchor);
+    const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
-  if (query.action === "new") {
-    getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <CreateTeam repo={repoName} labels={labels} />
-        </MuiThemeProvider>,
-        renderAnchor
-      );
-    });
-  } else if (query.action === "edit") {
-    getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <EditTeam query={query} repo={repoName} labels={labels} />
-        </MuiThemeProvider>,
-        renderAnchor
-      );
-    });
-  } else {
-    // render team container
-    Promise.all([getUsernameCookie(), teamModel.getTeams({ repo: repoName })]).then((res) => {
-      const teams = _.sortBy(res[1], function(team) {
-        return team.id;
+    ReactDOM.unmountComponentAtNode(renderAnchor);
+
+    if (query.action === "new") {
+      getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
+        ReactDOM.render(
+          <MuiThemeProvider>
+            <CreateTeam repo={repoName} labels={labels} />
+          </MuiThemeProvider>,
+          renderAnchor
+        );
       });
+    } else if (query.action === "edit") {
+      getRepoLabels({repo: repoName, owner: ownerName}).then((labels) => {
+        ReactDOM.render(
+          <MuiThemeProvider>
+            <EditTeam query={query} repo={repoName} labels={labels} />
+          </MuiThemeProvider>,
+          renderAnchor
+        );
+      });
+    } else {
+      // render team container
+      Promise.all([teamModel.getTeams({ repo: repoName })]).then((res) => {
+        const teams = _.sortBy(res[0], function(team) {
+          return team.id;
+        });
 
-      ReactDOM.render(
-        <MuiThemeProvider>
-          <TeamContainer query={query} username={res[0]} teams={teams} repo={repoName} owner={ownerName} />
-        </MuiThemeProvider>,
-        renderAnchor
-      );
-    });
-  }
+        ReactDOM.render(
+          <MuiThemeProvider>
+            <TeamContainer query={query} username={checkRes[0]} teams={teams} repo={repoName} owner={ownerName} />
+          </MuiThemeProvider>,
+          renderAnchor
+        );
+      });
+    }
+  }).catch((e) => {
+    ReactDOM.render(
+      <MuiThemeProvider>
+        <UnauthorizedSlate />
+      </MuiThemeProvider>,
+      renderAnchor
+    );
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
