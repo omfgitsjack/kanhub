@@ -33,8 +33,7 @@ class App extends Component {
           </div>
           <div className="popup-footer">
             <TooltipLabel label="What's this?">
-              This extension requires you to authenticate with your GitHub account
-              ONLY for project issue management.
+              This extension requires you to authenticate with your GitHub account.
             </TooltipLabel>
           </div>
         </div>
