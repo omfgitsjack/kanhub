@@ -59,6 +59,7 @@ export default ({ app, db, redisClient }) => {
                         let session = val.get({ plain: true });
                         let actions = sessionActions(redisClient, standupIo, teamId, session.id, repo);
 
+                        actions.pushUsersIntoQueue([ username ]); // push him back into queue.
                         actions.getSessionDetails(chatRepo).then(details => cb(teamId, details))
 
                         console.log(val.get({ plain: true }), 'found active session!');
