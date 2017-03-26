@@ -78,7 +78,6 @@ class StandupArchive extends Component {
     };
 
     getTeamStandups(requestData).then(function(standups) {
-      console.log(standups);
       this.setState({
         standups: standups,
       });
@@ -110,8 +109,6 @@ class StandupArchive extends Component {
           activeKey: activeKey,
           standupCards: standupCards,
         });
-
-        console.log(standupCards.get(activeKey));
       }.bind(this));
       // do fetch and update state with standup data
 
