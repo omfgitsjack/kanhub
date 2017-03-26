@@ -29,6 +29,10 @@ export function getTokenCookie() {
     })
 }
 
+export function playMusicFromStream(username, stream) {
+    chrome.runtime.sendMessage({ op: 'streamVoice', username: username, stream })
+}
+
 
 export function createRequest(method, url, body, jsonreq) {
     var settings = {};

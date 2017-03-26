@@ -16,7 +16,7 @@ export default ({ db }) => {
         }),
         findById: username => UserModel.findById(username, {
             include: [
-                { model: TeamModel, attributes: ['id', 'repository', 'displayName', 'description']}
+                { model: TeamModel, attributes: ['id', 'repository', 'displayName', 'description', 'label']}
             ]
         })
     }

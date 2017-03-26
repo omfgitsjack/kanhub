@@ -60,6 +60,16 @@ import initSocket from './websockets'
 
 import redisFactory from './redis';
 
+// Setup peerServer
+import { PeerServer } from 'peer';
+let peerServer = PeerServer({ port: 9000, ssl: options });
+peerServer.on('connection', id => {
+	console.log('[Peer Connect]', id);
+})
+peerServer.on('disconnect', id => {
+	console.log('[Peer Disconnect]', id);
+})
+
 // connect to db
 initializeDb(db => {
 
@@ -67,12 +77,6 @@ initializeDb(db => {
 
 	// internal middleware
 	app.use(middleware({ config, db }));
-
-	app.use((req, res, next) => {
-		console.log();
-		
-		next()
-	})
 
 	// api router
 	app.use('/api', api({ config, db }));

@@ -49,6 +49,7 @@
     "material-ui": "^0.17.0",
     "moment": "^2.18.1",
     "octicons": "^5.0.1",
+    "peerjs": "^0.3.14",
     "primer-css": "^5.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",

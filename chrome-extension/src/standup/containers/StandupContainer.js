@@ -7,9 +7,12 @@ import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, Re
 import { changeLocationHash } from '../../pageHelper';
 import { createSocket } from '../../socketCommon';
 import * as model from '../model/model';
+import { playMusicFromStream } from '../../modelCommon';
 import moment from 'moment';
 import _ from 'lodash';
 import { Map, List } from 'immutable';
+
+import Peer from 'peerjs';
 
 let socket;
 
@@ -29,7 +32,7 @@ class StandupContainer extends Component {
       currentCard: null,
       session: null,
       me: props.user,
-      timeLeft: [0,0],
+      timeLeft: [0, 0],
     };
 
     this.timer = null;
@@ -46,8 +49,8 @@ class StandupContainer extends Component {
   };
 
   _onJoinSuccess(lobbyUsers) {
-    model.getAllUserInfo({users: lobbyUsers}).then(function(users) {
-      var usersMap = users.reduce(function(map, user) {
+    model.getAllUserInfo({ users: lobbyUsers }).then(function (users) {
+      var usersMap = users.reduce(function (map, user) {
         map[user.login] = user;
         return map;
       }, {});
@@ -55,7 +58,7 @@ class StandupContainer extends Component {
       this.setState({
         users: Map(usersMap),
       });
-      
+
     }.bind(this));
   };
 
@@ -65,12 +68,12 @@ class StandupContainer extends Component {
 
     this.setState({
       messages: messages,
-    }, function() {
+    }, function () {
       const chatContainer = this.refs['chat'];
       if (chatContainer) {
         const messageContainer = chatContainer.refs['chat-container'];
         if (messageContainer) {
-          messageContainer.scrollTop = messageContainer.scrollHeight; 
+          messageContainer.scrollTop = messageContainer.scrollHeight;
         }
       }
     });
@@ -78,18 +81,18 @@ class StandupContainer extends Component {
 
   _onMessagesReceive(sessionMessages) {
 
-    const messages = _.map(sessionMessages.reverse(), function(message) {
-      return {username: message.username, message: message.message};
+    const messages = _.map(sessionMessages.reverse(), function (message) {
+      return { username: message.username, message: message.message };
     });
 
     this.setState({
       messages: List(messages),
-    }, function() {
+    }, function () {
       const chatContainer = this.refs['chat'];
       if (chatContainer) {
         const messageContainer = chatContainer.refs['chat-container'];
         if (messageContainer) {
-          messageContainer.scrollTop = messageContainer.scrollHeight; 
+          messageContainer.scrollTop = messageContainer.scrollHeight;
         }
       }
     });
@@ -97,57 +100,57 @@ class StandupContainer extends Component {
 
   _onUserJoin(username, cb) {
 
-      let messages = this.state.messages.push({
-          username: 'KANHUB_BOT',
-          message: username +' joined'
-      });
+    let messages = this.state.messages.push({
+      username: 'KANHUB_BOT',
+      message: username + ' joined'
+    });
 
-      let users = this.state.users;
+    let users = this.state.users;
 
-      if (!users.get(username)) {
-        model.getUserInfo({username: username}).then(function(user) {
-          users = users.set(username, user);
+    if (!users.get(username)) {
+      model.getUserInfo({ username: username }).then(function (user) {
+        users = users.set(username, user);
 
-          this.setState({
-            users: users,
-            messages: messages,
-          }, function() {
-            if (cb) {
-              cb();
-            }
-          });
-        }.bind(this));
-      } else {
         this.setState({
+          users: users,
           messages: messages,
-        }, function() {
+        }, function () {
           if (cb) {
             cb();
           }
         });
-      }
-  };
-
-  _onUserLeave(username, cb) {
-      let users = this.state.users.set(username, null);
-      let messages = this.state.messages.push({
-          username: 'KANHUB_BOT',
-          message: username +' left'
-      });
+      }.bind(this));
+    } else {
       this.setState({
-        users: users,
         messages: messages,
-      }, function() {
+      }, function () {
         if (cb) {
           cb();
         }
       });
+    }
+  };
+
+  _onUserLeave(username, cb) {
+    let users = this.state.users.set(username, null);
+    let messages = this.state.messages.push({
+      username: 'KANHUB_BOT',
+      message: username + ' left'
+    });
+    this.setState({
+      users: users,
+      messages: messages,
+    }, function () {
+      if (cb) {
+        cb();
+      }
+    });
   };
 
   _onSessionStart(session) {
     this.setState({
       session: session,
-    }, function() {
+    }, function () {
       if (session && session.currentCard && session.chat) {
         this._onCardReceive(session.currentCard);
         this._onMessagesReceive(session.chat);
@@ -157,7 +160,7 @@ class StandupContainer extends Component {
           clearInterval(this.timer);
         }
 
-        this.timer = setInterval(function() {this.updateTimer()}.bind(this), 1000);
+        this.timer = setInterval(function () { this.updateTimer() }.bind(this), 1000);
       }
     });
   };
@@ -170,7 +173,7 @@ class StandupContainer extends Component {
     this.setState({
       session: null,
       currentCard: null,
-      timeLeft: [0,0],
+      timeLeft: [0, 0],
     });
 
     if (this.timer) {
@@ -179,10 +182,10 @@ class StandupContainer extends Component {
   };
 
   _onCardReceive(card) {
-    
+
     this.setState({
       currentCard: card,
-    }, function() {
+    }, function () {
       this.setTextAreaHeight('standup-yesterday');
       this.setTextAreaHeight('standup-today');
       this.setTextAreaHeight('standup-obstacle');
@@ -201,7 +204,7 @@ class StandupContainer extends Component {
   componentDidMount() {
     if (this.props.teams && this.props.teams.length > 0) {
       const team = this.props.teams.find(function (team) {
-          return team.id === this.state.selectedTeamId;
+        return team.id === this.state.selectedTeamId;
       }.bind(this));
 
       if (!team) {
@@ -210,11 +213,71 @@ class StandupContainer extends Component {
 
       document.body.style.width = "80%";
       window.history.pushState({}, "", "#Standup?id=" + this.state.selectedTeamId);
-      
+
       socket = createSocket(this.props.socketToken);
 
       socket.on('connect', function () {
-        socket.emit('join_lobby', this.uniqueId, team.id, function(teamId, session) {
+        // We want to join the peer2peer voice chat too.
+        let peer = new Peer(this.props.user.login, { host: process.env.REACT_APP_HOST, port: 9000, path: '/', secure: true });
+        let otherUser = this.props.user.login === 'omfgitsjack' ? 'omfgtsalex' : 'omfgitsjack';
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioContext = new AudioContext();
+
+        peer.on('open', function (id) {
+          console.log('My peer ID is: ' + id);
+
+
+          if (otherUser === 'omfgtsalex') {
+            var conn = peer.connect(otherUser);
+            conn.on('error', err => {
+              console.log("failed to connect to alex");
+            })
+            conn.on('open', function () {
+              console.log('sending hi to ', otherUser);
+              conn.send('hi!');
+            });
+
+            // var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+              var call = peer.call(otherUser, stream);
+              call.on('stream', function (remoteStream) {
+                // Show stream in some video/canvas element.
+                console.log('getting something back..');
+
+                var mediaStreamSource = audioContext.createMediaStreamSource(remoteStream);
+                mediaStreamSource.connect(audioContext.destination);
+              });
+              call.on('error', err => console.log(err));
+            }, function (err) {
+              console.log('Failed to get local stream', err);
+            });
+          } else {
+            peer.on('connection', function (conn) {
+              conn.on('data', function (data) {
+                // Will print 'hi!'
+                console.log(data, 'from ', otherUser);
+              });
+            });
+
+            // var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            peer.on('call', function (call) {
+              navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+                call.answer(stream); // Answer the call with an A/V stream.
+                call.on('stream', function (remoteStream) {
+                  // Show stream in some video/canvas element.
+                var mediaStreamSource = audioContext.createMediaStreamSource(remoteStream);
+                mediaStreamSource.connect(audioContext.destination);
+
+                });
+              }, function (err) {
+                console.log('Failed to get local stream', err);
+              });
+            });
+          }
+
+        });
+
+        socket.emit('join_lobby', this.uniqueId, team.id, function (teamId, session) {
           this._onSessionStart(session);
         }.bind(this));
       }.bind(this));
@@ -235,7 +298,7 @@ class StandupContainer extends Component {
     if (this.timer) {
       clearInterval(this.timer);
     }
-    
+
     if (socket) {
       socket.emit('leave_lobby', this.uniqueId, this.state.selectedTeamId);
       socket.disconnect();
@@ -257,7 +320,7 @@ class StandupContainer extends Component {
     socket.emit('send_message', this.uniqueId, this.state.selectedTeamId, this.state.message, activeSession);
 
     // push message right away without waiting for server response
-    this._onMessageReceive({'username': this.state.me.login, 'message': this.state.message});
+    this._onMessageReceive({ 'username': this.state.me.login, 'message': this.state.message });
 
     this.setState({ message: '' });
   };
@@ -271,7 +334,7 @@ class StandupContainer extends Component {
 
   handleNavSelect = (teamId) => {
     // leave current lobby first
-    socket.emit('leave_lobby', this.uniqueId, this.state.selectedTeamId, function(id) {
+    socket.emit('leave_lobby', this.uniqueId, this.state.selectedTeamId, function (id) {
 
       if (this.timer) {
         clearInterval(this.timer);
@@ -289,11 +352,11 @@ class StandupContainer extends Component {
         obstaclesDescription: '',
         currentCard: null,
         session: null,
-        timeLeft: [0,0],
-      }, function() {
+        timeLeft: [0, 0],
+      }, function () {
         // join new lobby
-        socket.emit('join_lobby', this.uniqueId, teamId, function(teamId, session) {
-            this._onSessionStart(session);
+        socket.emit('join_lobby', this.uniqueId, teamId, function (teamId, session) {
+          this._onSessionStart(session);
         }.bind(this));
       });
     }.bind(this));
@@ -311,12 +374,12 @@ class StandupContainer extends Component {
   };
 
   setTextAreaHeight(textAreaRef) {
-      const standupCard = this.refs['standup-card'];
-      const textArea = standupCard && standupCard.refs[textAreaRef];
-      if (textArea) {
-        textArea.style.height = 'auto';
-        textArea.style.height = textArea.scrollHeight + 'px';
-      }
+    const standupCard = this.refs['standup-card'];
+    const textArea = standupCard && standupCard.refs[textAreaRef];
+    if (textArea) {
+      textArea.style.height = 'auto';
+      textArea.style.height = textArea.scrollHeight + 'px';
+    }
   };
 
   handleTextAreaChange(key, value, textAreaRef) {
@@ -329,7 +392,7 @@ class StandupContainer extends Component {
 
     currentCard[key] = value;
 
-    this.setState({currentCard: currentCard}, function() {
+    this.setState({ currentCard: currentCard }, function () {
       this.setTextAreaHeight(textAreaRef);
       this.handleCardChange();
     });
@@ -349,7 +412,7 @@ class StandupContainer extends Component {
 
   handleStartSession(e) {
     e.preventDefault();
-    socket.emit('start_session', this.uniqueId, this.state.selectedTeamId, function(session) {
+    socket.emit('start_session', this.uniqueId, this.state.selectedTeamId, function (session) {
       // if this is called then the session has already begun
 
     }.bind(this));
@@ -358,7 +421,7 @@ class StandupContainer extends Component {
   handleEndSession() {
 
     if (this.state.session) {
-      socket.emit('end_session', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId, function(err) {
+      socket.emit('end_session', this.uniqueId, this.state.selectedTeamId, this.state.session.sessionId, function (err) {
         console.log(err);
       }.bind(this));
     }
@@ -412,6 +475,7 @@ class StandupContainer extends Component {
 
         return (
           <RepoContent>
+            <audio src="" ref='audio'></audio>
             <Chat ref="chat" me={this.state.me}
               presentingUser={presentingUser}
               teamName={team.displayName}
@@ -420,28 +484,28 @@ class StandupContainer extends Component {
               handleMessageChange={this.handleMessageChange}
               handleSendMessage={this.handleSendMessage}
               handleKeyPress={this.handleKeyPress}
-              handleIssueSelect={this.handleIssueSelect}/>
+              handleIssueSelect={this.handleIssueSelect} />
             <NavHeader>
               <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
             </NavHeader>
             {!this.state.session || !this.state.currentCard || userListSize == 0 ?
-            <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users}/> :
-            presentingUser ?
-            <StandupBox>
-              <h1>{this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}</h1>
-              <StandupProfile username={presentingUser && presentingUser.login} src={presentingUser && presentingUser['avatar_url']}/>
-              <StandupCard ref="standup-card"
-                presenting={mePresenting}
-                card={this.state.currentCard}
-                handleYesterdayChange={this.handleYesterdayChange}
-                handleTodayChange={this.handleTodayChange}
-                handleObstacleChange={this.handleObstacleChange} />
-              <SpreadSectionButtonGroup>
-                <DangerButton onClick={this.handleEndSession}>End Session</DangerButton>
-                {mePresenting ? <PrimaryButton onClick={this.handleNextPerson}>Done</PrimaryButton> : <div></div>}
-              </SpreadSectionButtonGroup>
-            </StandupBox> :
-            <NoPresenter handleNextPerson={this.handleNextPerson} timeLeft={this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}></NoPresenter>}
+              <WaitingRoom handleStartSession={this.handleStartSession} users={this.state.users} /> :
+              presentingUser ?
+                <StandupBox>
+                  <h1>{this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}</h1>
+                  <StandupProfile username={presentingUser && presentingUser.login} src={presentingUser && presentingUser['avatar_url']} />
+                  <StandupCard ref="standup-card"
+                    presenting={mePresenting}
+                    card={this.state.currentCard}
+                    handleYesterdayChange={this.handleYesterdayChange}
+                    handleTodayChange={this.handleTodayChange}
+                    handleObstacleChange={this.handleObstacleChange} />
+                  <SpreadSectionButtonGroup>
+                    <DangerButton onClick={this.handleEndSession}>End Session</DangerButton>
+                    {mePresenting ? <PrimaryButton onClick={this.handleNextPerson}>Done</PrimaryButton> : <div></div>}
+                  </SpreadSectionButtonGroup>
+                </StandupBox> :
+                <NoPresenter handleNextPerson={this.handleNextPerson} timeLeft={this.state.timeLeft[0] + " mins " + this.state.timeLeft[1] + " seconds remaining"}></NoPresenter>}
           </RepoContent>
         );
       } else {
