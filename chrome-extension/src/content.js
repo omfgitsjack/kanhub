@@ -31,6 +31,18 @@ function addIssueModel() {
       modal.style.display = "none";
     }
   });
+  
+  let observer = new MutationObserver(function() {
+    let modalContent = $("#kanhub-issue-modal-content");
+    modalContent.find(".gh-header-actions").remove();
+    modalContent.find(".discussion-timeline-actions").remove();
+    modalContent.find(".sidebar-notifications").remove();
+    modalContent.find(".lock-toggle").remove();
+    modalContent.find(".timeline-comment-action").remove();
+  });
+
+  observer.observe(document.getElementById("kanhub-issue-modal-content"), {childList: true, subtree: true});
+
 }
 
 function showIssueModal(repo, owner, issueNumber) {
@@ -48,12 +60,6 @@ function showIssueModal(repo, owner, issueNumber) {
       if (text === 'error') {
         return;
       }
-
-      temp.find(".discussion-timeline-actions").remove();
-      temp.find(".gh-header-actions").remove();
-      temp.find(".sidebar-notifications").remove();
-      temp.find(".lock-toggle").remove();
-      temp.find(".timeline-comment-action").remove();
 
       issueModal.style.display = "block";
       let issuesList = temp.find(".container.new-discussion-timeline.experiment-repo-nav")[0];
