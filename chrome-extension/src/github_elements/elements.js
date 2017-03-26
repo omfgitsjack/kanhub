@@ -14,8 +14,27 @@ export function getParentRepoContainer() {
     return document.getElementById('js-repo-pjax-container');
 };
 
+export function createModal(id, contentId, overlayId, loaderId) {
+    let modal = document.createElement('div');
+    Object.assign(modal.style, styles.modal);
+    modal.id = id;
+
+    let overlay = document.createElement('div');
+    Object.assign(overlay.style, styles.modalOverlay);
+    overlay.id = overlayId;
+
+    let content = document.createElement('div');
+    Object.assign(content.style, styles.modalContent);
+    content.id = contentId;
+    
+    overlay.appendChild(content);
+    modal.appendChild(overlay);
+    
+    document.body.appendChild(modal);
+};
+
 export function createReactRepoContainer() {
-    const container = document.createElement('div');
+    let container = document.createElement('div');
     container.id = 'kanhub-react-container';
     Object.assign(container.style, styles.reactRepoContainer);
 

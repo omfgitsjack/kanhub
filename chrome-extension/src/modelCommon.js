@@ -70,7 +70,8 @@ export function checkPromise(response) {
 export function createPromise(request, notJson) {
     return fetch(request)
         .then((res) => { return checkPromise(res); })
-        .then((res) => { return notJson ? res : res.json() });
+        .then((res) => { return notJson ? res : res.json() })
+        .catch((err) => { return {error: err}; });
 }
 
 export function createPromises(requests) {

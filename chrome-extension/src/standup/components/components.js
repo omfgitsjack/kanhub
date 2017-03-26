@@ -6,15 +6,39 @@ import {
   UserCard, Box
 } from '../../github_elements/elements';
 import styles from '../styles/style';
+import { isIssueNumber } from '../../helper';
 
 var octicons = require("octicons");
 
+const IssueText = (props) => {
+
+  return (
+    <span style={styles.issueText} onClick={() => {props.handleIssueSelect(props.issue)}}>{props.issue}</span>
+  );
+}
+
 export const Message = (props) => {
+
+  const issueCheck = isIssueNumber(props.message);
+
+  let messageFirstPart = props.message;
+  let messageSecondPart = null;
+  let issueText = null;
+  
+  if (issueCheck) {
+    issueText = issueCheck['0'];
+    const index = issueCheck['index'];
+
+    messageFirstPart = props.message.slice(0, index);
+    messageSecondPart = props.message.slice(index + issueText.length);
+  }
 
   return (
     <li style={styles.chatMessage}>
       <span style={props.presenting ? styles.chatMessagePresenter : styles.chatMessageAuthor}>{props.username + ":"}</span>
-      <span style={props.forMe ? styles.chatMessageContentForMe : styles.chatMessageContent}>{props.message}</span>
+      <span style={props.forMe ? styles.chatMessageContentForMe : styles.chatMessageContent}>{messageFirstPart}</span>
+      {issueText && <IssueText handleIssueSelect={props.handleIssueSelect} issue={issueText}/>}
+      {messageSecondPart && <span style={props.forMe ? styles.chatMessageContentForMe : styles.chatMessageContent}>{messageSecondPart}</span>}
     </li>
   );
 }

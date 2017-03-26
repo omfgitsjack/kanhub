@@ -84,6 +84,33 @@ export const styles = {
     padding: "10px",
     background: "#ffffff",
   },
+  modal: {
+    display: "none", // default to hidden
+  },
+  modalOverlay: {
+    position: "fixed",
+    top: "0",
+    bottom: "0",
+    left: "0",
+    right: "0",
+    backgroundColor: "rgba(0,0,0, 0.5)",
+    zIndex: "1000",
+  },
+  modalContent: {
+    position: "absolute",
+    top: "10%",
+    left: "20%",
+    right: "20%",
+    bottom: "10%",
+    minWidth: "1050px",
+    border: "1px solid #cccccc",
+    background: "#ffffff",
+    overflow: "auto",
+    borderRadius: "4px",
+    outline: "none",
+    padding: "20px",
+    zIndex: "1001",
+  },
 };
 
 export default styles;

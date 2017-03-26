@@ -21,7 +21,7 @@ class Chat extends PureComponent {
     const messages = this.props.messages.map(function(message, i) {
       const forMe = _.includes(message.message.toLowerCase(), this.meString);
       const presenting = this.props.presentingUser && (message.username === this.props.presentingUser.login);
-      return <Message key={i} username={message.username} message={message.message} presenting={presenting} forMe={forMe}/>;
+      return <Message key={i} handleIssueSelect={this.props.handleIssueSelect} username={message.username} message={message.message} presenting={presenting} forMe={forMe}/>;
     }.bind(this));
 
     return (

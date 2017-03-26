@@ -16,6 +16,7 @@ export function getAllUserInfo(data) {
 }
 
 export function getUserInfo(data) {
+
     return getTokenCookie().then((token) => {
         const userReq = createGithubRequest('GET', '/users/' + data.username, token);
 
@@ -24,7 +25,17 @@ export function getUserInfo(data) {
 }
 
 export function getKanhubUser(data) {
+
     const teamReq = createRequest('GET', '/api/users/' + data.username, null, false);
 
     return createPromise(teamReq);
+}
+
+export function getSingleIssue(data) {
+
+    return getTokenCookie().then((token) => {
+        const issueReq = createGithubRequest('GET', '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.number, token);
+
+        return createPromise(issueReq);
+    });
 }

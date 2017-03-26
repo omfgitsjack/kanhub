@@ -16,6 +16,51 @@ import { getUsernameCookie, getSocketToken, authKanhub, getAuthUser, getRepoIssu
 
 var octicons = require("octicons");
 
+function addIssueModel() {
+  if (document.getElementById("kanhub-issue-modal")) {
+    return;
+  }
+  console.log("asd");
+  elements.createModal("kanhub-issue-modal", "kanhub-issue-modal-content", "kanhub-issue-modal-overlay");
+
+  $("#kanhub-issue-modal-overlay").click(function(e) {
+    e.preventDefault();
+    let modal = document.getElementById("kanhub-issue-modal");
+    let overlay = document.getElementById("kanhub-issue-modal-overlay");
+    if (e.target === overlay) {
+      modal.style.display = "none";
+    }
+  });
+}
+
+function showIssueModal(repo, owner, issueNumber) {
+    let issueModal = document.getElementById("kanhub-issue-modal");
+    let issueModalContent = document.getElementById("kanhub-issue-modal-content");
+
+    if (!issueModal || !issueModalContent) {
+      return;
+    }
+
+    const url = 'https://github.com/' + owner + '/' + repo + '/issues/' + issueNumber;
+    let temp = $("<div></div>");
+
+    temp.load(url, function(res, text) {
+      if (text === 'error') {
+        return;
+      }
+
+      temp.find(".discussion-timeline-actions").remove();
+      temp.find(".gh-header-actions").remove();
+      temp.find(".sidebar-notifications").remove();
+      temp.find(".lock-toggle").remove();
+
+      issueModal.style.display = "block";
+      let issuesList = temp.find(".container.new-discussion-timeline.experiment-repo-nav")[0];
+      $("#kanhub-issue-modal-content").empty();
+      issueModalContent.appendChild(issuesList);
+    });
+}
+
 function addRepoTab(label, url, icon, customClass) {
 
   if ($('.' + customClass).length !== 0) {
@@ -65,7 +110,7 @@ function renderStandupTab(query, renderAnchor) {
   const { ownerName, repoName } = pageHelper.getOwnerAndRepo();
 
   // render standup container
-  Promise.all([getAuthUser(), getSocketToken(), getRepoIssues({repo: repoName, owner: ownerName})]).then((res) => {
+  Promise.all([getAuthUser(), getSocketToken()]).then((res) => {
     standupModel.getKanhubUser({username: res[0].login}).then((user) => {
       const teams = _.filter(user.user.teams, function(team) {
         return team.repository === repoName;
@@ -74,7 +119,7 @@ function renderStandupTab(query, renderAnchor) {
       ReactDOM.unmountComponentAtNode(renderAnchor);
       ReactDOM.render(
         <MuiThemeProvider>
-          <StandupContainer query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} issues={res[2]} />
+          <StandupContainer showIssueModal={showIssueModal} query={query} user={res[0]} socketToken={res[1].token} teams={teams} owner={ownerName} repo={repoName} />
         </MuiThemeProvider>,
         renderAnchor
       );
@@ -145,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gitHubInjection(window, () => {
         addRepoTab("Team", "#Team", octicons.organization.toSVG(), "kanhub-reponav-team");
         addRepoTab("Standup", "#Standup", octicons['comment-discussion'].toSVG(), "kanhub-reponav-standup");
+        addIssueModel();
         ReactDOM.unmountComponentAtNode(elements.getReactRepoContainer());
       });
 

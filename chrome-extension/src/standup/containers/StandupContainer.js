@@ -31,7 +31,6 @@ class StandupContainer extends Component {
       session: null,
       me: props.user,
       timeLeft: [0,0],
-      isIssueModalOpen: true,
     };
 
     this.timer = null;
@@ -43,8 +42,7 @@ class StandupContainer extends Component {
     this.handleStartSession = this.handleStartSession.bind(this);
     this.handleEndSession = this.handleEndSession.bind(this);
     this.handleNextPerson = this.handleNextPerson.bind(this);
-    this.handleIssueLinkSelect = this.handleIssueLinkSelect.bind(this);
-    this.handleIssueModalClose = this.handleIssueModalClose.bind(this);
+    this.handleIssueSelect = this.handleIssueSelect.bind(this);
     this.updateTimer = this.updateTimer.bind(this);
   };
 
@@ -365,12 +363,8 @@ class StandupContainer extends Component {
     }
   };
 
-  handleIssueLinkSelect(e) {
-    e.preventDefault();
-
-    this.setState({
-      isIssueModalOpen: true,
-    });
+  handleIssueSelect(issueNumber) {
+    this.props.showIssueModal(this.props.repo, this.props.owner, issueNumber.substring(1));
   };
 
   handleIssueModalClose() {
@@ -409,7 +403,6 @@ class StandupContainer extends Component {
 
         return (
           <RepoContent>
-            <IssueModal isIssueModalOpen={this.state.isIssueModalOpen} handleIssueModalClose={this.handleIssueModalClose} />
             <Chat ref="chat" me={this.state.me}
               presentingUser={presentingUser}
               teamName={team.displayName}
@@ -417,7 +410,8 @@ class StandupContainer extends Component {
               message={this.state.message}
               handleMessageChange={this.handleMessageChange}
               handleSendMessage={this.handleSendMessage}
-              handleKeyPress={this.handleKeyPress} />
+              handleKeyPress={this.handleKeyPress}
+              handleIssueSelect={this.handleIssueSelect}/>
             <NavHeader>
               <TeamSubNav teams={this.props.teams} selectedTeamId={this.state.selectedTeamId} handleNavSelect={this.handleNavSelect} />
             </NavHeader>

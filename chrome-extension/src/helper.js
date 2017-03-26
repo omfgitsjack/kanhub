@@ -58,3 +58,8 @@ export function getColorByBgColor(bgColor) {
     if (!bgColor) { return '#000'; }
     return (parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2) ? '#000' : '#fff';
 }
+
+export function isIssueNumber(text) {
+    const result = /#\d+/.exec(text);
+    return result;
+}

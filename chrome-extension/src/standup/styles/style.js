@@ -151,9 +151,16 @@ export const styles = {
       zIndex: "1001",
     }
   },
-  issueFrame: {
+  issueText: {
+    cursor: "pointer",
+    background: "#ff8c9b",
+    fontWeight: "bold",
+  },
+  issueSection: {
+    padding: "20px",
+  },
+  metaHeader: {
     width: "100%",
-    height: "100%",
   },
 };
 
