@@ -53,6 +53,7 @@ function showIssueModal(repo, owner, issueNumber) {
       temp.find(".gh-header-actions").remove();
       temp.find(".sidebar-notifications").remove();
       temp.find(".lock-toggle").remove();
+      temp.find(".timeline-comment-action").remove();
 
       issueModal.style.display = "block";
       let issuesList = temp.find(".container.new-discussion-timeline.experiment-repo-nav")[0];
