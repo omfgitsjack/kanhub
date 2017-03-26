@@ -13,21 +13,28 @@ export default ({ config, db }) => {
 
     // TODO: validation & permissions
     api.post('/', (req, res) => {
-        TeamRepository.create({
-            repository: req.params.repository,
-            displayName: req.body.displayName,
-            description: req.body.description,
-            label: req.body.label,
-        }).then(({ team, created }) => {
-            if (!created) {
-                res.status(400).json({
-                    success: false,
-                    code: 'TEAM_ALREADY_EXISTS'
-                })
-            } else {
-                res.json(team)
-            }
-        });
+        if (!req.body.displayName) {
+            return res.status(400).json({
+                success: false,
+                code: 'NAME_REQUIRED'
+            })
+        } else {
+            TeamRepository.create({
+                repository: req.params.repository,
+                displayName: req.body.displayName,
+                description: req.body.description,
+                label: req.body.label,
+            }).then(({ team, created }) => {
+                if (!created) {
+                    res.status(400).json({
+                        success: false,
+                        code: 'TEAM_ALREADY_EXISTS'
+                    })
+                } else {
+                    res.json(team)
+                }
+            });
+        }
     });
 
     // TODO: pagination
@@ -78,7 +85,6 @@ export default ({ config, db }) => {
     api.get('/:teamId', fetchTeam(true));
     api.get('/:teamId/members', fetchTeam(false));
 
-    // TODO: Add validation here.
     api.post('/:teamId/members', (req, res) => {
         let username = req.session.user.username
 
