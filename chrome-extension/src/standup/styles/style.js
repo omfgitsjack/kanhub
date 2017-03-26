@@ -60,7 +60,7 @@ export const styles = {
     background: "#fffcc9",
   },
   chatMessage: {
-    fontSize: "12px",
+    fontSize: "14px",
     lineHeight: "20px",
     padding: "6px 20px",
     margin: "-3px 0",
@@ -136,21 +136,6 @@ export const styles = {
     flexDirection: "column",
     alignItems: "center",
   },
-  modalStyle: {
-    overlay: {
-      backgroundColor: "rgba(0,0,0, 0.5)",
-      zIndex: "1000",
-    },
-    content: {
-      top: "10%",
-      right: "20%",
-      bottom: "10%",
-      left: "20%",
-      minWidth: "700px",
-      padding: "0px",
-      zIndex: "1001",
-    }
-  },
   issueText: {
     cursor: "pointer",
     background: "#ff8c9b",
@@ -158,9 +143,6 @@ export const styles = {
   },
   issueSection: {
     padding: "20px",
-  },
-  metaHeader: {
-    width: "100%",
   },
 };
 

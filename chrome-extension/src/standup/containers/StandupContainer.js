@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { NotInTeam, WaitingRoom, StandupBox, StandupProfile } from '../components/components';
 import Chat from '../components/Chat';
-import IssueModal from '../components/IssueModal';
 import StandupCard from '../components/StandupCard';
 import { NoTeamFound, NoPresenter, TeamSubNav } from '../../team/components/components';
 import { SpreadSectionButtonGroup, NormalButton, DangerButton, PrimaryButton, RepoContent, NavHeader } from '../../github_elements/elements';

@@ -20,7 +20,7 @@ function addIssueModel() {
   if (document.getElementById("kanhub-issue-modal")) {
     return;
   }
-  console.log("asd");
+
   elements.createModal("kanhub-issue-modal", "kanhub-issue-modal-content", "kanhub-issue-modal-overlay");
 
   $("#kanhub-issue-modal-overlay").click(function(e) {
