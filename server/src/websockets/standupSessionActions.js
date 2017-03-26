@@ -1,5 +1,6 @@
 
-const getSessionQueue = sessionId => `queue/${sessionId}`
+const getSessionPoppedUserSet = sessionId => `sessionSet/${sessionId}`;
+const getSessionQueue = sessionId => `queue/${sessionId}`;
 const getLobbyUrl = (repo, teamId) => `repo/${repo}/lobby/${teamId}`;
 const getStartTime = sessionId => `startTime/${sessionId}`;
 
@@ -55,10 +56,21 @@ export default (redis, io, teamId, sessionId, repo) => {
             redis.lpopAsync(getSessionQueue(sessionId))
                 .then(user => {
                     console.log("[current_person]", user);
-                    api.setCurrentPerson(user);
-                    if (emitEvent) room.emit('current_person', user);
 
-                    return user;
+                    return redis.sismemberAsync(getSessionPoppedUserSet(sessionId), user)
+                        .then(finishedBefore => {
+                            console.log('did the user finish b4?', finishedBefore ? true : false)
+                            if (finishedBefore) { // skip this guy.
+                                return api.setNewCurrentFromQueue(emitEvent)
+                            } else { // hasn't submitted card before, let him back in.
+                                api.setCurrentPerson(user);
+                                redis.saddAsync(getSessionPoppedUserSet(sessionId), user)
+                                
+                                if (emitEvent) room.emit('current_person', user);
+                                
+                                return user;
+                            }
+                        })
                 })
                 .catch(() => room.emit('current_person', null)),
         updateCurrentCard: (cardId, payload) => 
