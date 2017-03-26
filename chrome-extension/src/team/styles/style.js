@@ -52,6 +52,13 @@ export const styles = {
     chartTitle: {
         margin: "10px 10px 0px 40px",
     },
+    noStandupsHeading: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        fontSize: "24px",
+        margin: "10px",
+    },
 };
 
 export default styles;

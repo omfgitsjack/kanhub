@@ -56,3 +56,9 @@ export function leaveTeam(data) {
 
     return createPromise(leaveTeam, true);
 }
+
+export function getTeamStandups(data) {
+    const standupReq = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id + '/standups', null, false);
+
+    return createPromise(standupReq);
+}

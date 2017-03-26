@@ -6,6 +6,7 @@ import LoadingHOC from '../../hocs/LoadingHOC';
 import * as model from '../model/model';
 import { getRepoIssues, getSingleLabel } from '../../modelCommon';
 import { List } from 'immutable';
+import StandupArchive from '../components/StandupArchive';
 
 class TeamContainer extends Component {
 
@@ -214,6 +215,9 @@ class TeamContainer extends Component {
               {this.state.members.size > 0 ?
               <TeamMembers members={this.state.members} /> :
               <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />}
+            </TeamSection>
+            <TeamSection heading="Standup Archive">
+              <StandupArchive owner={this.props.owner} repo={this.props.repo} team={team} />
             </TeamSection>
           </RepoContent>
         );
