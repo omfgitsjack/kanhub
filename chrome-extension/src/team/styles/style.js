@@ -49,6 +49,9 @@ export const styles = {
         height: "200px",
         margin: "10px",
     },
+    chartTitle: {
+        margin: "10px 10px 0px 40px",
+    },
 };
 
 export default styles;

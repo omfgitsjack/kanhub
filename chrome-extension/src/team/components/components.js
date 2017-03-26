@@ -74,6 +74,7 @@ export const TeamIssues = (props) => {
           </li>
         </ul>
         <div className="border-top">
+          <h3 style={styles.chartTitle}>Weekly issue progress</h3>
           <IssuesCharts issues={props.issues} issueDate="created_at" daysSince={7} />
         </div>
       </Box>
