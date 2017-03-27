@@ -7,12 +7,23 @@
 ##Description
 Our project will be to create a chrome extension that would “inject” code and UI elements onto the existing Github repo interface that will help developers to organize their internal team structure by allowing users to create their own groups within the repo. We will also create a "Standup" feature that will allow developers to do their daily standup meetings right within GitHub without relying on other applications such as slack. We will also include a real-time chat feature that allows collaborators to quickly discuss what they are working on at the moment so that they will always be on the same page. The role of the real-time chat is similar to how each issue has a conversation thread. We are hoping this extension would create a seamless experience for current developers to help organize their team.
 
-## Chrome-Extension Installation
-- Clone our repo, cd into chrome-extension and npm install
-- Now we will build the chrome-extension: npm run build
-- Open up chrome & go into your extensions manager (Settings -> More Tools -> Extensions)
-- Click on 'Load unpacked extension...' and select omfgitsklampz/chrome-extension/build
-- You should now see kanhub loaded as an extension on the top right bar of your chrome, click on it & authenticate!
+## Installation
+### Prerequisites
+- A valid account on [Github](https://github.com/)
+- You will require Google Chrome browser to install this extension (latest version preferred), you can get the latest version [here](https://www.google.com/chrome/browser/desktop/index.html)
+
+### How to install
+#### Installing from the build file
+1. Download the build.crx file [found in the latest-build folder](./latest-build)
+2. Open Google Chrome browser, go to [Settings > More tools > Extensions](chrome://extensions) and drag and drop this file into the window
+3. Add the extension by clicking "Add extension"
+
+#### Installing from the source
+1. Clone our repo, cd into chrome-extension and npm install
+2. Now we will build the chrome-extension: npm run build
+3. Open up chrome & go into your extensions manager (Settings -> More Tools -> Extensions)
+4. Click on 'Load unpacked extension...' and select omfgitsklampz/chrome-extension/build
+5. You should now see kanhub loaded as an extension on the top right bar of your chrome, click on it & authenticate!
 
 ## KanHub Tutorial
 - Once authenticated, you can now navigate to any repository, and each repository will have an additional 2 tabs: Team and Standup
@@ -37,13 +48,12 @@ Our project will be to create a chrome extension that would “inject” code an
 
 ##Technology Used
 - ReactJS
-- React-Redux
 - NodeJS
 - Express
 - Postgres
 - Websockets
 - Docker
-- RabbitMQ
+- Socket.io
 
 ##Key Challenges
 - [x] Learn how to create a chrome extension (https://developer.chrome.com/extensions/content_scripts)
