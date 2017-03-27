@@ -30,6 +30,7 @@ const StandupCards = (props) => {
 
     return (
       <div className="border" key={key} style={styles.standupCard}>
+        <h2 className="border-bottom">{username}</h2>
         <StandupCardSection style={styles.standupCardSection} heading={"What " + username + " did yesterday"}>{standup.yesterdayDescription}</StandupCardSection>
         <StandupCardSection style={styles.standupCardSection} heading={"What " + username + " will do today"}>{standup.todayDescription}</StandupCardSection>
         <StandupCardSection style={styles.standupCardSection} heading={"What roadblocks did " + username + " have"}>{standup.obstaclesDescription}</StandupCardSection>

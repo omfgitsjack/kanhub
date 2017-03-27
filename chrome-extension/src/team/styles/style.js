@@ -67,7 +67,7 @@ export const styles = {
         overflowY: "auto",
         fontSize: "14px",
         padding: "10px",
-        height: "330px",
+        height: "350px",
         width: "300px",
     },
     standupCardSection: {
