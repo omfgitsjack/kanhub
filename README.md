@@ -35,18 +35,18 @@ Our project will be to create a chrome extension that would “inject” code an
 - Easily Deployed: Through the use of docker, we have 3 separate containers for the nodejs-express server, postgres database and redis database. In fact, we simply need to `docker-compose build && docker-compose up` to deploy our services.
 - Fault Tolerant Real-time standups: We use redis to cache our standup session's state and periodically write to disk, so even if our app-server goes down we can recover without losing any state.
 
-##Beta Version Key Features
+## Beta Version Key Features
 - Installing the extension
 - Github authentication
 - Single room real-time chat
 - Team tab where developers can create different teams within the repo
 - Backend for team/standup features
 
-##Final Version Key Features:
+## Final Version Key Features:
 - Frontend for team/standup features
 - Multi-room chat
 
-##Technology Used
+## Technology Used
 - ReactJS
 - NodeJS
 - Express
@@ -55,7 +55,7 @@ Our project will be to create a chrome extension that would “inject” code an
 - Docker
 - Socket.io
 
-##Key Challenges
+## Key Challenges
 - [x] Learn how to create a chrome extension (https://developer.chrome.com/extensions/content_scripts)
 - [x] Learn how OAuth w/ Github works
 - [x] Learn React
