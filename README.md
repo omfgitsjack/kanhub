@@ -13,7 +13,8 @@ Our project will be to create a chrome extension that would “inject” code an
 - You will require [Google Chrome browser](https://www.google.com/chrome/browser/desktop/index.html) to install this extension (latest version preferred)
 
 ### How to install
-Easiest way would be to go to our [landing page](https://kanhub.me/). If that does not work, try below.
+#### Installing from Google Chrome Webstore (recommended)
+1. The easiest way to install would be to [go to the webstore and install it there](https://chrome.google.com/webstore/detail/kanhub/peacnodjjlhhodekaiafamddcgpjnbdo)
 
 #### Installing from the source
 1. Clone our repo, cd into chrome-extension and npm install
