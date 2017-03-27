@@ -62,3 +62,9 @@ export function getTeamStandups(data) {
 
     return createPromise(standupReq);
 }
+
+export function getStandupCards(data) {
+    const cardReq = createRequest('GET', '/api/repository/' + data.repo + '/teams/' + data.id + '/standups/' + data.standupId + '/cards', null, false);
+
+    return createPromise(cardReq);
+}

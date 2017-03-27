@@ -59,6 +59,32 @@ export const styles = {
         fontSize: "24px",
         margin: "10px",
     },
+    standupCard: {
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "4px",
+        margin: "10px",
+        overflowY: "auto",
+        fontSize: "14px",
+        padding: "10px",
+        height: "330px",
+        width: "300px",
+    },
+    standupCardSection: {
+        margin: "10px 0px 10px 0px",
+        height: "110px",
+    },
+    standupCardSectionHeader: {
+        fontWeight: "bold",
+    },
+    standupCardText: {
+        wordWrap: "break-word",
+    },
+    standupSection: {
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
 };
 
 export default styles;

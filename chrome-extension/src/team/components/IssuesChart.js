@@ -8,16 +8,18 @@ class IssuesChart extends Component {
 
   constructor(props) {
     super(props);
+
+    this.data = null;
   };
 
-  render() {
+  componentWillReceiveProps() {
+    this.data = null;
 
     let acc = {};
     let i = 0;
     for (i ; i < this.props.daysSince; i++) {
       acc[moment().subtract(i, 'd').format('MM-DD')] = {open: 0, closed: 0};
     }
-
 
     const data = _.reduce(this.props.issues.toArray(), function(graphData, issue) {
       if (!issue['created_at'] && !issue['closed_at']) {
@@ -45,9 +47,18 @@ class IssuesChart extends Component {
       return {name: key, open: data[key].open, closed: data[key].closed};
     });
 
+    this.data = pointData;
+  };
+
+  render() {
+
+    if (!this.data) {
+      return <div></div>;
+    }
+
     return (
       <ResponsiveContainer width='90%' height={200}>
-        <LineChart data={pointData.reverse()} margin={{top: 20, right:0, left:0, bottom: 10}}>
+        <LineChart data={this.data.reverse()} margin={{top: 20, right:0, left:0, bottom: 10}}>
           <XAxis dataKey='name'/>
           <YAxis/>
           <Tooltip/>
