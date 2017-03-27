@@ -230,7 +230,6 @@ class StandupContainer extends Component {
   };
 
   componentWillUnmount() {
-    console.log('unmounting');
 
     if (this.timer) {
       clearInterval(this.timer);

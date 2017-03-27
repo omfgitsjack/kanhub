@@ -62,7 +62,7 @@ class IssuesChart extends Component {
           <XAxis dataKey='name'/>
           <YAxis/>
           <Tooltip/>
-          <Line type='monotone' dataKey='open' stroke='#87ff75'/>
+          <Line type='monotone' dataKey='open' stroke='#53d140'/>
           <Line type='monotone' dataKey='closed' stroke='#ff6060'/>
         </LineChart>
       </ResponsiveContainer>
