@@ -217,7 +217,7 @@ class TeamContainer extends Component {
               <NoMembers teamName={team.displayName} handleJoinTeam={this.handleJoinTeam} />}
             </TeamSection>
             <TeamSection heading="Standup Archive">
-              <StandupArchive owner={this.props.owner} repo={this.props.repo} team={team} />
+              <StandupArchive owner={this.props.owner} repo={this.props.repo} selectedTeamId={this.state.selectedTeamId} />
             </TeamSection>
           </RepoContent>
         );
