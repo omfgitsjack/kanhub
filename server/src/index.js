@@ -22,6 +22,8 @@ let options = {
 let app = express();
 app.server = https.createServer(options, app);
 
+app.use(express.static(__dirname + '/front-end'));
+
 import cookieParser from 'cookie-parser';
 app.use(cookieParser());
 import bodyParser from 'body-parser';
