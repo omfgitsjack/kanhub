@@ -10,12 +10,12 @@ Our project will be to create a chrome extension that would “inject” code an
 ## Installation
 ### Prerequisites
 - A valid account on [Github](https://github.com/)
-- You will require Google Chrome browser to install this extension (latest version preferred), you can get the latest version [here](https://www.google.com/chrome/browser/desktop/index.html)
+- You will require [Google Chrome browser](https://www.google.com/chrome/browser/desktop/index.html) to install this extension (latest version preferred)
 
 ### How to install
 #### Installing from the build file
 1. Download the build.crx file [found in the latest-build folder](./latest-build)
-2. Open Google Chrome browser, go to [Settings > More tools > Extensions](chrome://extensions) and drag and drop this file into the window
+2. Open Google Chrome browser, go to your extensions manage (Settings -> More tools -> Extensions) and drag and drop this file into the window
 3. Add the extension by clicking "Add extension"
 
 #### Installing from the source
@@ -64,6 +64,6 @@ Our project will be to create a chrome extension that would “inject” code an
 - [x] Deploying entire app & db in different docker containers
 - [x] Securely send XHR requests that are cross origin
 - [x] Securely store and access cookies while respecting SameSite policies.
-- [ ] Learn websockets & see if there's a need for RabbitMQ
-- [ ] Learn how to use Github’s API
+- [x] Learn websockets & see if there's a need for RabbitMQ
+- [x] Learn how to use Github’s API
 - [ ] Figure out how to use webhooks
