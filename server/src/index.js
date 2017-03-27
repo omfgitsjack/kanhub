@@ -10,7 +10,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import initializeDb from './db';
-import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 
@@ -64,15 +63,6 @@ import redisFactory from './redis';
 initializeDb(db => {
 
 	initModels({ db })
-
-	// internal middleware
-	app.use(middleware({ config, db }));
-
-	app.use((req, res, next) => {
-		console.log();
-		
-		next()
-	})
 
 	// api router
 	app.use('/api', api({ config, db }));
