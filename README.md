@@ -13,17 +13,20 @@ Our project will be to create a chrome extension that would “inject” code an
 - You will require [Google Chrome browser](https://www.google.com/chrome/browser/desktop/index.html) to install this extension (latest version preferred)
 
 ### How to install
+#### Installing from the source (recommended)
+1. Clone our repo, cd into chrome-extension and npm install
+2. Now we will build the chrome-extension: npm run build
+3. Open up chrome & go into your extensions manager (Settings -> More Tools -> Extensions)
+4. Enable 'Developer Mode' found at the top
+5. Click on 'Load unpacked extension...' and select omfgitsklampz/chrome-extension/build
+6. You should now see KanHub loaded as an extension on the top right bar of your chrome, click on it and then select 'Authenticate with GitHub'
+
 #### Installing from the build file
 1. Download the build.crx file [found in the latest-build folder](./latest-build)
 2. Open Google Chrome browser, go to your extensions manager (Settings -> More tools -> Extensions) and drag and drop this file into the window
 3. Add the extension by clicking "Add extension"
-
-#### Installing from the source
-1. Clone our repo, cd into chrome-extension and npm install
-2. Now we will build the chrome-extension: npm run build
-3. Open up chrome & go into your extensions manager (Settings -> More Tools -> Extensions)
-4. Click on 'Load unpacked extension...' and select omfgitsklampz/chrome-extension/build
-5. You should now see kanhub loaded as an extension on the top right bar of your chrome, click on it & authenticate!
+4. Authenticate by clicking on the icon in the top right bar of chrome and selecting 'Authenticate with GitHub'
+5. If you add the extension this way, Chrome may disable the extension next time you restart. Just go back the the extensions manager and re-enable it. If you cannot re-enable it, you will have to delete the extension and add it back from step 2 above.
 
 ## KanHub Tutorial
 - Once authenticated, you can now navigate to any repository, and each repository will have an additional 2 tabs: Team and Standup
@@ -45,6 +48,8 @@ Our project will be to create a chrome extension that would “inject” code an
 ## Final Version Key Features:
 - Frontend for team/standup features
 - Multi-room chat
+- Standup Archive
+- Team issue tagging/overview
 
 ## Technology Used
 - ReactJS
