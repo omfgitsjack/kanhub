@@ -46,6 +46,8 @@ Our project will be to create a chrome extension that would “inject” code an
 ## Final Version Key Features:
 - Frontend for team/standup features
 - Multi-room chat
+- Standup Archive
+- Team issue tagging/overview
 
 ## Technology Used
 - ReactJS
