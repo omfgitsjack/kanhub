@@ -75,7 +75,7 @@ class StandupArchive extends Component {
     const requestData = {
       repo: this.props.repo,
       owner: this.props.owner,
-      id: this.props.team.id,
+      id: this.props.selectedTeamId,
     };
 
     getTeamStandups(requestData).then(function(standups) {
@@ -90,7 +90,7 @@ class StandupArchive extends Component {
       const requestData = {
         repo: this.props.repo,
         owner: this.props.owner,
-        id: this.props.team.id,
+        id: this.props.selectedTeamId,
         standupId: activeKey,
       };
 
