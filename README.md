@@ -7,7 +7,7 @@
 ## Description
 Our project will be to create a chrome extension that would “inject” code and UI elements onto the existing Github repo interface that will help developers to organize their internal team structure by allowing users to create their own groups within the repo. We will also create a "Standup" feature that will allow developers to do their daily standup meetings right within GitHub without relying on other applications such as slack. We will also include a real-time chat feature that allows collaborators to quickly discuss what they are working on at the moment so that they will always be on the same page. The role of the real-time chat is similar to how each issue has a conversation thread. We are hoping this extension would create a seamless experience for current developers to help organize their team.
 
-## Installation
+## Chrome Extension Installation
 ### Prerequisites
 - A valid account on [Github](https://github.com/)
 - You will require [Google Chrome browser](https://www.google.com/chrome/browser/desktop/index.html) to install this extension (latest version preferred)
@@ -15,7 +15,7 @@ Our project will be to create a chrome extension that would “inject” code an
 ### How to install
 #### Installing from the build file
 1. Download the build.crx file [found in the latest-build folder](./latest-build)
-2. Open Google Chrome browser, go to your extensions manage (Settings -> More tools -> Extensions) and drag and drop this file into the window
+2. Open Google Chrome browser, go to your extensions manager (Settings -> More tools -> Extensions) and drag and drop this file into the window
 3. Add the extension by clicking "Add extension"
 
 #### Installing from the source
