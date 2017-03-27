@@ -15,7 +15,7 @@ Our project will be to create a chrome extension that would “inject” code an
 ### How to install
 #### Installing from the build file
 1. Download the build.crx file [found in the latest-build folder](./latest-build)
-2. Open Google Chrome browser, go to your extensions manage (Settings -> More tools -> Extensions) and drag and drop this file into the window
+2. Open Google Chrome browser, go to your extensions manager (Settings -> More tools -> Extensions) and drag and drop this file into the window
 3. Add the extension by clicking "Add extension"
 
 #### Installing from the source
