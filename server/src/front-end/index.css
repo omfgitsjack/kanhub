@@ -43,6 +43,11 @@ h2 {
     background-color: rgb(1, 162, 183);
 }
 
+.banner-img {
+    max-width: 800px;
+    margin-top: 20px;
+}
+
 .header {
     max-width: 1000px;
     width: 100%;
