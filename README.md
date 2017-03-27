@@ -17,6 +17,7 @@ Our project will be to create a chrome extension that would “inject” code an
 1. Download the build.crx file [found in the latest-build folder](./latest-build)
 2. Open Google Chrome browser, go to your extensions manager (Settings -> More tools -> Extensions) and drag and drop this file into the window
 3. Add the extension by clicking "Add extension"
+4. If you add the extension this way, Chrome may disable the extension next time you restart. Just go back the the extensions manager and re-enable it
 
 #### Installing from the source
 1. Clone our repo, cd into chrome-extension and npm install
