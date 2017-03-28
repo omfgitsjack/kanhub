@@ -5,7 +5,7 @@ body {
     color: #ebebeb;
     height: 100vh;
 
-    background-image: url(https://github.com/images/modules/sitenextnext/home-code-bg-alt-01.svg);
+    background-image: url('./home-code-bg-alt-01.svg');
     background-blend-mode: luminosity;
     background-size: cover;
 }
