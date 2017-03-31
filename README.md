@@ -7,6 +7,11 @@
 ## Description
 Our project will be to create a chrome extension that would “inject” code and UI elements onto the existing Github repo interface that will help developers to organize their internal team structure by allowing users to create their own groups within the repo. We will also create a "Standup" feature that will allow developers to do their daily standup meetings right within GitHub without relying on other applications such as slack. We will also include a real-time chat feature that allows collaborators to quickly discuss what they are working on at the moment so that they will always be on the same page. The role of the real-time chat is similar to how each issue has a conversation thread. We are hoping this extension would create a seamless experience for current developers to help organize their team.
 
+## [API Docs](https://app.swaggerhub.com/api/omfgitsjack/kanhub/2.0.3)
+- All api routes (with the exception of /auth/github and /auth/github/callback) require session id.
+- Curl commands are found by clicking on 'Try it out' and executing the command (you may need to fill in some path params)
+- The server response from swagger is inaccurate, but you will be able to see the curl command that you can copy into your terminal
+
 ## [Demo Video](https://youtu.be/1uJNxMebBZw)
 
 ## Chrome Extension Installation
