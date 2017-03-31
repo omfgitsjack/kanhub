@@ -17,7 +17,7 @@ class IssuesChart extends Component {
 
     let acc = {};
     let i = 0;
-    for (i ; i < this.props.daysSince; i++) {
+    for (i ; i < this.props.daysSince + 1; i++) {
       acc[moment().subtract(i, 'd').format('MM-DD')] = {open: 0, closed: 0};
     }
 
@@ -33,6 +33,7 @@ class IssuesChart extends Component {
 
       if (moment(issue[issueDate]).isAfter(moment().subtract(this.props.daysSince, 'd'))) {
         const date = moment(issue[issueDate]).format('MM-DD');
+
         if (issue['state'] === 'open') {
           graphData[date].open ++;
         } else if (issue['state'] === 'closed') {
